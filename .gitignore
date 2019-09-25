@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/java,windows,eclipse,intellij
-# Edit at https://www.gitignore.io/?templates=java,windows,eclipse,intellij
+# Created by https://www.gitignore.io/api/java,maven,windows,eclipse,intellij
+# Edit at https://www.gitignore.io/?templates=java,maven,windows,eclipse,intellij
 
 ### Eclipse ###
 .metadata
@@ -184,6 +184,19 @@ fabric.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -210,4 +223,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/java,windows,eclipse,intellij
+# End of https://www.gitignore.io/api/java,maven,windows,eclipse,intellij
