@@ -1,1 +1,2 @@
 language: java
+script: cd common && mvn clean install && cd ../server && mvn clean install && cd ../client && mvn clean install
