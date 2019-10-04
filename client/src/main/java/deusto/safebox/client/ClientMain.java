@@ -2,10 +2,10 @@ package deusto.safebox.client;
 
 import deusto.safebox.client.gui.MainWindow;
 import deusto.safebox.client.net.Client;
+import java.io.IOException;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class ClientMain {
 
@@ -16,8 +16,7 @@ public class ClientMain {
 
     public static void main(String[] args) {
         Client client = new Client(HOSTNAME, PORT);
-
-        new MainWindow() {
+        SwingUtilities.invokeLater(() -> new MainWindow() {
             @Override
             protected void connect() {
                 logger.trace("Connecting to the server...");
@@ -35,6 +34,6 @@ public class ClientMain {
                     }
                 }).start();
             }
-        };
+        });
     }
 }

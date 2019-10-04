@@ -1,16 +1,19 @@
 package deusto.safebox.client.net;
 
 import deusto.safebox.common.net.ClientConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Client extends ClientConnection {
 
@@ -23,11 +26,15 @@ public class Client extends ClientConnection {
 
     // Trust manager that does not validate certificate chains.
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] {
-            new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-                public X509Certificate[] getAcceptedIssuers() { return null; }
+        new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
             }
+        }
     };
 
     /**

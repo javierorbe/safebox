@@ -1,18 +1,27 @@
 package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.ClientConnection;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.HashSet;
+import java.util.Set;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.*;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.security.*;
-import java.security.cert.CertificateException;
-
-public class Server extends AbstractServer {
+public class Server extends Thread implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -21,7 +30,16 @@ public class Server extends AbstractServer {
     private final String keyPassword;
 
     private SSLServerSocket serverSocket;
+    private boolean running = false;
+    private Set<ClientHandler> clients = new HashSet<>();
 
+    /**
+     * Creates a {@link Server} with the specified port.
+     *
+     * @param port server port number.
+     * @param keyPath JKS file path.
+     * @param keyPassword JKS file password.
+     */
     public Server(int port, String keyPath, String keyPassword) {
         this.port = port;
         this.keyPath = keyPath;
@@ -33,8 +51,8 @@ public class Server extends AbstractServer {
         SSLServerSocketFactory ssf;
         try {
             ssf = createServerSocketFactory();
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
-                IOException | UnrecoverableKeyException | KeyManagementException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException
+                | IOException | UnrecoverableKeyException | KeyManagementException e) {
             logger.error("Could not create a secure socket factory. ", e);
             return;
         }
@@ -50,12 +68,49 @@ public class Server extends AbstractServer {
         listen();
     }
 
+    private void listen() {
+        running = true;
+
+        try {
+            while (running) {
+                SSLSocket socket = (SSLSocket) serverSocket.accept();
+                ClientHandler client = new ClientHandler(socket);
+                clients.add(client);
+                client.start();
+            }
+        } catch (IOException e) {
+            logger.error("Error while server socket was listening.", e);
+        } finally {
+            if (!serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    logger.error("Error closing server socket.", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void close() {
+        running = false;
+        clients.forEach(ClientHandler::close);
+        try {
+            serverSocket.close();
+            logger.debug("Server socket closed.");
+        } catch (IOException e) {
+            logger.error("Error closing server socket.", e);
+        }
+    }
+
     private SSLServerSocketFactory createServerSocketFactory()
             throws KeyStoreException, CertificateException, NoSuchAlgorithmException,
             IOException, UnrecoverableKeyException, KeyManagementException {
         KeyStore ks = KeyStore.getInstance("JKS");
 
-        ks.load(getClass().getResourceAsStream(keyPath), keyPassword.toCharArray());
+        try (InputStream inputStream = getClass().getResourceAsStream(keyPath)) {
+            ks.load(inputStream, keyPassword.toCharArray());
+        }
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, keyPassword.toCharArray());
@@ -68,51 +123,5 @@ public class Server extends AbstractServer {
         sc.init(kmf.getKeyManagers(), trustManagers, null);
 
         return sc.getServerSocketFactory();
-    }
-
-    @Override
-    protected ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    @Override
-    protected ClientConnection getClientHandler(Socket socket) {
-        return new ClientHandler((SSLSocket) socket);
-    }
-
-    private static class ClientHandler extends ClientConnection {
-
-        private SSLSocket socket;
-
-        ClientHandler(SSLSocket socket) {
-            logger.trace("Creating new client handler.");
-            this.socket = socket;
-        }
-
-        @Override
-        public void run() {
-            try {
-                socket.startHandshake();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            listen();
-        }
-
-        @Override
-        public Socket getSocket() {
-            return socket;
-        }
-
-        @Override
-        protected void connectionEstablished() {
-            logger.trace("New client connection established.");
-        }
-
-        @Override
-        protected void receivePacket(byte[] packet) {
-            logger.trace("Received a packet: {}", packet);
-        }
     }
 }

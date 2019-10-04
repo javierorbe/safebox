@@ -1,16 +1,15 @@
 package deusto.safebox.common.net;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents an end side of the socket connection.
+ * Represents an endpoint of the socket connection.
  */
 public abstract class ClientConnection extends Thread implements AutoCloseable {
 
@@ -28,13 +27,13 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
                 receivePacket(Arrays.copyOf(buffer, size));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error listening to the socket.", e);
         } finally {
             if (getSocket() != null && !getSocket().isClosed()) {
                 try {
                     getSocket().close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error closing client socket.", e);
                 }
             }
         }
@@ -46,7 +45,7 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
             getSocket().close();
             logger.debug("Client connection closed.");
         } catch (IOException e) {
-            logger.error("Error while closing ClientConnection", e);
+            logger.error("Error closing client connection.", e);
         }
     }
 
@@ -54,10 +53,11 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
 
     public void sendPacket(byte[] packet) throws IOException {
         getSocket().getOutputStream().write(packet);
+        // TODO: is a flush necessary?
         getSocket().getOutputStream().flush();
     }
 
-    /** Called when the connection is ready. */
+    /** Called when the connection is ready to send and receive data. */
     protected abstract void connectionEstablished();
 
     protected abstract void receivePacket(byte[] packet);

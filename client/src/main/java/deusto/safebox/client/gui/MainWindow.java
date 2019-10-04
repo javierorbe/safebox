@@ -1,6 +1,8 @@
 package deusto.safebox.client.gui;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public abstract class MainWindow extends JFrame {
 
