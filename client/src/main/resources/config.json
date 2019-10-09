@@ -1,0 +1,7 @@
+{
+  "lang": "en",
+  "server": {
+    "hostname": "localhost",
+    "port": 6819
+  }
+}

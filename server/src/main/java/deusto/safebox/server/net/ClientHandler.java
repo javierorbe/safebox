@@ -1,6 +1,7 @@
 package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.ClientConnection;
+import deusto.safebox.common.util.JsonData;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.ssl.SSLSocket;
@@ -25,7 +26,6 @@ public class ClientHandler extends ClientConnection {
             logger.error("Could not complete handshake.", e);
             return;
         }
-
         listen();
     }
 
@@ -40,7 +40,7 @@ public class ClientHandler extends ClientConnection {
     }
 
     @Override
-    protected void receivePacket(byte[] packet) {
+    protected void receivePacket(JsonData packet) {
         logger.trace("Received a packet: {}", packet);
     }
 }

@@ -1,6 +1,5 @@
 package deusto.safebox.server.net;
 
-import deusto.safebox.common.net.ClientConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;

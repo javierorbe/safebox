@@ -1,6 +1,7 @@
 package deusto.safebox.client.net;
 
 import deusto.safebox.common.net.ClientConnection;
+import deusto.safebox.common.util.JsonData;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
@@ -19,11 +20,6 @@ public class Client extends ClientConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
-    private SSLSocket socket;
-
-    private final String hostname;
-    private final int port;
-
     // Trust manager that does not validate certificate chains.
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] {
         new X509TrustManager() {
@@ -36,6 +32,11 @@ public class Client extends ClientConnection {
             }
         }
     };
+
+    private final int port;
+    private final String hostname;
+
+    private SSLSocket socket;
 
     /**
      * Creates a {@link Client} with the specified host.
@@ -86,7 +87,7 @@ public class Client extends ClientConnection {
     }
 
     @Override
-    protected void receivePacket(byte[] packet) {
+    protected void receivePacket(JsonData packet) {
         logger.trace("Received a packet: {}", packet);
     }
 }

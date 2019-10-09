@@ -1,36 +1,37 @@
 package deusto.safebox.common.net;
 
+import com.google.gson.JsonObject;
+import deusto.safebox.common.util.Constants;
+import deusto.safebox.common.util.JsonData;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents an endpoint of the socket connection.
- */
+/** Represents an endpoint of the socket connection. */
 public abstract class ClientConnection extends Thread implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
 
-    private static final int PACKET_BUFFER_SIZE = 8192;
+    private DataOutputStream out;
 
     protected void listen() {
-        try (InputStream in = new DataInputStream(getSocket().getInputStream())) {
+        try (DataInputStream in = new DataInputStream(getSocket().getInputStream())) {
+            out = new DataOutputStream(getSocket().getOutputStream());
             connectionEstablished();
 
-            int size;
-            byte[] buffer = new byte[PACKET_BUFFER_SIZE];
-            while ((size = in.read(buffer)) > 0) {
-                receivePacket(Arrays.copyOf(buffer, size));
+            while (!getSocket().isClosed()) {
+                String data = in.readUTF();
+                receivePacket(new JsonData(Constants.GSON.fromJson(data, JsonObject.class)));
             }
         } catch (IOException e) {
             logger.error("Error listening to the socket.", e);
         } finally {
             if (getSocket() != null && !getSocket().isClosed()) {
                 try {
+                    logger.trace("Closing socket endpoint.");
                     getSocket().close();
                 } catch (IOException e) {
                     logger.error("Error closing client socket.", e);
@@ -51,14 +52,19 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
 
     protected abstract Socket getSocket();
 
-    public void sendPacket(byte[] packet) throws IOException {
-        getSocket().getOutputStream().write(packet);
-        // TODO: is a flush necessary?
-        getSocket().getOutputStream().flush();
-    }
-
     /** Called when the connection is ready to send and receive data. */
     protected abstract void connectionEstablished();
 
-    protected abstract void receivePacket(byte[] packet);
+    protected abstract void receivePacket(JsonData packet);
+
+    /**
+     * Send a packet to the other endpoint of the socket.
+     * This method shouldn't be used without receiving the {@link #connectionEstablished} callback.
+     *
+     * @param packet the packet in JSON format.
+     * @throws IOException if there is an error sending the packet.
+     */
+    public void sendPacket(JsonObject packet) throws IOException {
+        out.writeUTF(packet.toString());
+    }
 }
