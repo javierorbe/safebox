@@ -1,0 +1,3 @@
+keytool key generated with this command:
+
+keytool -genkey -alias YOURALIAS -keyalg RSA -keypass YOURPASSWORD -storepass YOUROTHERPASSWORD -keystore FILENAME.jks -validity 3650
