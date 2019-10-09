@@ -1,2 +1,4 @@
 language: java
+jdk:
+  - openjdk12
 script: cd common && mvn clean install && cd ../server && mvn clean install && cd ../client && mvn clean install
