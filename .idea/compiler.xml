@@ -12,9 +12,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="client" target="1.8" />
-      <module name="common" target="1.8" />
-      <module name="server" target="1.8" />
+      <module name="client" target="12" />
+      <module name="common" target="12" />
+      <module name="server" target="12" />
     </bytecodeTargetLevel>
   </component>
 </project>
