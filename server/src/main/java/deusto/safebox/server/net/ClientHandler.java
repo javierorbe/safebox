@@ -49,5 +49,6 @@ public abstract class ClientHandler extends ClientConnection {
         }
     }
 
+    /** Callback for when the client is going to disconnect. */
     protected abstract void disconnect();
 }
