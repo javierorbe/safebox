@@ -1,5 +1,6 @@
 package deusto.safebox.common.net;
 
+import deusto.safebox.common.net.packet.Packet;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;

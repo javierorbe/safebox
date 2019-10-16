@@ -35,16 +35,4 @@ public abstract class AbstractItem implements Serializable {
     public abstract ItemType getItemType();
 
     public abstract String getEncryptedData();
-
-    /*
-    public JsonObject serialize() {
-        JsonObject root = new JsonObject();
-        root.addProperty("id", getItemId().toString());
-        root.addProperty("type", getItemType().getId());
-        root.addProperty("creation_date", Constants.DATE_TIME_FORMATTER.format(getCreated()));
-        root.addProperty("last_modified", Constants.DATE_TIME_FORMATTER.format(getLastModified()));
-        root.addProperty("data", getEncryptedData());
-        return root;
-    }
-    */
 }

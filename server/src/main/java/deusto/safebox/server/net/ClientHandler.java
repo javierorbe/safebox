@@ -1,8 +1,8 @@
 package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.ClientConnection;
-import deusto.safebox.common.net.DisconnectPacket;
-import deusto.safebox.common.net.Packet;
+import deusto.safebox.common.net.packet.DisconnectPacket;
+import deusto.safebox.common.net.packet.Packet;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.ssl.SSLSocket;

@@ -1,7 +1,5 @@
-package deusto.safebox.common.net;
+package deusto.safebox.common;
 
-import deusto.safebox.common.AbstractItem;
-import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

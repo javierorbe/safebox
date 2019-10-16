@@ -5,7 +5,6 @@ import deusto.safebox.common.util.JsonData;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
 import java.util.Scanner;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

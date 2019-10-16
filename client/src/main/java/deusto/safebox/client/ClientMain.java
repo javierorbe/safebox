@@ -4,7 +4,6 @@ import deusto.safebox.common.util.JsonData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.UUID;
 import javax.swing.SwingUtilities;
 
 public class ClientMain {

@@ -1,4 +1,4 @@
-package deusto.safebox.common.net;
+package deusto.safebox.common.net.packet;
 
 import java.io.Serializable;
 

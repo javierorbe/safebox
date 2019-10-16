@@ -1,8 +1,7 @@
 package deusto.safebox.client.net;
 
 import deusto.safebox.common.net.ClientConnection;
-import deusto.safebox.common.net.Packet;
-
+import deusto.safebox.common.net.packet.Packet;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;

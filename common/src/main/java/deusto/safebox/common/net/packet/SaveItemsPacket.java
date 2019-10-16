@@ -1,4 +1,6 @@
-package deusto.safebox.common.net;
+package deusto.safebox.common.net.packet;
+
+import deusto.safebox.common.ItemContainer;
 
 import java.util.Arrays;
 import java.util.Collection;
