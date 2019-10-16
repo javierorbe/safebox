@@ -40,7 +40,7 @@ public class JsonData implements DataObject {
      * Returns the element in the specified JSON path.
      * The path is a string of keys separated by a period.
      *
-     * <p>For example, the path to access the street attribute in this JSON object is <tt>address.street</tt>
+     * <p>For example, the path to access the street attribute in this JSON object is <code>address.street</code>
      * <pre>
      * {
      *  name: "John",
@@ -54,7 +54,7 @@ public class JsonData implements DataObject {
      * @param path the path to the element.
      * @return the {@link JsonElement} in the path.
      */
-    private JsonElement getFromPath(String path) {
+    protected JsonElement getFromPath(String path) {
         JsonElement current = root;
         String[] s = path.split("\\.");
         for (String value : s) {

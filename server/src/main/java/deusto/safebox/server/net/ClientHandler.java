@@ -1,14 +1,15 @@
 package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.ClientConnection;
-import deusto.safebox.common.util.JsonData;
+import deusto.safebox.common.net.DisconnectPacket;
+import deusto.safebox.common.net.Packet;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.ssl.SSLSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientHandler extends ClientConnection {
+public abstract class ClientHandler extends ClientConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -40,7 +41,13 @@ public class ClientHandler extends ClientConnection {
     }
 
     @Override
-    protected void receivePacket(JsonData packet) {
+    protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
+
+        if (packet instanceof DisconnectPacket) {
+            disconnect();
+        }
     }
+
+    protected abstract void disconnect();
 }

@@ -4,6 +4,8 @@ import deusto.safebox.common.util.DataObject;
 import deusto.safebox.common.util.JsonData;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
+import java.util.Scanner;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,5 +33,10 @@ public class ServerMain {
 
         Server server = new Server(socketPort, KEY_PATH, KEY_PASSWORD);
         server.start();
+
+        Scanner scanner = new Scanner(System.in);
+        scanner.next();
+
+        server.close();
     }
 }

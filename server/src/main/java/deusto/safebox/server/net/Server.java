@@ -1,7 +1,9 @@
 package deusto.safebox.server.net;
 
+import deusto.safebox.common.net.ClientConnection;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -45,6 +47,7 @@ public class Server extends Thread implements AutoCloseable {
         this.keyPassword = keyPassword;
     }
 
+    /** Start the socket server. */
     @Override
     public void run() {
         SSLServerSocketFactory ssf;
@@ -67,39 +70,48 @@ public class Server extends Thread implements AutoCloseable {
         listen();
     }
 
+    /** Start listening to new clients. */
     private void listen() {
         running = true;
-
         try {
             while (running) {
                 SSLSocket socket = (SSLSocket) serverSocket.accept();
-                ClientHandler client = new ClientHandler(socket);
+                ClientHandler client = new ClientHandler(socket) {
+                    @Override
+                    protected void disconnect() {
+                        removeClient(this);
+                    }
+                };
                 clients.add(client);
                 client.start();
             }
+        } catch (SocketException e) {
+            logger.info("Socket closing exception.");
         } catch (IOException e) {
             logger.error("Error while server socket was listening.", e);
         } finally {
             if (!serverSocket.isClosed()) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    logger.error("Error closing server socket.", e);
-                }
+                close();
             }
         }
     }
 
+    /** Close the socket server. */
     @Override
-    public void close() {
+    public synchronized void close() {
         running = false;
-        clients.forEach(ClientHandler::close);
+        clients.forEach(ClientConnection::close);
         try {
             serverSocket.close();
             logger.debug("Server socket closed.");
         } catch (IOException e) {
             logger.error("Error closing server socket.", e);
         }
+    }
+
+    private void removeClient(ClientHandler client) {
+        clients.remove(client);
+        client.close();
     }
 
     private SSLServerSocketFactory createServerSocketFactory()

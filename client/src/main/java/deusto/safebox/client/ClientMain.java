@@ -1,78 +1,75 @@
 package deusto.safebox.client;
 
-import com.google.gson.JsonObject;
-import deusto.safebox.client.gui.MainWindow;
-import deusto.safebox.client.net.Client;
-import deusto.safebox.common.util.Constants;
-import deusto.safebox.common.util.DataObject;
 import deusto.safebox.common.util.JsonData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.UUID;
 import javax.swing.SwingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClientMain {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
+    // private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
 
-    private static final String DATA_DIRECTORY = ".safebox";
+    /** Program data folder name. */
+    private static final String FOLDER_NAME = ".safebox";
     private static final String CONFIG_FILE = "config.json";
 
     public static void main(String[] args) {
-        DataObject serverConfig = loadConfig();
+        /*
+        DataObject config = getClientConfig();
 
-        final String hostname = serverConfig.getString("server.hostname");
-        final int port = serverConfig.getInt("server.port");
+        String hostname = config.getString("server.hostname");
+        int port = config.getInt("server.port");
 
         Client client = new Client(hostname, port);
-        SwingUtilities.invokeLater(() -> new MainWindow() {
-            @Override
-            protected void connect() {
-                logger.trace("Connecting to the server...");
-                client.start();
-            }
+        */
 
-            @Override
-            protected void send() {
-                new Thread(() -> {
-                    try {
-                        logger.trace("Sending a packet...");
-                        client.sendPacket(Constants.GSON.fromJson(
-                                "{ \"data1\": 1337, \"data2\": 42 }",
-                                JsonObject.class
-                        ));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-            }
+        SwingUtilities.invokeLater(() -> {
+            // TODO: create main window
         });
     }
 
-    private static DataObject loadConfig() {
-        final String dataDirectoryPath = Path.of(getAppDataDirectory(), DATA_DIRECTORY).toString();
-        // Create the program data directory if it doesn't exist.
-        if (!new File(dataDirectoryPath).exists()) {
-            if (!new File(dataDirectoryPath).mkdir()) {
-                throw new RuntimeException("Could not create the data directory.");
+    /**
+     * Returns the contents of the client file.
+     *
+     * <p>The program data directory is created if it doesn't exist.
+     *
+     * @return a {@link JsonData} with the contents of the config file.
+     * @throws RuntimeException if the data directory cannot be created or the config file cannot be read.
+     * @throws IllegalArgumentException if the path to the data directory doesn't contain a directory.
+     */
+    private static JsonData getClientConfig() {
+        File programDirectory = Path.of(getUserDataDirectory(), FOLDER_NAME).toFile();
+        if (!programDirectory.exists()) {
+            if (!programDirectory.mkdir()) {
+                throw new RuntimeException("Could not create the data directory " + programDirectory.toString());
             }
+        } else if (!programDirectory.isDirectory()) {
+            throw new IllegalArgumentException("The path is not a directory.");
         }
 
         try {
             return JsonData.getOrExtractResource(
                     "/" + CONFIG_FILE,
-                    Path.of(dataDirectoryPath, CONFIG_FILE).toString()
+                    Path.of(programDirectory.getPath(), CONFIG_FILE).toString()
             );
         } catch (IOException e) {
             throw new RuntimeException("Could not load the config file.", e);
         }
     }
 
-    private static String getAppDataDirectory() {
-        String os = System.getProperty("os.name").toUpperCase();
-        if (os.contains("WIN")) {
+    /**
+     * Returns the path to a user dependent directory.
+     *
+     * <p>For Windows operating systems, it is <code>C:\Users\&lt;username&gt;\AppData\Roaming\</code>.
+     * For other operating systems, the user home directory is used.
+     *
+     * @return the absolute path to the user directory.
+     */
+    private static String getUserDataDirectory() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
             return System.getenv("AppData");
         } else {
             return System.getProperty("user.home");

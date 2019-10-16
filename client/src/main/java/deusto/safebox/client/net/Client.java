@@ -1,7 +1,8 @@
 package deusto.safebox.client.net;
 
 import deusto.safebox.common.net.ClientConnection;
-import deusto.safebox.common.util.JsonData;
+import deusto.safebox.common.net.Packet;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
@@ -39,7 +40,7 @@ public class Client extends ClientConnection {
     private SSLSocket socket;
 
     /**
-     * Creates a {@link Client} with the specified host.
+     * Creates a {@link Client} with that will connect to the specified server.
      *
      * @param hostname server hostname.
      * @param port server port.
@@ -49,6 +50,7 @@ public class Client extends ClientConnection {
         this.port = port;
     }
 
+    /** Connect to the server. */
     @Override
     public void run() {
         logger.info("Connecting to {}:{}", hostname, port);
@@ -63,14 +65,11 @@ public class Client extends ClientConnection {
         }
 
         SSLSocketFactory socketFactory = sslContext.getSocketFactory();
-
         try {
             socket = (SSLSocket) socketFactory.createSocket(hostname, port);
-            socket.addHandshakeCompletedListener(e -> {
-                logger.trace("Handshake completed.");
-                listen();
-            });
+            socket.addHandshakeCompletedListener(e -> logger.trace("Handshake completed."));
             socket.startHandshake();
+            listen();
         } catch (IOException e) {
             logger.error("Could not start a socket.", e);
         }
@@ -87,7 +86,7 @@ public class Client extends ClientConnection {
     }
 
     @Override
-    protected void receivePacket(JsonData packet) {
+    protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
     }
 }
