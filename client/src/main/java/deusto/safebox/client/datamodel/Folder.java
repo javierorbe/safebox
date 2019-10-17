@@ -9,7 +9,7 @@ import java.util.List;
 public class Folder extends Item {
 
     private Folder parentFolder;
-    private List<Item> items = new ArrayList<>();
+    private List<LeafItem> items = new ArrayList<>();
     private List<Folder> subFolders = new ArrayList<>();
 
     public Folder(String name, Folder parentFolder, LocalDateTime created, LocalDateTime lastModified) {
@@ -31,11 +31,11 @@ public class Folder extends Item {
         return parentFolder;
     }
 
-    public List<Item> getItems() {
+    public List<LeafItem> getItems() {
         return items;
     }
 
-    public void addItem(Item item) {
+    public void addItem(LeafItem item) {
         items.add(item);
     }
 

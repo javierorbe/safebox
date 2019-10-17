@@ -3,13 +3,14 @@ package deusto.safebox.common;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ItemContainer extends AbstractItem {
+public class EncryptedItem extends AbstractItem {
 
     private UUID userId;
     private ItemType type;
+    /** Encrypted data. */
     private String data;
 
-    public ItemContainer(UUID id, UUID userId, ItemType type, String data,
+    public EncryptedItem(UUID id, UUID userId, ItemType type, String data,
                          LocalDateTime created, LocalDateTime lastModified) {
         super(created, lastModified);
         setItemId(id);

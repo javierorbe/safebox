@@ -14,11 +14,12 @@ public class Login extends LeafItem {
     private LocalDate passwordExpiration;
 
     public Login(String itemName, Folder folder, LocalDateTime lastModified, LocalDateTime created,
-                 String username, String password, String website) {
+                 String username, String password, String website, LocalDate passwordExpiration) {
         super(itemName, folder, lastModified, created);
         this.username = username;
         this.password = password;
         this.website = website;
+        this.passwordExpiration = passwordExpiration;
     }
 
     public String getUsername() {
@@ -33,6 +34,10 @@ public class Login extends LeafItem {
         return website;
     }
 
+    public LocalDate getPasswordExpiration() {
+        return passwordExpiration;
+    }
+
     @Override
     public ItemType getItemType() {
         return ItemType.LOGIN;
@@ -45,5 +50,21 @@ public class Login extends LeafItem {
         root.addProperty("password", password);
         root.addProperty("website", website);
         return root;
+    }
+
+    @Override
+    public Object getProperty(int index) {
+        switch (index) {
+            case 0:
+                return getItemName();
+            case 1:
+                return username;
+            case 2:
+                return password;
+            case 3:
+                return website;
+            default:
+                return "";
+        }
     }
 }

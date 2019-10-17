@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Data object model.
+ * Data access object.
  *
  * @param <E> object type.
  * @param <K> key data type.
+ * @see <a href="https://en.wikipedia.org/wiki/Data_access_object" target="_top">Data access object in Wikipedia</a>
  */
 public interface Dao<E, K> {
 

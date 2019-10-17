@@ -43,7 +43,7 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
                     logger.error("Could not deserialize the received object.", e);
                 }
             }
-        } catch (EOFException e) {
+        } catch (EOFException e) { // This exception is thrown when the input stream is closed.
             if (running) {
                 close();
             }

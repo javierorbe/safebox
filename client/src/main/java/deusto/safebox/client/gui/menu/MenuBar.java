@@ -1,5 +1,6 @@
 package deusto.safebox.client.gui.menu;
 
+import deusto.safebox.client.ButtonAction;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -13,20 +14,20 @@ public class MenuBar extends JMenuBar {
 
         helpMenu.add(new MenuBarItem("Help") {
             @Override
-            void action() {
+            public void action() {
                 // TODO
             }
         });
 
         helpMenu.add(new MenuBarItem("About") {
             @Override
-            void action() {
+            public void action() {
                 // TODO
             }
         });
     }
 
-    private abstract static class MenuBarItem extends JMenuItem {
+    private abstract static class MenuBarItem extends JMenuItem implements ButtonAction {
 
         MenuBarItem(String text, Icon icon) {
             super(text, icon);
@@ -36,7 +37,5 @@ public class MenuBar extends JMenuBar {
         MenuBarItem(String text) {
             this(text, null);
         }
-
-        abstract void action();
     }
 }

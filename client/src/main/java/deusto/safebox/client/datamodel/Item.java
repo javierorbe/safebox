@@ -23,6 +23,12 @@ public abstract class Item extends AbstractItem {
         return name;
     }
 
+    /**
+     * Creates and returns a {@link JsonObject} containing the properties
+     * that are specific to the item type.
+     *
+     * @return a {@link JsonObject} with the data.
+     */
     protected abstract JsonObject getCustomData();
 
     @Override
