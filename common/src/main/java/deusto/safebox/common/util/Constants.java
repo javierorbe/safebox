@@ -7,9 +7,7 @@ import deusto.safebox.common.json.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public final class Constants {
-
-    private Constants() {}
+public class Constants {
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final Gson GSON;
@@ -19,5 +17,9 @@ public final class Constants {
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer());
         GSON = gsonBuilder.setPrettyPrinting().create();
+    }
+
+    private Constants() {
+        throw new AssertionError();
     }
 }

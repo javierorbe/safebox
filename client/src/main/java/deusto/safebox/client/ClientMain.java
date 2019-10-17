@@ -1,5 +1,6 @@
 package deusto.safebox.client;
 
+import deusto.safebox.client.gui.MainFrame;
 import deusto.safebox.common.util.JsonData;
 import java.io.File;
 import java.io.IOException;
@@ -24,9 +25,7 @@ public class ClientMain {
         Client client = new Client(hostname, port);
         */
 
-        SwingUtilities.invokeLater(() -> {
-            // TODO: create main window
-        });
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 
     /**
@@ -73,5 +72,9 @@ public class ClientMain {
         } else {
             return System.getProperty("user.home");
         }
+    }
+
+    private ClientMain() {
+        throw new AssertionError();
     }
 }
