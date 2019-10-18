@@ -1,4 +1,4 @@
-package deusto.safebox.client;
+package deusto.safebox.client.gui;
 
 public interface ButtonAction {
 

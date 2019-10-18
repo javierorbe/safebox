@@ -18,7 +18,6 @@ public class DataTable extends JTable {
         setAutoCreateRowSorter(true);
 
         folderTableModel = new FolderTableModel();
-        folderTableModel.setTable(this);
 
         setModel(folderTableModel);
     }

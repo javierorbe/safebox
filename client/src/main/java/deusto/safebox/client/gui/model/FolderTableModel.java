@@ -5,7 +5,6 @@ import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.common.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 public class FolderTableModel extends AbstractTableModel {
@@ -13,18 +12,13 @@ public class FolderTableModel extends AbstractTableModel {
     // name, type, created, last modified
     private static final int COLUMN_COUNT = 4;
 
-    private JTable table;
     private List<LeafItem> items = new ArrayList<>();
 
     public FolderTableModel() {}
 
-    public void setTable(JTable table) {
-        this.table = table;
-    }
-
     public void setItems(List<LeafItem> items) {
         this.items = items;
-        table.updateUI();
+        fireTableDataChanged();
     }
 
     @Override
