@@ -1,6 +1,7 @@
 package deusto.safebox.client.gui;
 
 import deusto.safebox.client.gui.menu.MenuBar;
+import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.util.GuiUtil;
 import deusto.safebox.client.util.IconManager;
@@ -29,6 +30,7 @@ public class MainFrame extends JFrame {
         setIconImage(IconManager.getAsImage(IconManager.IconType.APP));
         setLayout(new BorderLayout());
         setJMenuBar(new MenuBar());
+        getContentPane().add(new ToolBar(this), BorderLayout.PAGE_START);
 
         JPanel mainPanel = new MainPanel();
         setCurrentPanel(mainPanel);

@@ -2,6 +2,7 @@ package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
 import deusto.safebox.common.ItemType;
+import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -63,6 +64,10 @@ public class Login extends LeafItem {
                 return password;
             case 3:
                 return website;
+            case 4:
+                return Constants.DATE_TIME_FORMATTER.format(getCreated());
+            case 5:
+                return Constants.DATE_TIME_FORMATTER.format(getLastModified());
             default:
                 return "";
         }

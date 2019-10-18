@@ -37,6 +37,7 @@ public class Folder extends Item {
 
     public void addItem(LeafItem item) {
         items.add(item);
+        item.setFolder(this);
     }
 
     public List<Folder> getSubFolders() {
@@ -45,6 +46,7 @@ public class Folder extends Item {
 
     public void addSubFolder(Folder folder) {
         subFolders.add(folder);
+        folder.parentFolder = this;
     }
 
     public boolean isLeafFolder() {

@@ -1,5 +1,6 @@
 package deusto.safebox.client.datamodel;
 
+import deusto.safebox.client.gui.model.ItemTableModel;
 import java.time.LocalDateTime;
 
 /**
@@ -24,8 +25,13 @@ public abstract class LeafItem extends Item {
         return folder;
     }
 
+    void setFolder(Folder folder) {
+        this.folder = folder;
+    }
+
     /**
      * Returns a property (string, number...) of the item.
+     * This is a utility method used in {@link ItemTableModel}.
      *
      * @param index the index of the property.
      * @return the property in the specified index.
