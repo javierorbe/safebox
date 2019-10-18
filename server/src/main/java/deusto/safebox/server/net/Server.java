@@ -70,7 +70,12 @@ public class Server extends Thread implements AutoCloseable {
         listen();
     }
 
-    /** Start listening to new clients. */
+    /**
+     * Start listening to new clients.
+     *
+     * <p>Each time a new socket is accepted, a new {@link ClientHandler} is linked
+     * to the socket and then added to {@link #clients}.
+     */
     private void listen() {
         running = true;
         try {

@@ -33,6 +33,7 @@ public class ServerMain {
         Server server = new Server(socketPort, KEY_PATH, KEY_PASSWORD);
         server.start();
 
+        // Wait for user input
         Scanner scanner = new Scanner(System.in);
         scanner.next();
 

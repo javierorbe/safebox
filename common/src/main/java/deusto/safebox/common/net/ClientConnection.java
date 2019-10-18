@@ -31,18 +31,19 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
         try (ObjectInputStream in = new ObjectInputStream(getSocket().getInputStream())) {
             connectionEstablished();
 
-            Object data;
             while (getSocket().isConnected()) {
                 try {
-                    data = in.readObject();
+                    Object data = in.readObject();
                     if (data instanceof Packet) {
                         receivePacket((Packet) data);
+                    } else {
+                        logger.warn("Received an invalid object type ({})", data.getClass().getName());
                     }
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    logger.error("Could not deserialize the received object.", e);
                 }
             }
-        } catch (EOFException e) {
+        } catch (EOFException e) { // This exception is thrown when the input stream is closed.
             if (running) {
                 close();
             }
@@ -69,9 +70,9 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
     protected abstract void connectionEstablished();
 
     /**
-     * Called when a packets is received from the other endpoint of the socket.
+     * Called when a packet is received from the other endpoint of the socket.
      *
-     * @param packet the payload of the packet.
+     * @param packet the received packet.
      */
     protected abstract void receivePacket(Packet packet);
 
@@ -79,7 +80,7 @@ public abstract class ClientConnection extends Thread implements AutoCloseable {
      * Send a packet to the other endpoint of the socket.
      * This method shouldn't be used without receiving the {@link #connectionEstablished} callback.
      *
-     * @param packet the packet in JSON format.
+     * @param packet the packet to send.
      */
     public void sendPacket(Packet packet) {
         try {

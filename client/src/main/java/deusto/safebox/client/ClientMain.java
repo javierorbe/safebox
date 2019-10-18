@@ -1,32 +1,38 @@
 package deusto.safebox.client;
 
+import deusto.safebox.client.gui.MainFrame;
+import deusto.safebox.common.util.DataObject;
 import deusto.safebox.common.util.JsonData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientMain {
 
-    // private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
 
     /** Program data folder name. */
     private static final String FOLDER_NAME = ".safebox";
     private static final String CONFIG_FILE = "config.json";
 
     public static void main(String[] args) {
-        /*
         DataObject config = getClientConfig();
 
+        /*
         String hostname = config.getString("server.hostname");
         int port = config.getInt("server.port");
 
         Client client = new Client(hostname, port);
+        client.start();
         */
 
-        SwingUtilities.invokeLater(() -> {
-            // TODO: create main window
-        });
+        String lang = config.getString("lang");
+        logger.info("Selected language: {}", lang);
+
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 
     /**
@@ -73,5 +79,9 @@ public class ClientMain {
         } else {
             return System.getProperty("user.home");
         }
+    }
+
+    private ClientMain() {
+        throw new AssertionError();
     }
 }

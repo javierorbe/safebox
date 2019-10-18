@@ -1,15 +1,19 @@
 package deusto.safebox.common;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ItemContainer extends AbstractItem {
+public class EncryptedItem extends AbstractItem implements Serializable {
+
+    private static final long serialVersionUID = -5535224259949435428L;
 
     private UUID userId;
     private ItemType type;
+    /** Encrypted data. */
     private String data;
 
-    public ItemContainer(UUID id, UUID userId, ItemType type, String data,
+    public EncryptedItem(UUID id, UUID userId, ItemType type, String data,
                          LocalDateTime created, LocalDateTime lastModified) {
         super(created, lastModified);
         setItemId(id);
