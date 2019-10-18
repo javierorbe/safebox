@@ -2,8 +2,9 @@ package deusto.safebox.client.gui.menu;
 
 import static deusto.safebox.client.util.IconManager.IconType;
 
-import deusto.safebox.client.ButtonAction;
+import deusto.safebox.client.gui.ButtonAction;
 import deusto.safebox.client.gui.component.SearchBox;
+import deusto.safebox.client.gui.panel.SettingsDialog;
 import deusto.safebox.client.util.IconManager;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -46,7 +47,7 @@ public class ToolBar extends JToolBar {
                 "Settings", IconType.GEAR) {
             @Override
             public void action() {
-                // TODO
+                new SettingsDialog(mainFrame);
             }
         };
 

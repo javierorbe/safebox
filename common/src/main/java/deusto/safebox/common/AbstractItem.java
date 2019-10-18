@@ -6,8 +6,9 @@ import java.util.UUID;
 
 public abstract class AbstractItem implements Serializable {
 
-    private UUID id;
+    private static final long serialVersionUID = -4215916784181762173L;
 
+    private UUID id;
     private LocalDateTime created;
     private LocalDateTime lastModified;
 

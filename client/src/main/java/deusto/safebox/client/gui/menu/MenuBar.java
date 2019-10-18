@@ -1,6 +1,6 @@
 package deusto.safebox.client.gui.menu;
 
-import deusto.safebox.client.ButtonAction;
+import deusto.safebox.client.gui.ButtonAction;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
