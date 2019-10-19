@@ -1,7 +1,13 @@
 package deusto.safebox.client.gui.panel;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 public class LoginPanel extends JPanel {
 
@@ -23,24 +29,24 @@ public class LoginPanel extends JPanel {
 
         JButton button = new JButton("Login");
 
-        sLayout.putConstraint(SpringLayout.WEST, button, 3* SHIFT_X, SpringLayout.WEST, this);
-        sLayout.putConstraint(SpringLayout.EAST, button, 3*-SHIFT_X, SpringLayout.EAST, this);
-        sLayout.putConstraint(SpringLayout.NORTH, button, (N+2)* SHIFT_Y, SpringLayout.NORTH, this);
+        sLayout.putConstraint(SpringLayout.WEST, button, 3 * SHIFT_X, SpringLayout.WEST, this);
+        sLayout.putConstraint(SpringLayout.EAST, button, 3 * -SHIFT_X, SpringLayout.EAST, this);
+        sLayout.putConstraint(SpringLayout.NORTH, button, (N + 2) * SHIFT_Y, SpringLayout.NORTH, this);
 
-        JCheckBox rememberUsename = new JCheckBox("Remember username");
-        sLayout.putConstraint(SpringLayout.WEST, rememberUsename,  2*SHIFT_X, SpringLayout.WEST, this);
-        sLayout.putConstraint(SpringLayout.EAST, rememberUsename, 2*-SHIFT_X, SpringLayout.EAST, this);
-        sLayout.putConstraint(SpringLayout.NORTH, rememberUsename, (N+1)* SHIFT_Y, SpringLayout.NORTH, this);
+        JCheckBox rememberUsername = new JCheckBox("Remember username");
+        sLayout.putConstraint(SpringLayout.WEST, rememberUsername, 2 * SHIFT_X, SpringLayout.WEST, this);
+        sLayout.putConstraint(SpringLayout.EAST, rememberUsername, 2 * -SHIFT_X, SpringLayout.EAST, this);
+        sLayout.putConstraint(SpringLayout.NORTH, rememberUsername,(N + 1) * SHIFT_Y, SpringLayout.NORTH, this);
 
         //TODO: Añadir funcionalidad a todo
         System.out.println("getWidth: "+labels[0].getWidth());
         System.out.println("getPreferedSize: "+labels[0].getPreferredSize());
         System.out.println("getSize: "+labels[0].getSize());
-        add(rememberUsename);
+        add(rememberUsername);
         add(button);
     }
 
-    private void addLabelsTextFields(){
+    private void addLabelsTextFields() {
         for (int i = 0; i < N; i++) {
             labels[i] = new JLabel(nameLabels[i], JLabel.CENTER);
             textFields[i] = new JTextField(20);
@@ -54,7 +60,7 @@ public class LoginPanel extends JPanel {
 
             sLayout.putConstraint(SpringLayout.WEST, content[i], SHIFT_X, SpringLayout.WEST, this);
             sLayout.putConstraint(SpringLayout.EAST, content[i], -SHIFT_X, SpringLayout.EAST, this);
-            sLayout.putConstraint(SpringLayout.NORTH, content[i], (i+1)* SHIFT_Y, SpringLayout.NORTH, this);
+            sLayout.putConstraint(SpringLayout.NORTH, content[i], ( i + 1) * SHIFT_Y, SpringLayout.NORTH, this);
 
             add(content[i]);
         }
