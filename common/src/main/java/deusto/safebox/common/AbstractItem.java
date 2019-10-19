@@ -1,20 +1,22 @@
 package deusto.safebox.common;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public abstract class AbstractItem implements Serializable {
-
-    private static final long serialVersionUID = -4215916784181762173L;
+public abstract class AbstractItem {
 
     private UUID id;
     private LocalDateTime created;
     private LocalDateTime lastModified;
 
-    public AbstractItem(LocalDateTime created, LocalDateTime lastModified) {
+    public AbstractItem(UUID id, LocalDateTime created, LocalDateTime lastModified) {
+        this.id = id;
         this.created = created;
         this.lastModified = lastModified;
+    }
+
+    public AbstractItem(LocalDateTime created, LocalDateTime lastModified) {
+        this(null, created, lastModified);
     }
 
     public UUID getItemId() {

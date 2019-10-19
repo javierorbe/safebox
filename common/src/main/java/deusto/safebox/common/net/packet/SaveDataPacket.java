@@ -1,21 +1,21 @@
 package deusto.safebox.common.net.packet;
 
-import deusto.safebox.common.EncryptedItem;
-
+import deusto.safebox.common.net.ItemPacketData;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
-public class SaveDataPacket extends Packet {
+public class SaveDataPacket extends Packet implements Serializable {
 
-    private Set<EncryptedItem> items = new HashSet<>();
+    private static final long serialVersionUID = 6465366035399352082L;
 
-    public void addItem(EncryptedItem item) {
-        items.add(item);
+    private Collection<ItemPacketData> items;
+
+    public SaveDataPacket(Collection<ItemPacketData> items) {
+        this.items = items;
     }
 
-    public Collection<EncryptedItem> getItems() {
+    public Collection<ItemPacketData> getItems() {
         return items;
     }
 

@@ -1,6 +1,10 @@
 package deusto.safebox.common.net.packet;
 
-public class TestPacket extends Packet {
+import java.io.Serializable;
+
+public class TestPacket extends Packet implements Serializable {
+
+    private static final long serialVersionUID = 1681049760090246927L;
 
     private String text;
 
