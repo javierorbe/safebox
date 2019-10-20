@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
+@SuppressWarnings("serial")
 public class FolderTableModel extends AbstractTableModel {
 
     // name, type, created, last modified

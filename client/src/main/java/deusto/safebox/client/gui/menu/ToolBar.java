@@ -67,7 +67,7 @@ public class ToolBar extends JToolBar {
     private abstract static class ToolBarButton extends JButton implements ButtonAction {
 
         ToolBarButton(String toolTipText, IconType iconType) {
-            super(IconManager.getAsIcon(iconType));
+            super(iconType.getAsIcon());
             setFocusPainted(false);
             setRequestFocusEnabled(false);
             setToolTipText(toolTipText);
@@ -78,7 +78,7 @@ public class ToolBar extends JToolBar {
     private abstract static class ToolBarToggleButton extends JToggleButton implements ButtonAction {
 
         ToolBarToggleButton(String toolTipText, IconType iconType) {
-            super(IconManager.getAsIcon(iconType));
+            super(iconType.getAsIcon());
             setFocusPainted(false);
             setRequestFocusEnabled(false);
             setToolTipText(toolTipText);

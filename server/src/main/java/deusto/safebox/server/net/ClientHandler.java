@@ -13,7 +13,7 @@ public abstract class ClientHandler extends ClientConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-    private SSLSocket socket;
+    private final SSLSocket socket;
 
     ClientHandler(SSLSocket socket) {
         this.socket = socket;

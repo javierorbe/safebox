@@ -1,10 +1,12 @@
 package deusto.safebox.client.gui;
 
+import static deusto.safebox.client.util.IconManager.IconType;
+
 import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
+import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.util.GuiUtil;
-import deusto.safebox.client.util.IconManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -27,13 +29,13 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLookAndFeel();
         setPreferredSize(PREFERRED_SIZE);
-        setIconImage(IconManager.getAsImage(IconManager.IconType.APP));
+        setIconImage(IconType.APP.getAsImage());
         setLayout(new BorderLayout());
         setJMenuBar(new MenuBar());
         getContentPane().add(new ToolBar(this), BorderLayout.PAGE_START);
 
-        JPanel mainPanel = new MainPanel();
-        setCurrentPanel(mainPanel);
+        // setCurrentPanel(new MainPanel());
+        setCurrentPanel(new AuthPanel());
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));

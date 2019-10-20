@@ -16,6 +16,10 @@ public abstract class LeafItem extends Item {
         this.folder = folder;
     }
 
+    LeafItem(String name, LocalDateTime created, LocalDateTime lastModified) {
+        this(name, null, created, lastModified);
+    }
+
     /**
      * Returns the folder where the item is.
      *
@@ -25,7 +29,7 @@ public abstract class LeafItem extends Item {
         return folder;
     }
 
-    void setFolder(Folder folder) {
+    public void setFolder(Folder folder) {
         this.folder = folder;
     }
 

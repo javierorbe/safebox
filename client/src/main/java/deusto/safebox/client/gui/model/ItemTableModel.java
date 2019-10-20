@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.table.AbstractTableModel;
 
+@SuppressWarnings("serial")
 public class ItemTableModel extends AbstractTableModel {
 
     private static final Map<ItemType, List<String>> ITEM_PROPERTIES = new HashMap<>();

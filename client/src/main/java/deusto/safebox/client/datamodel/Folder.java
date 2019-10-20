@@ -9,12 +9,16 @@ import java.util.List;
 public class Folder extends Item {
 
     private Folder parentFolder;
-    private List<LeafItem> items = new ArrayList<>();
-    private List<Folder> subFolders = new ArrayList<>();
+    private final List<LeafItem> items = new ArrayList<>();
+    private final List<Folder> subFolders = new ArrayList<>();
 
     public Folder(String name, Folder parentFolder, LocalDateTime created, LocalDateTime lastModified) {
         super(name, created, lastModified);
         this.parentFolder = parentFolder;
+    }
+
+    public Folder(String name, LocalDateTime created, LocalDateTime lastModified) {
+        this(name, null, created, lastModified);
     }
 
     @Override

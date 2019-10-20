@@ -6,7 +6,7 @@ import java.util.UUID;
 public abstract class AbstractItem {
 
     private UUID id;
-    private LocalDateTime created;
+    private final LocalDateTime created;
     private LocalDateTime lastModified;
 
     public AbstractItem(UUID id, LocalDateTime created, LocalDateTime lastModified) {

@@ -9,7 +9,7 @@ public class SaveDataPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = 6465366035399352082L;
 
-    private Collection<ItemPacketData> items;
+    private final Collection<ItemPacketData> items;
 
     public SaveDataPacket(Collection<ItemPacketData> items) {
         this.items = items;

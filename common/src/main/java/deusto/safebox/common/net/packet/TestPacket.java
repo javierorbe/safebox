@@ -6,7 +6,7 @@ public class TestPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = 1681049760090246927L;
 
-    private String text;
+    private final String text;
 
     public TestPacket(String text) {
         this.text = text;

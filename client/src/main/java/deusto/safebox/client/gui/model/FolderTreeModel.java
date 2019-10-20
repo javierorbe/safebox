@@ -10,8 +10,8 @@ import javax.swing.tree.TreePath;
 
 public class FolderTreeModel implements TreeModel {
 
-    private Collection<TreeModelListener> listeners = new HashSet<>();
-    private List<Folder> folders;
+    private final Collection<TreeModelListener> listeners = new HashSet<>();
+    private final List<Folder> folders;
 
     public FolderTreeModel(List<Folder> folders) {
         this.folders = folders;

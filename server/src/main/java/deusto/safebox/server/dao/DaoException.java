@@ -1,5 +1,6 @@
 package deusto.safebox.server.dao;
 
+@SuppressWarnings("serial")
 public class DaoException extends Exception {
 
     public DaoException() {}

@@ -32,7 +32,7 @@ public class Server extends Thread implements AutoCloseable {
 
     private SSLServerSocket serverSocket;
     private boolean running = false;
-    private Set<ClientHandler> clients = new HashSet<>();
+    private final Set<ClientHandler> clients = new HashSet<>();
 
     /**
      * Creates a {@link Server} with the specified port.

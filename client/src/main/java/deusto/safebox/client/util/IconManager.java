@@ -12,28 +12,11 @@ public class IconManager {
 
     private static final Logger logger = LoggerFactory.getLogger(IconManager.class);
 
-    static {
-        for (IconType i : IconType.values()) {
-            URL url = IconManager.class.getResource("/img/" + i.filename + ".png");
-            try {
-                i.image = ImageIO.read(url);
-            } catch (IOException e) {
-                logger.error("Could load image " + i.filename + ".", e);
-            }
-        }
-    }
-
-    public static Image getAsImage(IconType iconType) {
-        return iconType.image;
-    }
-
-    public static ImageIcon getAsIcon(IconType iconType) {
-        return new ImageIcon(getAsImage(iconType));
-    }
-
     public enum IconType {
         // Maintain lexicographical order on the type names
         APP("app"),
+        EYE("eye"),
+        EYE_CLOSED("eye_closed"),
         FOLDER("folder_16"),
         GEAR("gear_20"),
         LOCK("lock_20"),
@@ -42,11 +25,31 @@ public class IconManager {
         PASSWORD_FIELD("password_field_20"),
         ;
 
-        private String filename;
+        private final String filename;
         private Image image;
 
         IconType(String filename) {
             this.filename = filename;
+        }
+
+        public Image getAsImage() {
+            if (image == null) {
+                load();
+            }
+            return image;
+        }
+
+        public ImageIcon getAsIcon() {
+            return new ImageIcon(getAsImage());
+        }
+
+        private void load() {
+            URL url = IconManager.class.getResource("/img/" + filename + ".png");
+            try {
+                image = ImageIO.read(url);
+            } catch (IOException e) {
+                logger.error("Could load image " + filename + ".", e);
+            }
         }
     }
 

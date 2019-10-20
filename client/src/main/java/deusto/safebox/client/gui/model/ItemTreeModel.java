@@ -18,8 +18,8 @@ public class ItemTreeModel implements TreeModel {
             ItemType.NOTE
     );
 
-    private Collection<TreeModelListener> listeners = new HashSet<>();
-    private Map<ItemType, List<LeafItem>> items;
+    private final Collection<TreeModelListener> listeners = new HashSet<>();
+    private final Map<ItemType, List<LeafItem>> items;
 
     public ItemTreeModel(Map<ItemType, List<LeafItem>> items) {
         this.items = items;
