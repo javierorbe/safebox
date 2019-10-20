@@ -1,49 +1,106 @@
 package deusto.safebox.client.gui.panel;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import static deusto.safebox.client.gui.GridBagBuilder.Anchor;
+import static deusto.safebox.client.gui.GridBagBuilder.Fill;
+import static deusto.safebox.client.util.IconManager.IconType;
+
+import deusto.safebox.client.gui.GridBagBuilder;
+import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ShowPasswordField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-import static deusto.safebox.client.util.GuiUtil.addComponentInARow;
-import static deusto.safebox.client.util.GuiUtil.addLabelFieldPanelInARow;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class RegisterPanel extends JPanel {
+
+    private final GridBagBuilder gbb = new GridBagBuilder();
 
     public RegisterPanel() {
         super(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        final LabelFieldPanel email = new LabelFieldPanel("Email", 30);
-        final LabelFieldPanel username = new LabelFieldPanel("Username", 30);
-        final LabelFieldPanel password = new LabelFieldPanel("Password", 30, true);
-        final LabelFieldPanel rPassword = new LabelFieldPanel("Repeat password", 30, true);
-        final JButton seePassword = new JButton();
-        final JButton seerPassword = new JButton();
+        final JTextField nameField  = new JTextField(30);
+        final JTextField emailField = new JTextField(30);
+        final ShowPasswordField passwordField = new ShowPasswordField(30, false);
+        final ShowPasswordField rPasswordField = new ShowPasswordField(30, false);
         final JButton registerBtn = new JButton("Register");
+        final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+                IconType.EYE, IconType.EYE_CLOSED, false) {
+            @Override
+            public void action(boolean state) {
+                if (state) {
+                    passwordField.showPassword();
+                } else {
+                    passwordField.hidePassword();
+                }
+            }
+        };
+        final ChangingToggleButton showRPasswordBtn = new ChangingToggleButton(
+                IconType.EYE, IconType.EYE_CLOSED, false) {
+            @Override
+            public void action(boolean state) {
+                if (state) {
+                    rPasswordField.showPassword();
+                } else {
+                    rPasswordField.hidePassword();
+                }
+            }
+        };
 
-        gbc.insets = new Insets(4,4,4,4);
+        gbb.setInsets(4, 4, 4, 4);
+        gbb.setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        addLabelFieldPanelInARow(this, email, gbc, 0);
-        addLabelFieldPanelInARow(this, username, gbc, 1);
-        addLabelFieldPanelInARow(this, password, gbc, 2);
-        addLabelFieldPanelInARow(this, rPassword, gbc, 3);
+        gbb.setGridWidthAndWeightX(1, 0);
+        addGB(new JLabel("Name"));
+        gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
+        addGB(nameField);
 
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.SOUTH;
-        gbc.gridx = 0;
-        gbc.gridwidth = 0;
-        addComponentInARow(this, registerBtn, gbc, 4);
+        gbb.setGridWidthAndWeightX(1, 0);
+        addGB(new JLabel("Email"));
+        gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
+        addGB(emailField);
 
-        gbc.gridx = 2;
-        addComponentInARow(this, seePassword, gbc, 2);
-        addComponentInARow(this, seerPassword, gbc, 3);
-        //TODO: Fix position and size of seePassword and seerPassword
+        gbb.setGridWidthAndWeightX(1, 0);
+        addGB(new JLabel("Password"));
+        gbb.setWeightX(1);
+        addGB(passwordField);
+        gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
+        addGB(showPasswordBtn);
+
+        gbb.setGridWidthAndWeightX(1, 0);
+        addGB(new JLabel("Repeat password"));
+        gbb.setWeightX(1);
+        addGB(rPasswordField);
+        gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
+        addGB(showRPasswordBtn);
+
+        gbb.setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
+        addGB(registerBtn);
     }
 
+    private void addGB(JComponent component) {
+        add(component, gbb.getConstraints());
+    }
 
+    /*
+    public static void main(String[] args) {
+        JFrame frame = new JFrame();
+        frame.setSize(new Dimension(500, 500));
 
+        LoginPanel lP = new LoginPanel();
+        RegisterPanel rP = new RegisterPanel();
+
+        JTabbedPane tb = new JTabbedPane();
+        tb.addTab("Login", lP);
+        tb.addTab("Register", rP);
+
+        frame.add(tb);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    */
 
 }
