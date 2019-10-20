@@ -1,69 +1,43 @@
 package deusto.safebox.client.gui.panel;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 
-public class LoginPanel extends JPanel {
+import static deusto.safebox.client.util.GuiUtil.addComponentInARow;
+import static deusto.safebox.client.util.GuiUtil.addLabelFieldPanelInARow;
 
-    private SpringLayout sLayout = new SpringLayout();
-    private String[] nameLabels = {"Username:", "Password:"};
-    private final int N = nameLabels.length;
-    private JLabel[] labels = new JLabel[N];
-    private JTextField[] textFields = new JTextField[N];
-    private JPanel[] content = new JPanel[N];
-
-    private static int WIDTH_WINDOW = 500;
-    private static int HEIGHT_WINDOW = 450;
-    private static int SHIFT_X = WIDTH_WINDOW/10;
-    private static int SHIFT_Y = HEIGHT_WINDOW/10;
+class LoginPanel extends JPanel {
 
     public LoginPanel() {
-        setLayout(sLayout);
-        addLabelsTextFields();
+        super(new GridBagLayout());
 
-        JButton button = new JButton("Login");
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        sLayout.putConstraint(SpringLayout.WEST, button, 3 * SHIFT_X, SpringLayout.WEST, this);
-        sLayout.putConstraint(SpringLayout.EAST, button, 3 * -SHIFT_X, SpringLayout.EAST, this);
-        sLayout.putConstraint(SpringLayout.NORTH, button, (N + 2) * SHIFT_Y, SpringLayout.NORTH, this);
+        final LabelFieldPanel email = new LabelFieldPanel("Email", 30);
+        final LabelFieldPanel password = new LabelFieldPanel("Password",30, true);
+        final JButton seePassword = new JButton();
+        final JCheckBox rememberEmail = new JCheckBox("Remember email");
+        final JButton loginBtn = new JButton("Login");
 
-        JCheckBox rememberUsername = new JCheckBox("Remember username");
-        sLayout.putConstraint(SpringLayout.WEST, rememberUsername, 2 * SHIFT_X, SpringLayout.WEST, this);
-        sLayout.putConstraint(SpringLayout.EAST, rememberUsername, 2 * -SHIFT_X, SpringLayout.EAST, this);
-        sLayout.putConstraint(SpringLayout.NORTH, rememberUsername,(N + 1) * SHIFT_Y, SpringLayout.NORTH, this);
+        gbc.insets = new Insets(4, 4, 4, 4);
 
-        //TODO: Añadir funcionalidad a todo
-        System.out.println("getWidth: "+labels[0].getWidth());
-        System.out.println("getPreferedSize: "+labels[0].getPreferredSize());
-        System.out.println("getSize: "+labels[0].getSize());
-        add(rememberUsername);
-        add(button);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        addLabelFieldPanelInARow(this, email, gbc, 0);
+        addLabelFieldPanelInARow(this, password, gbc, 1);
+        addComponentInARow(this, rememberEmail, gbc, 2);
+
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.SOUTH;
+        gbc.gridx = 0;
+        gbc.gridwidth = 0;
+        addComponentInARow(this, loginBtn, gbc, 3);
+
+        gbc.gridx = 2;
+        addComponentInARow(this, seePassword, gbc, 1);
+        //TODO: Fix position and size of seePassword
     }
-
-    private void addLabelsTextFields() {
-        for (int i = 0; i < N; i++) {
-            labels[i] = new JLabel(nameLabels[i], JLabel.CENTER);
-            textFields[i] = new JTextField(20);
-
-            content[i] = new JPanel(new FlowLayout());
-            content[i].add(labels[i]);
-            content[i].add(textFields[i]);
-            labels[i].setPreferredSize(new Dimension(30,35));
-
-            textFields[i].setHorizontalAlignment(JTextField.CENTER);
-
-            sLayout.putConstraint(SpringLayout.WEST, content[i], SHIFT_X, SpringLayout.WEST, this);
-            sLayout.putConstraint(SpringLayout.EAST, content[i], -SHIFT_X, SpringLayout.EAST, this);
-            sLayout.putConstraint(SpringLayout.NORTH, content[i], ( i + 1) * SHIFT_Y, SpringLayout.NORTH, this);
-
-            add(content[i]);
-        }
-    }
-
 }
