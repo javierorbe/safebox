@@ -2,6 +2,14 @@
 # Created by https://www.gitignore.io/api/java,maven,windows,eclipse,intellij
 # Edit at https://www.gitignore.io/?templates=java,maven,windows,eclipse,intellij
 
+# Javadoc
+docs/
+
+# Checkstyle
+checkstyle.xml
+.idea/checkstyle-idea.xml
+.idea/checkstyleidea-libs/
+
 ### Eclipse ###
 .metadata
 bin/
