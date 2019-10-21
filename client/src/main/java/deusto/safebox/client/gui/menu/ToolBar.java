@@ -17,7 +17,7 @@ public class ToolBar extends JToolBar {
 
     public ToolBar(JFrame mainFrame) {
         setFloatable(false);
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
+        setBorder(BorderFactory.createEmptyBorder(2, 4, 0, 4));
 
         JButton newEntryBtn = new ToolBarButton(
                 "Add a new entry", IconType.NEW_FILE_20) {
@@ -26,6 +26,7 @@ public class ToolBar extends JToolBar {
                 // TODO
             }
         };
+        newEntryBtn.setEnabled(false);
 
         JButton lockBtn = new ToolBarButton(
                 "Lock database", IconType.LOCK) {
@@ -34,6 +35,7 @@ public class ToolBar extends JToolBar {
                 // TODO
             }
         };
+        lockBtn.setEnabled(false);
 
         JToggleButton pwdGenBtn = new ToolBarToggleButton(
                 "Password generator", IconType.PASSWORD_FIELD) {

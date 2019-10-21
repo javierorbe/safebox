@@ -25,30 +25,27 @@ public class IconManager {
         PASSWORD_FIELD("password_field_20"),
         ;
 
-        private final String filename;
-        private Image image;
+        private final Image image;
 
         IconType(String filename) {
-            this.filename = filename;
+            this.image = load(filename);
         }
 
         public Image getAsImage() {
-            if (image == null) {
-                load();
-            }
             return image;
         }
 
         public ImageIcon getAsIcon() {
-            return new ImageIcon(getAsImage());
+            return new ImageIcon(image);
         }
 
-        private void load() {
+        private static Image load(String filename) {
             URL url = IconManager.class.getResource("/img/" + filename + ".png");
             try {
-                image = ImageIO.read(url);
+                return ImageIO.read(url);
             } catch (IOException e) {
                 logger.error("Could load image " + filename + ".", e);
+                return null;
             }
         }
     }
