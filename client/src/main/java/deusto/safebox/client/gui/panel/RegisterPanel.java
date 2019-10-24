@@ -7,46 +7,52 @@ import static deusto.safebox.client.util.IconManager.IconType;
 import deusto.safebox.client.gui.GridBagBuilder;
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.ShowPasswordField;
+import deusto.safebox.client.gui.component.SimpleButton;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class RegisterPanel extends JPanel {
+class RegisterPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
-    public RegisterPanel() {
+    RegisterPanel() {
         super(new GridBagLayout());
 
-        final JTextField nameField  = new JTextField(30);
-        final JTextField emailField = new JTextField(30);
-        final ShowPasswordField passwordField = new ShowPasswordField(30, false);
-        final ShowPasswordField rPasswordField = new ShowPasswordField(30, false);
-        final JButton registerBtn = new JButton("Register");
+        setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+
+        final JTextField nameField  = new JTextField();
+        final JTextField emailField = new JTextField();
+        final ShowPasswordField passwordField = new ShowPasswordField(false);
+        final ShowPasswordField rPasswordField = new ShowPasswordField(false);
+        final JButton registerBtn = new SimpleButton("Register");
         final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
                 IconType.EYE, IconType.EYE_CLOSED, false) {
             @Override
-            public void action(boolean state) {
-                if (state) {
-                    passwordField.showPassword();
-                } else {
-                    passwordField.hidePassword();
-                }
+            public void on() {
+                passwordField.showPassword();
+            }
+
+            @Override
+            public void off() {
+                passwordField.hidePassword();
             }
         };
         final ChangingToggleButton showRPasswordBtn = new ChangingToggleButton(
                 IconType.EYE, IconType.EYE_CLOSED, false) {
             @Override
-            public void action(boolean state) {
-                if (state) {
-                    rPasswordField.showPassword();
-                } else {
-                    rPasswordField.hidePassword();
-                }
+            public void on() {
+                rPasswordField.showPassword();
+            }
+
+            @Override
+            public void off() {
+                rPasswordField.hidePassword();
             }
         };
 
@@ -54,7 +60,7 @@ public class RegisterPanel extends JPanel {
         gbb.setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Name"));
+        addGB(new JLabel("Full Name"));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
         addGB(nameField);
 
@@ -71,7 +77,7 @@ public class RegisterPanel extends JPanel {
         addGB(showPasswordBtn);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Repeat password"));
+        addGB(new JLabel("Confirm Password"));
         gbb.setWeightX(1);
         addGB(rPasswordField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
@@ -84,23 +90,4 @@ public class RegisterPanel extends JPanel {
     private void addGB(JComponent component) {
         add(component, gbb.getConstraints());
     }
-
-    /*
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setSize(new Dimension(500, 500));
-
-        LoginPanel lP = new LoginPanel();
-        RegisterPanel rP = new RegisterPanel();
-
-        JTabbedPane tb = new JTabbedPane();
-        tb.addTab("Login", lP);
-        tb.addTab("Register", rP);
-
-        frame.add(tb);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    }
-    */
-
 }

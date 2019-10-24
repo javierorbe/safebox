@@ -24,6 +24,16 @@ public class ShowPasswordField extends JPasswordField {
         }
     }
 
+    /**
+     * Creates a {@link ShowPasswordField}.
+     *
+     * @param show if true, the password is initially shown;
+     *             otherwise, the password is initially hidden.
+     */
+    public ShowPasswordField(boolean show) {
+        this(0, show);
+    }
+
     public void showPassword() {
         setEchoChar((char) 0);
         putClientProperty("JPasswordField.cutCopyAllowed", true);

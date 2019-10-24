@@ -7,8 +7,10 @@ import static deusto.safebox.client.util.IconManager.IconType;
 import deusto.safebox.client.gui.GridBagBuilder;
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.ShowPasswordField;
+import deusto.safebox.client.gui.component.SimpleButton;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -23,19 +25,23 @@ class LoginPanel extends JPanel {
     LoginPanel() {
         super(new GridBagLayout());
 
-        final JTextField emailField = new JTextField(30);
-        final ShowPasswordField passwordField = new ShowPasswordField(30, false);
-        final JButton loginBtn = new JButton("Login");
+        setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+
+        final JTextField emailField = new JTextField();
+        final ShowPasswordField passwordField = new ShowPasswordField(false);
+        final JButton loginBtn = new SimpleButton("Login");
         final JCheckBox rememberEmail = new JCheckBox("Remember Email");
+        rememberEmail.setFocusPainted(false);
         final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
                 IconType.EYE, IconType.EYE_CLOSED, false) {
             @Override
-            public void action(boolean state) {
-                if (state) {
-                    passwordField.showPassword();
-                } else {
-                    passwordField.hidePassword();
-                }
+            public void on() {
+                passwordField.showPassword();
+            }
+
+            @Override
+            public void off() {
+                passwordField.hidePassword();
             }
         };
 
@@ -54,8 +60,11 @@ class LoginPanel extends JPanel {
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
         addGB(showPasswordBtn);
 
+        gbb.setGridWidth(1);
         addGB(rememberEmail);
 
+        gbb.incrementGridX();
+        gbb.setGridWidth(GridBagConstraints.REMAINDER);
         gbb.setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
         addGB(loginBtn);
     }

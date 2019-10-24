@@ -28,13 +28,13 @@ public abstract class ChangingToggleButton extends JToggleButton {
         onIcon = onIconType.getAsIcon();
         offIcon = offIconType.getAsIcon();
 
-        addItemListener(e -> {
+        addActionListener(e -> {
             if (isSelected()) {
                 setIcon(onIcon);
-                action(true);
+                on();
             } else {
                 setIcon(offIcon);
-                action(false);
+                off();
             }
         });
 
@@ -48,9 +48,12 @@ public abstract class ChangingToggleButton extends JToggleButton {
     }
 
     /**
-     * Button action callback.
-     *
-     * @param state true if the button is selected, otherwise false.
+     * Button action callback when the button is toggled on.
      */
-    public abstract void action(boolean state);
+    public abstract void on();
+
+    /**
+     * Button action callback when the button is toggled off.
+     */
+    public abstract void off();
 }
