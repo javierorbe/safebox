@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Socket Test" type="CompoundRunConfigurationType">
+    <toRun name="ClientSocketTest" type="Application" />
+    <toRun name="ServerMain" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

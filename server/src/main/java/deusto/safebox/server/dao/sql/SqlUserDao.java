@@ -1,4 +1,4 @@
-package deusto.safebox.server.dao.mysql;
+package deusto.safebox.server.dao.sql;
 
 import deusto.safebox.server.User;
 import deusto.safebox.server.dao.DaoException;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MySqlUserDao implements UserDao {
+class SqlUserDao implements UserDao {
 
     private static final String INSERT
             = "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?)";
@@ -28,7 +28,7 @@ public class MySqlUserDao implements UserDao {
 
     private final Connection connection;
 
-    MySqlUserDao(Connection connection) {
+    SqlUserDao(Connection connection) {
         this.connection = connection;
     }
 
@@ -100,7 +100,7 @@ public class MySqlUserDao implements UserDao {
         }
     }
 
-    private User convert(ResultSet set) throws SQLException {
+    private static User convert(ResultSet set) throws SQLException {
         UUID id = UUID.fromString(set.getString("id"));
         String name = set.getString("name");
         String email = set.getString("email");
