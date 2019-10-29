@@ -25,6 +25,8 @@ class SqlUserDao implements UserDao {
             = "SELECT id, name, email, password FROM user WHERE id=?";
     private static final String GET_ALL
             = "SELECT id, name, email, password FROM user";
+    private static final String GET_ONE_EMAIL
+            = "SELECT id, name, email, password FROM user WHERE email=?";
 
     private final Connection connection;
 
@@ -95,6 +97,23 @@ class SqlUserDao implements UserDao {
                 }
             }
             return users;
+        } catch (SQLException e) {
+            throw new DaoException("SQL error.", e);
+        }
+    }
+
+    @Override
+    public Optional<User> getByEmail(String email) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(GET_ONE_EMAIL)) {
+            statement.setString(1, email);
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    User user = convert(set);
+                    return Optional.of(user);
+                } else {
+                    return Optional.empty();
+                }
+            }
         } catch (SQLException e) {
             throw new DaoException("SQL error.", e);
         }

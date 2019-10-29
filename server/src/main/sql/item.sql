@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS item(
     data            TEXT            NOT NULL,
     creation        TIMESTAMP       NOT NULL,
     last_modified   TIMESTAMP       NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id)   REFERENCES user(id)
+    CONSTRAINT pk_item PRIMARY KEY (id),
+    CONSTRAINT fk_item_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
+
+CREATE UNIQUE INDEX ix_item_user ON item (user_id);

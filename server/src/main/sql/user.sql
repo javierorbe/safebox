@@ -4,5 +4,7 @@ CREATE TABLE IF NOT EXISTS user(
     email           VARCHAR(50)     NOT NULL,
     password        VARCHAR(99)     NOT NULL,
     creation        TIMESTAMP       NOT NULL,
-    PRIMARY KEY (id)
+    CONSTRAINT pk_user PRIMARY KEY (id)
 );
+
+CREATE UNIQUE INDEX ix_user_email ON user (email);
