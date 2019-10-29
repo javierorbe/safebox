@@ -1,7 +1,7 @@
 package deusto.safebox.server;
 
-import deusto.safebox.common.util.DataObject;
-import deusto.safebox.common.util.JsonData;
+import deusto.safebox.common.util.ConfigFile;
+import deusto.safebox.common.util.JsonConfig;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
 import java.util.Scanner;
@@ -19,9 +19,10 @@ public class ServerMain {
     private static final String CONFIG_FILE = "config.json";
 
     public static void main(String[] args) {
-        final DataObject serverConfig;
+        final ConfigFile serverConfig;
         try {
-            serverConfig = JsonData.getOrExtractResource("/" + CONFIG_FILE, CONFIG_FILE);
+            // The file is extracted in the same directory as the application executable.
+            serverConfig = JsonConfig.getOrExtractResource("/" + CONFIG_FILE, CONFIG_FILE);
         } catch (IOException e) {
             logger.error("Could not load the config file.", e);
             return;

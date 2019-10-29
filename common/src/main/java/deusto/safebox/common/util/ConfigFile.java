@@ -1,6 +1,6 @@
 package deusto.safebox.common.util;
 
-public interface DataObject {
+public interface ConfigFile {
 
     int getInt(String path);
 

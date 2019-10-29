@@ -13,17 +13,17 @@ import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Container class of a {@link JsonObject} for an easier access to the JSON elements.
- */
-public class JsonData implements DataObject {
+/** JSON formatted config file loader. */
+public class JsonConfig implements ConfigFile {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsonData.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonConfig.class);
 
     private JsonObject root;
 
-    public JsonData(JsonObject root) {
-        this.root = root;
+    public JsonConfig(String filepath) throws IOException {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(filepath), StandardCharsets.UTF_8)) {
+            root = Constants.GSON.fromJson(reader, JsonObject.class);
+        }
     }
 
     @Override
@@ -54,7 +54,7 @@ public class JsonData implements DataObject {
      * @param path the path to the element.
      * @return the {@link JsonElement} in the path.
      */
-    protected JsonElement getFromPath(String path) {
+    private JsonElement getFromPath(String path) {
         JsonElement current = root;
         String[] s = path.split("\\.");
         for (String value : s) {
@@ -65,13 +65,8 @@ public class JsonData implements DataObject {
         return current;
     }
 
-    public static JsonData fromFile(String filePath) throws FileNotFoundException {
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8);
-        return new JsonData(Constants.GSON.fromJson(reader, JsonObject.class));
-    }
-
     /**
-     * Creates a {@link JsonData} from a JSON file in the system disk.
+     * Creates a {@link JsonConfig} from a JSON file in the system disk.
      * If the file doesn't exist in the system disk, then the resource file in {@code resourcePath}
      * is first extracted to {@code extractionPath} and then read.
      *
@@ -79,17 +74,17 @@ public class JsonData implements DataObject {
      * @param extractionPath file path where to read or extract the file.
      * @throws IOException if there is an error reading or extracting the file.
      */
-    public static JsonData getOrExtractResource(String resourcePath, String extractionPath) throws IOException {
+    public static JsonConfig getOrExtractResource(String resourcePath, String extractionPath) throws IOException {
         if (!new File(extractionPath).exists()) {
             logger.trace("Config file doesn't exist, creating it.");
             extractFile(resourcePath, extractionPath);
         }
-        return fromFile(extractionPath);
+        return new JsonConfig(extractionPath);
     }
 
     /** Extract a resource file to disk. */
     private static void extractFile(String resourcePath, String extractionPath) throws IOException {
-        try (InputStream stream = JsonData.class.getResourceAsStream(resourcePath);
+        try (InputStream stream = JsonConfig.class.getResourceAsStream(resourcePath);
              FileOutputStream fos = new FileOutputStream(extractionPath)) {
             byte[] buf = new byte[2048];
             int r;

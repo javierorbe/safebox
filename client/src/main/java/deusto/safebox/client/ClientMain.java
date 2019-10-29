@@ -1,8 +1,8 @@
 package deusto.safebox.client;
 
 import deusto.safebox.client.gui.MainFrame;
-import deusto.safebox.common.util.DataObject;
-import deusto.safebox.common.util.JsonData;
+import deusto.safebox.common.util.ConfigFile;
+import deusto.safebox.common.util.JsonConfig;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,7 +19,13 @@ public class ClientMain {
     private static final String CONFIG_FILE = "config.json";
 
     public static void main(String[] args) {
-        DataObject config = getClientConfig();
+        final ConfigFile config;
+        try {
+            config = getClientConfig();
+        } catch (IOException e) {
+            logger.error("Could not load client configuration file.", e);
+            return;
+        }
 
         /*
         String hostname = config.getString("server.hostname");
@@ -36,15 +42,15 @@ public class ClientMain {
     }
 
     /**
-     * Returns the contents of the client file.
+     * Returns a {@link JsonConfig} with the contents of the client configuration file.
      *
      * <p>The program data directory is created if it doesn't exist.
      *
-     * @return a {@link JsonData} with the contents of the config file.
+     * @return a {@link JsonConfig} with the contents of the config file.
      * @throws RuntimeException if the data directory cannot be created or the config file cannot be read.
      * @throws IllegalArgumentException if the path to the data directory doesn't contain a directory.
      */
-    private static JsonData getClientConfig() {
+    private static JsonConfig getClientConfig() throws IOException {
         File programDirectory = Path.of(getUserDataDirectory(), FOLDER_NAME).toFile();
         if (!programDirectory.exists()) {
             if (!programDirectory.mkdir()) {
@@ -54,14 +60,10 @@ public class ClientMain {
             throw new IllegalArgumentException("The path is not a directory.");
         }
 
-        try {
-            return JsonData.getOrExtractResource(
-                    "/" + CONFIG_FILE,
-                    Path.of(programDirectory.getPath(), CONFIG_FILE).toString()
-            );
-        } catch (IOException e) {
-            throw new RuntimeException("Could not load the config file.", e);
-        }
+        return JsonConfig.getOrExtractResource(
+                "/" + CONFIG_FILE,
+                Path.of(programDirectory.getPath(), CONFIG_FILE).toString()
+        );
     }
 
     /**
