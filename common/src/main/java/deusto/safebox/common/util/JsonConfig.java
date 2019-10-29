@@ -84,12 +84,12 @@ public class JsonConfig implements ConfigFile {
 
     /** Extract a resource file to disk. */
     private static void extractFile(String resourcePath, String extractionPath) throws IOException {
-        try (InputStream stream = JsonConfig.class.getResourceAsStream(resourcePath);
+        try (InputStream is = JsonConfig.class.getResourceAsStream(resourcePath);
              FileOutputStream fos = new FileOutputStream(extractionPath)) {
-            byte[] buf = new byte[2048];
-            int r;
-            while ((r = stream.read(buf)) != -1) {
-                fos.write(buf, 0, r);
+            byte[] buffer = new byte[2048];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
             }
         }
     }
