@@ -5,7 +5,6 @@ import static deusto.safebox.client.util.IconManager.IconType;
 import deusto.safebox.client.gui.ButtonAction;
 import deusto.safebox.client.gui.component.SearchBox;
 import deusto.safebox.client.gui.panel.SettingsDialog;
-import deusto.safebox.client.util.IconManager;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -13,11 +12,11 @@ import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
-public class ToolBar extends JToolBar {
+public abstract class ToolBar extends JToolBar {
 
     public ToolBar(JFrame mainFrame) {
         setFloatable(false);
-        setBorder(BorderFactory.createEmptyBorder(2, 4, 0, 4));
+        setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
         JButton newEntryBtn = new ToolBarButton(
                 "Add a new entry", IconType.NEW_FILE_20) {
@@ -26,16 +25,14 @@ public class ToolBar extends JToolBar {
                 // TODO
             }
         };
-        newEntryBtn.setEnabled(false);
 
         JButton lockBtn = new ToolBarButton(
                 "Lock database", IconType.LOCK) {
             @Override
             public void action() {
-                // TODO
+                lock();
             }
         };
-        lockBtn.setEnabled(false);
 
         JToggleButton pwdGenBtn = new ToolBarToggleButton(
                 "Password generator", IconType.PASSWORD_FIELD) {
@@ -65,6 +62,8 @@ public class ToolBar extends JToolBar {
         add(Box.createHorizontalGlue());
         add(searchBox);
     }
+
+    protected abstract void lock();
 
     private abstract static class ToolBarButton extends JButton implements ButtonAction {
 
