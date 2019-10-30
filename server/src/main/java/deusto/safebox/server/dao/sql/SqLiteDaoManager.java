@@ -1,17 +1,17 @@
 package deusto.safebox.server.dao.sql;
 
-import deusto.safebox.server.dao.DaoManager;
 import deusto.safebox.server.dao.UserDao;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SQLite implementation of a {@link DaoManager}.
+ * SQLite implementation of a {@link SqlDaoManager}.
  */
-public class SqLiteDaoManager implements DaoManager {
+public class SqLiteDaoManager implements SqlDaoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SqLiteDaoManager.class);
 
@@ -34,6 +34,11 @@ public class SqLiteDaoManager implements DaoManager {
         logger.info("Connected to SQLite database.");
 
         userDao = new SqlUserDao(connection);
+    }
+
+    @Override
+    public DatabaseMetaData getDatabaseMetadata() throws SQLException {
+        return connection.getMetaData();
     }
 
     @Override

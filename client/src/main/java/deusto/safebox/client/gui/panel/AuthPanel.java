@@ -11,8 +11,6 @@ public class AuthPanel extends JPanel {
     public AuthPanel() {
         super(new BorderLayout());
 
-        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
         tabbedPane.setRequestFocusEnabled(false);
 

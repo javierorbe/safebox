@@ -1,4 +1,4 @@
-package deusto.safebox.client.gui;
+package deusto.safebox.common.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -47,13 +47,19 @@ public class GridBagBuilder {
         return this;
     }
 
-    public GridBagBuilder setWeightX(int value) {
+    public GridBagBuilder setWeightX(double value) {
         gbc.weightx = value;
         return this;
     }
 
-    public GridBagBuilder setWeightY(int value) {
+    public GridBagBuilder setWeightY(double value) {
         gbc.weighty = value;
+        return this;
+    }
+
+    public GridBagBuilder setWeight(double weightX, double weightY) {
+        gbc.weightx = weightX;
+        gbc.weighty = weightY;
         return this;
     }
 
@@ -118,6 +124,8 @@ public class GridBagBuilder {
         SOUTHEAST(GridBagConstraints.SOUTHEAST),
         SOUTHWEST(GridBagConstraints.SOUTHWEST),
         CENTER(GridBagConstraints.CENTER),
+        PAGE_START(GridBagConstraints.PAGE_START),
+        PAGE_END(GridBagConstraints.PAGE_END),
         ;
 
         private int id;

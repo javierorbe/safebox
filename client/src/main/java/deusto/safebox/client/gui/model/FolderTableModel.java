@@ -10,8 +10,12 @@ import javax.swing.table.AbstractTableModel;
 @SuppressWarnings("serial")
 public class FolderTableModel extends AbstractTableModel {
 
-    // name, type, created, last modified
-    private static final int COLUMN_COUNT = 4;
+    private static final String[] COLUMN_NAMES = {
+            "Name",
+            "Type",
+            "Created",
+            "Last modified"
+    };
 
     private List<LeafItem> items = new ArrayList<>();
 
@@ -29,22 +33,15 @@ public class FolderTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return COLUMN_COUNT;
+        return COLUMN_NAMES.length;
     }
 
     @Override
     public String getColumnName(int column) {
-        switch (column) {
-            case 0:
-                return "Name";
-            case 1:
-                return "Type";
-            case 2:
-                return "Created";
-            case 3:
-                return "Last modified";
-            default:
-                return super.getColumnName(column);
+        if (column < COLUMN_NAMES.length) {
+            return COLUMN_NAMES[column];
+        } else {
+            return super.getColumnName(column);
         }
     }
 

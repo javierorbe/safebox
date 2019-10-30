@@ -1,5 +1,9 @@
 {
   "socketPort": 6819,
+  "rdbms":  "sqlite",
+  "sqlite": {
+    "filepath": "./dir/safebox.db"
+  },
   "mysql": {
     "host": "localhost",
     "port": 3306,

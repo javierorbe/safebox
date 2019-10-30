@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TEMP
 public class ClientSocketTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientSocketTest.class);

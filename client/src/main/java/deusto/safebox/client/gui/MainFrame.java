@@ -6,57 +6,63 @@ import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
-import deusto.safebox.client.util.GuiUtil;
+import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MainFrame extends JFrame {
 
-    private static final Logger logger = LoggerFactory.getLogger(MainFrame.class);
-
     private static final Dimension PREFERRED_SIZE = new Dimension(1280, 720);
 
-    private JPanel currentContentPanel = null;
+    private Map<PanelType, JPanel> panels = new HashMap<>();
+    private PanelType currentPanel;
 
     public MainFrame() {
         super("SafeBox");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLookAndFeel();
+        GuiUtil.setDefaultLookAndFeel();
         setPreferredSize(PREFERRED_SIZE);
         setIconImage(IconType.APP.getAsImage());
         setLayout(new BorderLayout());
         setJMenuBar(new MenuBar());
-        getContentPane().add(new ToolBar(this), BorderLayout.PAGE_START);
 
-        // setCurrentPanel(new MainPanel());
-        setCurrentPanel(new AuthPanel());
+        getContentPane().add(new ToolBar(this) {
+            @Override
+            protected void lock() {
+                // TEMP
+                if (currentPanel == PanelType.MAIN) {
+                    setCurrentPanel(PanelType.AUTH);
+                } else {
+                    setCurrentPanel(PanelType.MAIN);
+                }
+            }
+        }, BorderLayout.PAGE_START);
+
+        panels.put(PanelType.MAIN, new MainPanel());
+        panels.put(PanelType.AUTH, new AuthPanel());
+
+        currentPanel = PanelType.AUTH;
+        getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));
         setVisible(true);
     }
 
-    public void setCurrentPanel(JPanel panel) {
-        if (currentContentPanel != null) {
-            getContentPane().remove(currentContentPanel);
-        }
-        getContentPane().add(panel, BorderLayout.CENTER);
-        currentContentPanel = panel;
+    private void setCurrentPanel(PanelType panel) {
+        getContentPane().remove(panels.get(currentPanel));
+        getContentPane().add(panels.get(panel), BorderLayout.CENTER);
+        getContentPane().revalidate();
+        getContentPane().repaint();
+        currentPanel = panel;
     }
 
-    /** Set the default look and feel. */
-    private void setLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            logger.error("Could not load the default look and feel.", e);
-        }
+    /** Content panel types. */
+    private enum PanelType {
+        MAIN, AUTH
     }
 }

@@ -47,6 +47,14 @@ public class Server extends Thread implements AutoCloseable {
         this.keyPassword = keyPassword;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public synchronized boolean isRunning() {
+        return running;
+    }
+
     /** Start the socket server. */
     @Override
     public void run() {
@@ -91,7 +99,7 @@ public class Server extends Thread implements AutoCloseable {
                 client.start();
             }
         } catch (SocketException e) {
-            logger.info("Socket closing exception.");
+            logger.debug("Socket closing exception.");
         } catch (IOException e) {
             logger.error("Error while server socket was listening.", e);
         } finally {

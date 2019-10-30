@@ -2,6 +2,7 @@
   <configuration default="false" name="ServerMain" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="deusto.safebox.server.ServerMain" />
     <module name="server" />
+    <option name="PROGRAM_PARAMETERS" value="-gui" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="deusto.safebox.server.*" />

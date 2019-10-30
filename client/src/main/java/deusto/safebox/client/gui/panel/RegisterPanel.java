@@ -1,13 +1,13 @@
 package deusto.safebox.client.gui.panel;
 
-import static deusto.safebox.client.gui.GridBagBuilder.Anchor;
-import static deusto.safebox.client.gui.GridBagBuilder.Fill;
+import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
+import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 import static deusto.safebox.client.util.IconManager.IconType;
 
-import deusto.safebox.client.gui.GridBagBuilder;
+import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.ShowPasswordField;
-import deusto.safebox.client.gui.component.SimpleButton;
+import deusto.safebox.common.gui.SimpleButton;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
@@ -56,8 +56,8 @@ class RegisterPanel extends JPanel {
             }
         };
 
-        gbb.setInsets(4, 4, 4, 4);
-        gbb.setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
+        gbb.setInsets(4, 4, 4, 4)
+                .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
         addGB(new JLabel("Full Name"));

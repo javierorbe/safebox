@@ -17,7 +17,7 @@ class SqLiteDaoManagerTest {
     private static SqLiteDaoManager daoManager;
 
     @BeforeAll
-    static void init() {
+    static void setup() {
         try {
             // The database file is automatically created if it doesn't exist.
             daoManager = new SqLiteDaoManager(DATABASE_FILEPATH);

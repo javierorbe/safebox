@@ -1,17 +1,17 @@
 package deusto.safebox.server.dao.sql;
 
-import deusto.safebox.server.dao.DaoManager;
 import deusto.safebox.server.dao.UserDao;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MySQL implementation of a {@link DaoManager}.
+ * MySQL implementation of a {@link SqlDaoManager}.
  */
-public class MySqlDaoManager implements DaoManager {
+public class MySqlDaoManager implements SqlDaoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(MySqlDaoManager.class);
 
@@ -39,6 +39,11 @@ public class MySqlDaoManager implements DaoManager {
         logger.info("Connected to MySQL database.");
 
         userDao = new SqlUserDao(connection);
+    }
+
+    @Override
+    public DatabaseMetaData getDatabaseMetadata() throws SQLException {
+        return connection.getMetaData();
     }
 
     @Override

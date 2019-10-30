@@ -35,13 +35,16 @@ public class MainPanel extends JPanel {
 
         Folder f1 = new Folder(
                 "Folder1",
-                null,
                 LocalDateTime.of(2019, 1, 5, 14, 30),
                 LocalDateTime.of(2019, 1, 5, 14, 30)
         );
         Folder f2 = new Folder(
                 "Folder2",
-                null,
+                LocalDateTime.of(2019, 2, 7, 14, 15),
+                LocalDateTime.of(2019, 2, 7, 14, 15)
+        );
+        Folder f3 = new Folder(
+                "Folder3",
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 LocalDateTime.of(2019, 2, 7, 14, 15)
         );
@@ -70,6 +73,7 @@ public class MainPanel extends JPanel {
         f1.addItem(note);
 
         exampleFolders.add(f1);
+        exampleFolders.add(f3);
         exampleItems.get(ItemType.LOGIN).add(login);
         exampleItems.get(ItemType.NOTE).add(note);
     }

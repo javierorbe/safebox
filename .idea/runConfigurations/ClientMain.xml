@@ -4,7 +4,7 @@
     <module name="client" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="deusto.safebox.client.gui.*" />
+        <option name="PATTERN" value="deusto.safebox.common.gui.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
