@@ -55,8 +55,8 @@ public class ServerMain {
             Scanner scanner = new Scanner(System.in);
             scanner.next();
 
-            daoManager.close();
             server.close();
+            daoManager.close();
         }
     }
 
