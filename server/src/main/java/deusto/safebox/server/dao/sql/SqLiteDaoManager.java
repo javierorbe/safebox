@@ -53,5 +53,6 @@ public class SqLiteDaoManager implements SqlDaoManager {
         } catch (SQLException e) {
             logger.error("Error closing SQLite connection.", e);
         }
+        logger.info("SQLite connection closed.");
     }
 }

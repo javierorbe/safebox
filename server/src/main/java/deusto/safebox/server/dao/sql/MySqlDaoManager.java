@@ -53,6 +53,7 @@ public class MySqlDaoManager implements SqlDaoManager {
         } catch (SQLException e) {
             logger.error("Error closing MySQL connection.", e);
         }
+        logger.info("MySQL connection closed.");
     }
 
     @Override

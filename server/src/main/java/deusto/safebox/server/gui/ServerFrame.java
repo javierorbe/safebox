@@ -63,6 +63,7 @@ public class ServerFrame extends JFrame {
         stopBtn.addActionListener(e -> {
             if (server.isRunning()) {
                 stopBtn.setEnabled(false);
+                daoManager.close();
                 server.close();
                 // startBtn.setEnabled(true);
                 serverState.setText("Server state: not running");

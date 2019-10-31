@@ -1,6 +1,6 @@
 package deusto.safebox.server.dao;
 
-public interface DaoManager extends AutoCloseable {
+public interface DaoManager {
 
     UserDao getUserDao();
 }
