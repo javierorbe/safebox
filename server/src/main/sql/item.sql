@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS item(
     CONSTRAINT fk_item_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-CREATE UNIQUE INDEX ix_item_user ON item (user_id);
+CREATE INDEX ix_item_user ON item (user_id);
