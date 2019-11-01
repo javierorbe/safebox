@@ -4,7 +4,17 @@
 
 Caja fuerte virtual para guardar tu información de forma segura.
 
+## Requisitos del sistema del servidor
+
+* JRE 12+
+* Base de datos (MySQL o SQLite)
+
+## Requisitos del sistema del cliente
+
+* JRE 12+
+
 ## Desarrollado con
+
 * [Maven](https://maven.apache.org) - Gestión de dependencias
 * [Travis CI](https://travis-ci.com) - Integración continua
 * [JUnit](https://junit.org/junit5) - Pruebas unitarias
