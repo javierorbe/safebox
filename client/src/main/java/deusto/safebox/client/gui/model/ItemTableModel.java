@@ -2,7 +2,7 @@ package deusto.safebox.client.gui.model;
 
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.common.ItemType;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.table.AbstractTableModel;
@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
 @SuppressWarnings("serial")
 public class ItemTableModel extends AbstractTableModel {
 
-    private static final Map<ItemType, List<String>> ITEM_PROPERTIES = new HashMap<>();
+    private static final Map<ItemType, List<String>> ITEM_PROPERTIES = new EnumMap<>(ItemType.class);
 
     static {
         ITEM_PROPERTIES.put(ItemType.LOGIN, List.of(
@@ -29,8 +29,8 @@ public class ItemTableModel extends AbstractTableModel {
         ));
     }
 
-    private ItemType itemType;
-    private List<LeafItem> items;
+    private final ItemType itemType;
+    private final List<LeafItem> items;
 
     public ItemTableModel(ItemType itemType, List<LeafItem> items) {
         this.itemType = itemType;

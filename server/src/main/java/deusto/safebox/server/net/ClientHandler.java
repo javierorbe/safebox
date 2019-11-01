@@ -1,6 +1,6 @@
 package deusto.safebox.server.net;
 
-import deusto.safebox.common.net.ClientConnection;
+import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.Packet;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import javax.net.ssl.SSLSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ClientHandler extends ClientConnection {
+public abstract class ClientHandler extends SocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 

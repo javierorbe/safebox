@@ -11,10 +11,10 @@ import javax.swing.table.AbstractTableModel;
 public class FolderTableModel extends AbstractTableModel {
 
     private static final String[] COLUMN_NAMES = {
-            "Name",
-            "Type",
-            "Created",
-            "Last modified"
+        "Name",
+        "Type",
+        "Created",
+        "Last modified"
     };
 
     private List<LeafItem> items = new ArrayList<>();

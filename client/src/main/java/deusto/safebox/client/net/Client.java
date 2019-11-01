@@ -1,6 +1,6 @@
 package deusto.safebox.client.net;
 
-import deusto.safebox.common.net.ClientConnection;
+import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.Packet;
 import java.io.IOException;
 import java.net.Socket;
@@ -16,30 +16,33 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Client extends ClientConnection {
+public class Client extends SocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     // Trust manager that does not validate certificate chains.
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] {
         new X509TrustManager() {
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {}
 
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {}
 
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
         }
     };
 
-    private final int port;
     private final String hostname;
+    private final int port;
 
     private SSLSocket socket;
 
     /**
-     * Creates a {@link Client} with that will connect to the specified server.
+     * Creates a client socket handler that connects to the specified server.
      *
      * @param hostname server hostname.
      * @param port server port.
@@ -68,10 +71,11 @@ public class Client extends ClientConnection {
             socket = (SSLSocket) socketFactory.createSocket(hostname, port);
             socket.addHandshakeCompletedListener(e -> logger.trace("Handshake completed."));
             socket.startHandshake();
-            listen();
         } catch (IOException e) {
             logger.error("Could not start a socket.", e);
         }
+
+        listen();
     }
 
     @Override

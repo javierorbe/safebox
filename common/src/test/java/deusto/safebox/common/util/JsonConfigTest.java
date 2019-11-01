@@ -21,7 +21,9 @@ class JsonConfigTest {
     @BeforeAll
     static void setup() {
         try {
-            createTestConfig();
+            try (PrintWriter pw = new PrintWriter(TEST_CONFIG_FILEPATH)) {
+                pw.println(TEST_CONTENT);
+            }
         } catch (FileNotFoundException e) {
             fail(e);
         }
@@ -52,12 +54,6 @@ class JsonConfigTest {
             if (!file.delete()) {
                 fail("Could not delete test config file.");
             }
-        }
-    }
-
-    private static void createTestConfig() throws FileNotFoundException {
-        try (PrintWriter pw = new PrintWriter(TEST_CONFIG_FILEPATH)) {
-            pw.println(TEST_CONTENT);
         }
     }
 }

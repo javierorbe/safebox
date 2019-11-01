@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Represents an endpoint of the socket connection. */
-public abstract class ClientConnection extends Thread implements AutoCloseable {
+public abstract class SocketHandler extends Thread implements AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
     private boolean running = false;
     private ObjectOutputStream out;

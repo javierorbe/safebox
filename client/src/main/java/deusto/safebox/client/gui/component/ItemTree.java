@@ -21,7 +21,7 @@ public class ItemTree extends JTree {
         addTreeSelectionListener((e) -> {
             Object o = e.getPath().getLastPathComponent();
             if (o instanceof ItemType) {
-                table.selectItemModel((ItemType) o, items.get(o));
+                table.selectItemModel((ItemType) o);
             } else if (o instanceof Item) {
                 // TODO: show item info on display box
             }

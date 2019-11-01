@@ -1,6 +1,6 @@
 package deusto.safebox.server.net;
 
-import deusto.safebox.common.net.ClientConnection;
+import deusto.safebox.common.net.SocketHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
@@ -10,8 +10,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
@@ -32,7 +32,7 @@ public class Server extends Thread implements AutoCloseable {
 
     private SSLServerSocket serverSocket;
     private boolean running = false;
-    private final Set<ClientHandler> clients = new HashSet<>();
+    private final Collection<ClientHandler> clients = new HashSet<>();
 
     /**
      * Creates a {@link Server} with the specified port.
@@ -113,7 +113,7 @@ public class Server extends Thread implements AutoCloseable {
     @Override
     public synchronized void close() {
         running = false;
-        clients.forEach(ClientConnection::close);
+        clients.forEach(SocketHandler::close);
         try {
             serverSocket.close();
             logger.debug("Server socket closed.");

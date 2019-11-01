@@ -36,7 +36,7 @@ public class MySqlDaoManager implements SqlDaoManager {
                 password
         );
 
-        logger.info("Connected to MySQL database.");
+        logger.info("Connected to MySQL database '" + database + "'.");
 
         userDao = new SqlUserDao(connection);
     }

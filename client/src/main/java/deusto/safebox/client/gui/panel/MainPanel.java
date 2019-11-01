@@ -12,7 +12,7 @@ import java.awt.BorderLayout;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JPanel;
@@ -25,7 +25,7 @@ import javax.swing.JTree;
 public class MainPanel extends JPanel {
 
     private static final List<Folder> exampleFolders = new ArrayList<>();
-    private static final Map<ItemType, List<LeafItem>> exampleItems = new HashMap<>();
+    private static final Map<ItemType, List<LeafItem>> exampleItems = new EnumMap<>(ItemType.class);
 
     // TEMP
     static {
@@ -81,7 +81,7 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         super(new BorderLayout());
 
-        DataTable table = new DataTable();
+        DataTable table = new DataTable(exampleItems);
         JScrollPane tableScrollPane = new JScrollPane(table);
 
         JTree folderTree = new FolderTree(exampleFolders, table);

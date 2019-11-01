@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.model;
 
-import deusto.safebox.client.datamodel.Item;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.common.ItemType;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public class ItemTreeModel implements TreeModel {
                 return true;
             }
         }
-        return node instanceof Item;
+        return node instanceof LeafItem;
     }
 
     @Override
@@ -63,7 +62,7 @@ public class ItemTreeModel implements TreeModel {
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        if (parent instanceof ItemType && child instanceof Item) {
+        if (parent instanceof ItemType && child instanceof LeafItem) {
             return items.get(parent).indexOf(child);
         } else if (child instanceof ItemType) {
             return ITEM_TYPE_ORDER.indexOf(child);
