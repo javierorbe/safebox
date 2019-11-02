@@ -38,7 +38,7 @@ class SqlUserDao implements UserDao {
     @Override
     public boolean insert(User user) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
-            statement.setString(1, UUID.randomUUID().toString());
+            statement.setString(1, user.getId().toString());
             statement.setString(2, user.getName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
