@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS user(
     name            VARCHAR(50)         NULL,
     email           VARCHAR(50)     NOT NULL,
     password        VARCHAR(99)     NOT NULL,
-    creation        TIMESTAMP       NOT NULL,
+    creation        DATE            NOT NULL,
     CONSTRAINT pk_user PRIMARY KEY (id)
 );
 

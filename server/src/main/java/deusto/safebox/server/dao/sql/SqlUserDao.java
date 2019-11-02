@@ -4,10 +4,11 @@ import deusto.safebox.server.User;
 import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.UserDao;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ class SqlUserDao implements UserDao {
             statement.setString(2, user.getName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
-            statement.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+            statement.setDate(5, Date.valueOf(user.getCreation()));
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("SQL error.", e);
@@ -124,6 +125,7 @@ class SqlUserDao implements UserDao {
         String name = set.getString("name");
         String email = set.getString("email");
         String password = set.getString("password");
-        return new User(id, name, email, password);
+        LocalDate creation = set.getDate("creation").toLocalDate();
+        return new User(id, name, email, password, creation);
     }
 }

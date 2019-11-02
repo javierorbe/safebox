@@ -25,6 +25,14 @@ public class ItemPacketData implements Serializable {
         lastModified = item.getLastModified();
     }
 
+    public ItemPacketData(UUID id, ItemType type, String data, LocalDateTime created, LocalDateTime lastModified) {
+        this.id = id;
+        this.type = type;
+        this.data = data;
+        this.created = created;
+        this.lastModified = lastModified;
+    }
+
     public UUID getId() {
         return id;
     }
