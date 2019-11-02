@@ -12,18 +12,23 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SqlItemCollectionDao implements ItemCollectionDao {
 
-    private static final String INSERT
-            = "INSERT INTO item (id, type, data, created, lastModified) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE
-            = "UPDATE item SET type=?, data=?, lastModified=? WHERE id=?";
+    private static final Logger logger = LoggerFactory.getLogger(SqlItemCollectionDao.class);
+
+    private static final String INSERT_ONE_ITEM
+            = "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE_ONE_ITEM
+            = "UPDATE item SET data=?, last_modified=? WHERE id=?";
     private static final String DELETE
-            = "DELETE FROM item WHERE id=?";
+            = "DELETE FROM item WHERE user_id=?";
     private static final String GET_ONE
             = "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?";
 
@@ -34,42 +39,74 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
     }
 
     @Override
-    public boolean insert(ItemCollection itemCollection) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
-            for(ItemPacketData item : itemCollection.getItemCollection()) {
-                statement.setString(1, UUID.randomUUID().toString());
-                statement.setString(2, item.getType().getName());
-                statement.setString(3, item.getEncryptedData());
-                statement.setTimestamp(4, Timestamp.valueOf(item.getCreated()));
-                statement.setTimestamp(5, Timestamp.valueOf(item.getLastModified()));
-            }
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            throw new DaoException("SQL error", e);
-        }
-    }
+    public boolean insert(ItemCollection collection) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_ONE_ITEM)) {
+            connection.setAutoCommit(false);
 
-    @Override
-    public boolean update(ItemCollection itemCollection) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-            for(ItemPacketData item : itemCollection.getItemCollection()) {
-                statement.setString(1, item.getType().getName());
-                statement.setString(2, item.getEncryptedData());
-                statement.setTimestamp(3, Timestamp.valueOf(item.getLastModified()));
-                statement.setString(4, item.getId().toString());
-            }
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            throw new DaoException("SQL error", e);
-        }
-    }
-
-    @Override
-    public boolean delete(ItemCollection itemCollection) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(DELETE)) {
-            for (ItemPacketData item : itemCollection.getItemCollection()) {
+            for (ItemPacketData item : collection.getItems()) {
                 statement.setString(1, item.getId().toString());
+                statement.setString(2, collection.getUserId().toString());
+                statement.setByte(3, item.getType().getId());
+                statement.setString(4, item.getEncryptedData());
+                statement.setTimestamp(5, Timestamp.valueOf(item.getCreated()));
+                statement.setTimestamp(6, Timestamp.valueOf(item.getLastModified()));
+                statement.addBatch();
             }
+
+            int[] results = statement.executeBatch();
+            connection.commit();
+            return Arrays.stream(results).allMatch(result -> result > 0);
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                logger.error("Error in transaction rollback.", rollbackEx);
+            }
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.error("Error in transaction rollback.", e);
+            }
+        }
+    }
+
+    @Override
+    public boolean update(ItemCollection collection) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_ONE_ITEM)) {
+            connection.setAutoCommit(false);
+
+            for (ItemPacketData item : collection.getItems()) {
+                statement.setString(1, item.getEncryptedData());
+                statement.setTimestamp(2, Timestamp.valueOf(item.getLastModified()));
+                statement.setString(3, item.getId().toString());
+                statement.addBatch();
+            }
+
+            int[] results = statement.executeBatch();
+            connection.commit();
+            return Arrays.stream(results).allMatch(result -> result > 0);
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                logger.error("Error in transaction rollback.", rollbackEx);
+            }
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.error("Error in transaction rollback.", e);
+            }
+        }
+    }
+
+    @Override
+    public boolean delete(ItemCollection collection) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(DELETE)) {
+            statement.setString(1, collection.getUserId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("SQL error.", e);
@@ -80,27 +117,29 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
     public Optional<ItemCollection> get(UUID userId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(GET_ONE)) {
             statement.setString(1, userId.toString());
-            List<ItemPacketData> itemCollection = new ArrayList<>();
+
+            List<ItemPacketData> items = new ArrayList<>();
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    itemCollection.add(convert(set));
+                    items.add(convert(set));
                 }
-                return Optional.of(new ItemCollection(userId, itemCollection));
             }
+            return Optional.of(new ItemCollection(userId, items));
         } catch (SQLException e) {
             throw new DaoException("SQL error.", e);
         }
     }
 
     @Override
-    public List<ItemCollection> getAll() throws DaoException {
-        return null;
+    public List<ItemCollection> getAll() {
+        // TODO
+        throw new UnsupportedOperationException();
     }
 
     private static ItemPacketData convert(ResultSet set) throws SQLException {
         UUID id = UUID.fromString(set.getString("id"));
-        ItemType type  = ItemType.valueOf(set.getString("type"));
-        String data = set.getString("email");
+        ItemType type  = ItemType.fromId(set.getByte("type"));
+        String data = set.getString("data");
         LocalDateTime created = set.getTimestamp("creation").toLocalDateTime();
         LocalDateTime lastModified = set.getTimestamp("last_modified").toLocalDateTime();
         return new ItemPacketData(id, type, data, created, lastModified);

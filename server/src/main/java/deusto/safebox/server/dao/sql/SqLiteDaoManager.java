@@ -1,5 +1,6 @@
 package deusto.safebox.server.dao.sql;
 
+import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.dao.UserDao;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,6 +20,7 @@ public class SqLiteDaoManager implements SqlDaoManager {
 
     private final Connection connection;
     private final UserDao userDao;
+    private final ItemCollectionDao itemCollectionDao;
 
     /**
      * Creates a connection to a SQLite database.
@@ -34,16 +36,12 @@ public class SqLiteDaoManager implements SqlDaoManager {
         logger.info("Connected to SQLite database.");
 
         userDao = new SqlUserDao(connection);
+        itemCollectionDao = new SqlItemCollectionDao(connection);
     }
 
     @Override
     public DatabaseMetaData getDatabaseMetadata() throws SQLException {
         return connection.getMetaData();
-    }
-
-    @Override
-    public UserDao getUserDao() {
-        return userDao;
     }
 
     @Override
@@ -54,5 +52,15 @@ public class SqLiteDaoManager implements SqlDaoManager {
             logger.error("Error closing SQLite connection.", e);
         }
         logger.info("SQLite connection closed.");
+    }
+
+    @Override
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    @Override
+    public ItemCollectionDao getItemCollectionDao() {
+        return itemCollectionDao;
     }
 }

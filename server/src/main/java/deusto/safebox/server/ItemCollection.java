@@ -6,19 +6,24 @@ import java.util.UUID;
 
 public class ItemCollection {
 
-    private UUID userId;
-    private Collection<ItemPacketData> itemCollection;
+    private final UUID userId;
+    private final Collection<ItemPacketData> items;
 
-    public ItemCollection(UUID userId, Collection<ItemPacketData> itemCollection){
+    public ItemCollection(UUID userId, Collection<ItemPacketData> items) {
         this.userId = userId;
-        this.itemCollection = itemCollection;
+        this.items = items;
     }
 
     public UUID getUserId() {
         return userId;
     }
 
-    public Collection<ItemPacketData> getItemCollection() {
-        return itemCollection;
+    public Collection<ItemPacketData> getItems() {
+        return items;
+    }
+
+    @Override
+    public String toString() {
+        return userId + "(" + items.size() + " items)";
     }
 }

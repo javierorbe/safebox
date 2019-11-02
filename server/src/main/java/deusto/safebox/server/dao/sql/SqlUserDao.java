@@ -23,7 +23,7 @@ class SqlUserDao implements UserDao {
     private static final String DELETE
             = "DELETE FROM user WHERE id=?";
     private static final String GET_ONE
-            = "SELECT id, name, email, password FROM user WHERE id=?";
+            = "SELECT id, name, email, password, creation FROM user WHERE id=?";
     private static final String GET_ALL
             = "SELECT id, name, email, password FROM user";
     private static final String GET_ONE_EMAIL

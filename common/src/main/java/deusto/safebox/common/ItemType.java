@@ -11,6 +11,14 @@ public enum ItemType {
     BANK_ACCOUNT((byte) 6, "Bank Account"),
     ;
 
+    private static final ItemType[] ID_MAPPER = new ItemType[ItemType.values().length];
+
+    static {
+        for (ItemType type : ItemType.values()) {
+            ID_MAPPER[type.getId()] = type;
+        }
+    }
+
     private byte id;
     private String name;
 
@@ -30,5 +38,9 @@ public enum ItemType {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static ItemType fromId(byte id) {
+        return ID_MAPPER[id];
     }
 }

@@ -1,5 +1,6 @@
 package deusto.safebox.server.dao.sql;
 
+import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.dao.UserDao;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,6 +20,7 @@ public class MySqlDaoManager implements SqlDaoManager {
 
     private final Connection connection;
     private final UserDao userDao;
+    private final ItemCollectionDao itemCollectionDao;
 
     /**
      * Creates a connection to a MySQL database.
@@ -39,6 +41,7 @@ public class MySqlDaoManager implements SqlDaoManager {
         logger.info("Connected to MySQL database '" + database + "'.");
 
         userDao = new SqlUserDao(connection);
+        itemCollectionDao = new SqlItemCollectionDao(connection);
     }
 
     @Override
@@ -59,5 +62,10 @@ public class MySqlDaoManager implements SqlDaoManager {
     @Override
     public UserDao getUserDao() {
         return userDao;
+    }
+
+    @Override
+    public ItemCollectionDao getItemCollectionDao() {
+        return itemCollectionDao;
     }
 }
