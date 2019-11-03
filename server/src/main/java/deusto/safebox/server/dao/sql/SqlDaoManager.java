@@ -64,12 +64,19 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
         return itemCollectionDao;
     }
 
+    /**
+     * Creates a connection to a SQLite database.
+     *
+     * @param path path to the database file.
+     * @return a {@link SqlDaoManager} connected to a SQLite database.
+     */
     public static SqlDaoManager ofSqlite(String path) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(String.format(SQLITE_URL, path));
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+        config.addDataSourceProperty("useServerPrepStmts", true);
         return new SqlDaoManager(config);
     }
 
@@ -80,9 +87,10 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
      * @param database database name.
      * @param username database access username.
      * @param password database access password.
+     * @return a {@link SqlDaoManager} connected to a MySQL database.
+     * @see <a href="https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration" target="_top">MySQL Configuration</a>
      */
     public static SqlDaoManager ofMysql(String host, String database, String username, String password) {
-        // TODO: use this config https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(String.format(MYSQL_URL, host, database));
         config.setUsername(username);
@@ -90,6 +98,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+        config.addDataSourceProperty("useServerPrepStmts", true);
         return new SqlDaoManager(config);
     }
 }

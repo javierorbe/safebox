@@ -5,25 +5,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import deusto.safebox.server.dao.UserDao;
 import java.io.File;
-import java.sql.SQLException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class SqLiteDaoManagerTest {
+class SqlDaoManagerTest {
 
     private static final String DATABASE_FILEPATH = "./test.db";
 
-    private static SqLiteDaoManager daoManager;
+    private static SqlDaoManager daoManager;
 
     @BeforeAll
     static void setup() {
-        try {
-            // The database file is automatically created if it doesn't exist.
-            daoManager = new SqLiteDaoManager(DATABASE_FILEPATH);
-        } catch (SQLException e) {
-            fail(e);
-        }
+        // The database file is automatically created if it doesn't exist.
+        daoManager = SqlDaoManager.ofSqlite(DATABASE_FILEPATH);
     }
 
     @Test
