@@ -2,8 +2,6 @@ package deusto.safebox.server;
 
 import deusto.safebox.common.util.ConfigFile;
 import deusto.safebox.common.util.JsonConfig;
-import deusto.safebox.server.dao.sql.MySqlDaoManager;
-import deusto.safebox.server.dao.sql.SqLiteDaoManager;
 import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.gui.ServerFrame;
 import deusto.safebox.server.net.Server;
@@ -65,7 +63,7 @@ public class ServerMain {
         switch (rdbms.toLowerCase()) {
             case "sqlite": {
                 String sqliteFilepath = config.getString("sqlite.filepath");
-                return new SqLiteDaoManager(sqliteFilepath);
+                return SqlDaoManager.ofSqlite(sqliteFilepath);
             }
 
             case "mysql": {
@@ -74,7 +72,7 @@ public class ServerMain {
                 String database = config.getString("mysql.host");
                 String username = config.getString("username");
                 String password = config.getString("password");
-                return new MySqlDaoManager(host + ":" + port, database, username, password);
+                return SqlDaoManager.ofMysql(host + ":" + port, database, username, password);
             }
 
             default: {

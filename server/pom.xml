@@ -111,6 +111,12 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.28.0</version>
         </dependency>
+        <!-- HikariCP (JDBC connection pool) -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>3.4.1</version>
+        </dependency>
         <!-- Argon2 (hashing) -->
         <dependency>
             <groupId>de.mkammerer</groupId>

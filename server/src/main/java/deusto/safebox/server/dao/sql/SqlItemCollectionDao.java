@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +33,21 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
     private static final String GET_ONE
             = "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?";
 
-    private final Connection connection;
+    private final Supplier<Optional<Connection>> connectionSupplier;
 
-    SqlItemCollectionDao(Connection connection) {
-        this.connection = connection;
+    SqlItemCollectionDao(Supplier<Optional<Connection>> connectionSupplier) {
+        this.connectionSupplier = connectionSupplier;
+    }
+
+    private Connection getConnection() throws DaoException {
+        return connectionSupplier.get()
+                .orElseThrow(() -> new DaoException("Could not get a connection from the pool."));
     }
 
     @Override
-    public boolean insert(ItemCollection collection) {
+    public boolean insert(ItemCollection collection) throws DaoException {
+        Connection connection = getConnection();
+
         try (PreparedStatement statement = connection.prepareStatement(INSERT_ONE_ITEM)) {
             connection.setAutoCommit(false);
 
@@ -73,7 +81,9 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
     }
 
     @Override
-    public boolean update(ItemCollection collection) {
+    public boolean update(ItemCollection collection) throws DaoException {
+        Connection connection = getConnection();
+
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_ONE_ITEM)) {
             connection.setAutoCommit(false);
 
@@ -105,7 +115,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public boolean delete(ItemCollection collection) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(DELETE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(DELETE)) {
             statement.setString(1, collection.getUserId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -115,7 +125,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public Optional<ItemCollection> get(UUID userId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(GET_ONE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(GET_ONE)) {
             statement.setString(1, userId.toString());
 
             List<ItemPacketData> items = new ArrayList<>();
