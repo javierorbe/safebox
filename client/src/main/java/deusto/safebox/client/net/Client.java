@@ -6,7 +6,7 @@ import static java.util.stream.Collectors.toMap;
 
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
-import deusto.safebox.common.net.PacketAction;
+import deusto.safebox.common.util.UnboundClassConsumerMap;
 import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.Packet;
 import deusto.safebox.common.net.packet.ReceiveDataPacket;
@@ -50,7 +50,7 @@ public class Client extends SocketHandler {
 
     private final String hostname;
     private final int port;
-    private final PacketAction packetAction = new PacketAction();
+    private final UnboundClassConsumerMap packetAction = new UnboundClassConsumerMap();
 
     private SSLSocket socket;
 
@@ -64,7 +64,7 @@ public class Client extends SocketHandler {
         this.hostname = hostname;
         this.port = port;
 
-        packetAction.putAction(ReceiveDataPacket.class, packet -> {
+        packetAction.put(ReceiveDataPacket.class, packet -> {
             Map<ItemType, List<ItemData>> rawItems = classifyByType(packet.getItems());
             // TODO
         });
@@ -118,7 +118,7 @@ public class Client extends SocketHandler {
     @Override
     protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
-        packetAction.getAction(packet).ifPresentOrElse(
+        packetAction.get(packet).ifPresentOrElse(
             action -> action.accept(packet),
             () -> logger.error("There is no action defined for the received packet ({})", packet)
         );
