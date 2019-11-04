@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.menu;
 
-import deusto.safebox.client.gui.ButtonAction;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -12,30 +11,31 @@ public class MenuBar extends JMenuBar {
         JMenu helpMenu = new JMenu("Help");
         add(helpMenu);
 
-        helpMenu.add(new MenuBarItem("Help") {
-            @Override
-            public void action() {
-                // TODO
-            }
-        });
+        helpMenu.add(new MenuBarItem("Help", () -> {
+            // TODO
+        }));
 
-        helpMenu.add(new MenuBarItem("About") {
-            @Override
-            public void action() {
-                // TODO
-            }
-        });
+        helpMenu.add(new MenuBarItem("About", () -> {
+            // TODO
+        }));
     }
 
-    private abstract static class MenuBarItem extends JMenuItem implements ButtonAction {
+    private static class MenuBarItem extends JMenuItem {
 
-        MenuBarItem(String text, Icon icon) {
+        /**
+         * Creates a {@link MenuBarItem} with an specified action callback.
+         *
+         * @param text the text displayed in the item.
+         * @param icon the icon displayed in the item.
+         * @param action item action callback.
+         */
+        MenuBarItem(String text, Icon icon, Runnable action) {
             super(text, icon);
-            addActionListener(e -> action());
+            addActionListener(e -> action.run());
         }
 
-        MenuBarItem(String text) {
-            this(text, null);
+        MenuBarItem(String text, Runnable action) {
+            this(text, null, action);
         }
     }
 }

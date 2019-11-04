@@ -54,36 +54,25 @@ public class SettingsDialog extends JDialog {
 
         gbb.setWeight(0.5, 1.0);
         gbb.setGridY(0);
-        addGB(splitPane);
+        put(splitPane);
 
         gbb.setWeightY(0);
         gbb.setAnchor(Anchor.PAGE_END);
         gbb.setGridWidthAndWeightX(0, GridBagConstraints.REMAINDER);
         gbb.incrementGridY();
-        // c.insets = new Insets(5, 0, 0, 0);
-        addGB(new ButtonPanel() {
-            @Override
-            void accept() {
-                // TODO
-            }
 
-            @Override
-            void cancel() {
-                // TODO
-            }
-
-            @Override
-            void apply() {
-                // TODO
-            }
-        });
+        put(new ButtonPanel(
+            () -> { /* TODO */ },
+            () -> { /* TODO */ },
+            () -> { /* TODO */ }
+        ));
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));
         setVisible(true);
     }
 
-    private void addGB(JComponent component) {
+    private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }
 }

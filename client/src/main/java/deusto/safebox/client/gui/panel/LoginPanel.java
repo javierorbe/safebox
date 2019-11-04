@@ -33,43 +33,38 @@ class LoginPanel extends JPanel {
         final JCheckBox rememberEmail = new JCheckBox("Remember Email");
         rememberEmail.setFocusPainted(false);
         final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
-                IconType.EYE, IconType.EYE_CLOSED, false) {
-            @Override
-            public void on() {
-                passwordField.showPassword();
-            }
-
-            @Override
-            public void off() {
-                passwordField.hidePassword();
-            }
-        };
+                IconType.EYE,
+                IconType.EYE_CLOSED,
+                false,
+                passwordField::showPassword,
+                passwordField::hidePassword
+        );
 
         gbb.setInsets(4, 4, 4, 4)
                 .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Email"));
+        put(new JLabel("Email"));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
-        addGB(emailField);
+        put(emailField);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Password"));
+        put(new JLabel("Password"));
         gbb.setWeightX(1);
-        addGB(passwordField);
+        put(passwordField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        addGB(showPasswordBtn);
+        put(showPasswordBtn);
 
         gbb.setGridWidth(1);
-        addGB(rememberEmail);
+        put(rememberEmail);
 
         gbb.incrementGridX()
                 .setGridWidth(GridBagConstraints.REMAINDER)
                 .setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
-        addGB(loginBtn);
+        put(loginBtn);
     }
 
-    private void addGB(JComponent component) {
+    private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }
 }

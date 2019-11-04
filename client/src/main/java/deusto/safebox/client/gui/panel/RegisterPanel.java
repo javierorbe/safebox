@@ -28,66 +28,56 @@ class RegisterPanel extends JPanel {
 
         final JTextField nameField  = new JTextField();
         final JTextField emailField = new JTextField();
-        final ShowPasswordField passwordField = new ShowPasswordField(false);
-        final ShowPasswordField rPasswordField = new ShowPasswordField(false);
+        final ShowPasswordField pwdField = new ShowPasswordField(false);
+        final ShowPasswordField confirmPwdField = new ShowPasswordField(false);
         final JButton registerBtn = new SimpleButton("Register");
         final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
-                IconType.EYE, IconType.EYE_CLOSED, false) {
-            @Override
-            public void on() {
-                passwordField.showPassword();
-            }
-
-            @Override
-            public void off() {
-                passwordField.hidePassword();
-            }
-        };
+                IconType.EYE,
+                IconType.EYE_CLOSED,
+                false,
+                pwdField::showPassword,
+                pwdField::hidePassword
+        );
         final ChangingToggleButton showRPasswordBtn = new ChangingToggleButton(
-                IconType.EYE, IconType.EYE_CLOSED, false) {
-            @Override
-            public void on() {
-                rPasswordField.showPassword();
-            }
-
-            @Override
-            public void off() {
-                rPasswordField.hidePassword();
-            }
-        };
+                IconType.EYE,
+                IconType.EYE_CLOSED,
+                false,
+                confirmPwdField::showPassword,
+                confirmPwdField::hidePassword
+        );
 
         gbb.setInsets(4, 4, 4, 4)
                 .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Full Name"));
+        put(new JLabel("Full Name"));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
-        addGB(nameField);
+        put(nameField);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Email"));
+        put(new JLabel("Email"));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
-        addGB(emailField);
+        put(emailField);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Password"));
+        put(new JLabel("Password"));
         gbb.setWeightX(1);
-        addGB(passwordField);
+        put(pwdField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        addGB(showPasswordBtn);
+        put(showPasswordBtn);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        addGB(new JLabel("Confirm Password"));
+        put(new JLabel("Confirm Password"));
         gbb.setWeightX(1);
-        addGB(rPasswordField);
+        put(confirmPwdField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        addGB(showRPasswordBtn);
+        put(showRPasswordBtn);
 
         gbb.setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
-        addGB(registerBtn);
+        put(registerBtn);
     }
 
-    private void addGB(JComponent component) {
+    private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }
 }

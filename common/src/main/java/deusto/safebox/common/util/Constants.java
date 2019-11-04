@@ -16,7 +16,8 @@ public class Constants {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer());
-        GSON = gsonBuilder.setPrettyPrinting().create();
+        gsonBuilder.setPrettyPrinting();
+        GSON = gsonBuilder.create();
     }
 
     private Constants() {

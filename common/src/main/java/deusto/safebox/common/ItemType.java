@@ -1,5 +1,10 @@
 package deusto.safebox.common;
 
+import static java.util.stream.Collectors.toMap;
+
+import java.util.Arrays;
+import java.util.Map;
+
 public enum ItemType {
 
     FOLDER((byte) 0, "Folder"),
@@ -11,13 +16,8 @@ public enum ItemType {
     BANK_ACCOUNT((byte) 6, "Bank Account"),
     ;
 
-    private static final ItemType[] ID_MAPPER = new ItemType[ItemType.values().length];
-
-    static {
-        for (ItemType type : ItemType.values()) {
-            ID_MAPPER[type.getId()] = type;
-        }
-    }
+    private static final Map<Byte, ItemType> ID_MAPPER
+            = Arrays.stream(values()).collect(toMap(ItemType::getId, e -> e));
 
     private byte id;
     private String name;
@@ -41,6 +41,6 @@ public enum ItemType {
     }
 
     public static ItemType fromId(byte id) {
-        return ID_MAPPER[id];
+        return ID_MAPPER.get(id);
     }
 }

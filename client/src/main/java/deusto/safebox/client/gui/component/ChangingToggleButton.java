@@ -8,7 +8,7 @@ import javax.swing.JToggleButton;
 /**
  * A {@link JToggleButton} with a different icon for its on and off state.
  */
-public abstract class ChangingToggleButton extends JToggleButton {
+public class ChangingToggleButton extends JToggleButton {
 
     private final ImageIcon onIcon;
     private final ImageIcon offIcon;
@@ -20,8 +20,10 @@ public abstract class ChangingToggleButton extends JToggleButton {
      * @param offIconType the icon that the button displays on its unselected state.
      * @param selected if true, the button is initially selected;
      *                 otherwise, the button is initially unselected.
+     * @param onAction action callback when the button is toggled on.
+     * @param offAction action callback when the button is toggled ff.
      */
-    protected ChangingToggleButton(IconType onIconType, IconType offIconType, boolean selected) {
+    public ChangingToggleButton(IconType onIconType, IconType offIconType, boolean selected, Runnable onAction, Runnable offAction) {
         setFocusPainted(false);
         setRequestFocusEnabled(false);
 
@@ -31,10 +33,10 @@ public abstract class ChangingToggleButton extends JToggleButton {
         addActionListener(e -> {
             if (isSelected()) {
                 setIcon(onIcon);
-                on();
+                onAction.run();
             } else {
                 setIcon(offIcon);
-                off();
+                offAction.run();
             }
         });
 
@@ -46,14 +48,4 @@ public abstract class ChangingToggleButton extends JToggleButton {
             setIcon(offIcon);
         }
     }
-
-    /**
-     * Button action callback when the button is toggled on.
-     */
-    public abstract void on();
-
-    /**
-     * Button action callback when the button is toggled off.
-     */
-    public abstract void off();
 }
