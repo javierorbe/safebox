@@ -1,14 +1,25 @@
 package deusto.safebox.client.net;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
+import deusto.safebox.common.ItemData;
+import deusto.safebox.common.ItemType;
 import deusto.safebox.common.net.PacketAction;
 import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.Packet;
+import deusto.safebox.common.net.packet.ReceiveDataPacket;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -52,6 +63,20 @@ public class Client extends SocketHandler {
     public Client(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
+
+        packetAction.putAction(ReceiveDataPacket.class, packet -> {
+            Map<ItemType, List<ItemData>> rawItems = classifyByType(packet.getItems());
+            // TODO
+        });
+    }
+
+    private Map<ItemType, List<ItemData>> classifyByType(Collection<ItemData> items) {
+        return items.parallelStream()
+                .collect(groupingBy(
+                    ItemData::getType,
+                    () -> new EnumMap<>(ItemType.class),
+                    toList())
+                );
     }
 
     /** Connect to the server. */
@@ -93,6 +118,9 @@ public class Client extends SocketHandler {
     @Override
     protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
-        packetAction.getAction(packet).accept(packet);
+        packetAction.getAction(packet).ifPresentOrElse(
+            action -> action.accept(packet),
+            () -> logger.error("There is no action defined for the received packet ({})", packet)
+        );
     }
 }

@@ -4,6 +4,7 @@ import deusto.safebox.common.net.packet.Packet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class PacketAction {
@@ -15,9 +16,10 @@ public class PacketAction {
         actions.put(Objects.requireNonNull(type), consumer);
     }
 
-    // Type safe because there is a type relationship between keys and values.
-    @SuppressWarnings("unchecked")
-    public <P extends Packet> Consumer<P> getAction(P packet) {
-        return (Consumer<P>) actions.get(packet.getClass());
+    public <P extends Packet> Optional<Consumer<P>> getAction(P packet) {
+        // Type safe because there is a type relationship between keys and values.
+        @SuppressWarnings("unchecked")
+        Consumer<P> consumer = (Consumer<P>) actions.get(packet.getClass());
+        return Optional.ofNullable(consumer);
     }
 }
