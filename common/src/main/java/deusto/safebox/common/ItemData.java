@@ -1,13 +1,11 @@
-package deusto.safebox.common.net;
+package deusto.safebox.common;
 
-import deusto.safebox.common.AbstractItem;
-import deusto.safebox.common.ItemType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /** Serializable form of an item. */
-public class ItemPacketData implements Serializable {
+public class ItemData implements Serializable {
 
     private static final long serialVersionUID = 4554854569406609630L;
 
@@ -17,20 +15,16 @@ public class ItemPacketData implements Serializable {
     private final LocalDateTime created;
     private final LocalDateTime lastModified;
 
-    public ItemPacketData(AbstractItem item) {
-        id = item.getItemId();
-        type = item.getItemType();
-        data = item.getEncryptedData();
-        created = item.getCreated();
-        lastModified = item.getLastModified();
-    }
-
-    public ItemPacketData(UUID id, ItemType type, String data, LocalDateTime created, LocalDateTime lastModified) {
+    public ItemData(UUID id, ItemType type, String data, LocalDateTime created, LocalDateTime lastModified) {
         this.id = id;
         this.type = type;
         this.data = data;
         this.created = created;
         this.lastModified = lastModified;
+    }
+
+    public ItemData(AbstractItem item) {
+        this(item.getItemId(), item.getItemType(), item.getEncryptedData(), item.getCreated(), item.getLastModified());
     }
 
     public UUID getId() {

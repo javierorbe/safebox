@@ -1,5 +1,6 @@
 package deusto.safebox.client.net;
 
+import deusto.safebox.common.net.PacketAction;
 import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.Packet;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class Client extends SocketHandler {
 
     private final String hostname;
     private final int port;
+    private final PacketAction packetAction = new PacketAction();
 
     private SSLSocket socket;
 
@@ -91,5 +93,6 @@ public class Client extends SocketHandler {
     @Override
     protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
+        packetAction.getAction(packet).accept(packet);
     }
 }

@@ -142,28 +142,23 @@ class SqlUserDao implements UserDao {
 
     private enum UserStatement implements SqlStatement {
         INSERT(
-                "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET name=?, email=?, password=?",
-                "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=?, email=?, password=?"
+            "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET name=?, email=?, password=?",
+            "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=?, email=?, password=?"
         ),
         UPDATE(
-                "UPDATE user SET name=?, email=?, password=? WHERE id=?",
-                "UPDATE user SET name=?, email=?, password=? WHERE id=?"
+            "UPDATE user SET name=?, email=?, password=? WHERE id=?"
         ),
         DELETE(
-                "DELETE FROM user WHERE id=?",
-                "DELETE FROM user WHERE id=?"
+            "DELETE FROM user WHERE id=?"
         ),
         GET_ONE(
-                "SELECT id, name, email, password, creation FROM user WHERE id=?",
-                "SELECT id, name, email, password, creation FROM user WHERE id=?"
+            "SELECT id, name, email, password, creation FROM user WHERE id=?"
         ),
         GET_ALL(
-                "SELECT id, name, email, password FROM user",
-                "SELECT id, name, email, password FROM user"
+            "SELECT id, name, email, password FROM user"
         ),
         GET_ONE_EMAIL(
-                "SELECT id, name, email, password FROM user WHERE email=?",
-                "SELECT id, name, email, password FROM user WHERE email=?"
+            "SELECT id, name, email, password FROM user WHERE email=?"
         )
         ;
 
@@ -173,6 +168,10 @@ class SqlUserDao implements UserDao {
         UserStatement(String sqliteStmt, String mysqlStmt) {
             this.sqliteStmt = sqliteStmt;
             this.mysqlStmt = mysqlStmt;
+        }
+
+        UserStatement(String genericStmt) {
+            this(genericStmt, genericStmt);
         }
 
         @Override

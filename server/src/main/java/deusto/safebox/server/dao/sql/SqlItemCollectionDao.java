@@ -1,7 +1,7 @@
 package deusto.safebox.server.dao.sql;
 
+import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
-import deusto.safebox.common.net.ItemPacketData;
 import deusto.safebox.server.ItemCollection;
 import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.ItemCollectionDao;
@@ -22,12 +22,12 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlItemCollectionDao implements ItemCollectionDao {
+class SqlItemCollectionDao implements ItemCollectionDao {
 
     private static final Logger logger = LoggerFactory.getLogger(SqlItemCollectionDao.class);
 
     private final Supplier<Optional<Connection>> connectionSupplier;
-    
+
     private final String insertOneItem;
     private final String updateOneItem;
     private final String delete;
@@ -35,7 +35,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     SqlItemCollectionDao(SqlDatabase database, Supplier<Optional<Connection>> connectionSupplier) {
         this.connectionSupplier = connectionSupplier;
-        
+
         insertOneItem = ItemCollectionStatement.INSERT_ONE_ITEM.get(database);
         updateOneItem = ItemCollectionStatement.UPDATE_ONE_ITEM.get(database);
         delete = ItemCollectionStatement.DELETE.get(database);
@@ -52,7 +52,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
         AtomicBoolean insertResult = new AtomicBoolean(false);
         boolean transactionResult = transaction(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(insertOneItem)) {
-                for (ItemPacketData item : collection.getItems()) {
+                for (ItemData item : collection.getItems()) {
                     statement.setString(1, item.getId().toString());
                     statement.setString(2, collection.getUserId().toString());
                     statement.setByte(3, item.getType().getId());
@@ -78,7 +78,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
         AtomicBoolean updateResult = new AtomicBoolean(false);
         boolean transactionResult = transaction(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(updateOneItem)) {
-                for (ItemPacketData item : collection.getItems()) {
+                for (ItemData item : collection.getItems()) {
                     statement.setString(1, item.getEncryptedData());
                     statement.setTimestamp(2, Timestamp.valueOf(item.getLastModified()));
                     statement.setString(3, item.getId().toString());
@@ -108,7 +108,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
         try (PreparedStatement statement = getConnection().prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
 
-            List<ItemPacketData> items = new ArrayList<>();
+            List<ItemData> items = new ArrayList<>();
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     items.add(convert(set));
@@ -126,13 +126,13 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
         throw new UnsupportedOperationException();
     }
 
-    private static ItemPacketData convert(ResultSet set) throws SQLException {
+    private static ItemData convert(ResultSet set) throws SQLException {
         UUID id = UUID.fromString(set.getString("id"));
         ItemType type  = ItemType.fromId(set.getByte("type"));
         String data = set.getString("data");
         LocalDateTime created = set.getTimestamp("creation").toLocalDateTime();
         LocalDateTime lastModified = set.getTimestamp("last_modified").toLocalDateTime();
-        return new ItemPacketData(id, type, data, created, lastModified);
+        return new ItemData(id, type, data, created, lastModified);
     }
 
     private boolean transaction(Consumer<Connection> connectionConsumer) throws DaoException {
@@ -158,34 +158,35 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
             }
         }
     }
-    
+
     private enum ItemCollectionStatement implements SqlStatement {
         INSERT_ONE_ITEM(
-                "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
+            "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
             "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
         ),
         UPDATE_ONE_ITEM(
-                "UPDATE item SET data=?, last_modified=? WHERE id=?",
-                "UPDATE item SET data=?, last_modified=? WHERE id=?"
+            "UPDATE item SET data=?, last_modified=? WHERE id=?"
         ),
         DELETE(
-                "DELETE FROM item WHERE user_id=?",
-                "DELETE FROM item WHERE user_id=?"
+            "DELETE FROM item WHERE user_id=?"
         ),
         GET_ONE(
-                "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?",
-                "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?"
+            "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?"
         ),
         ;
 
         private final String sqliteStmt;
         private final String mysqlStmt;
-        
+
         ItemCollectionStatement(String sqliteStmt, String mysqlStmt) {
             this.sqliteStmt = sqliteStmt;
             this.mysqlStmt = mysqlStmt;
         }
-        
+
+        ItemCollectionStatement(String genericStmt) {
+            this(genericStmt, genericStmt);
+        }
+
         @Override
         public String get(SqlDatabase database) {
             if (database == SqlDatabase.SQLITE) {
