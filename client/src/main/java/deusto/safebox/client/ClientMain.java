@@ -61,8 +61,8 @@ public class ClientMain {
         }
 
         return JsonConfig.ofResource(
-                "/" + CONFIG_FILE,
-                Path.of(programDirectory.getPath(), CONFIG_FILE).toString()
+                Path.of("/" + CONFIG_FILE),
+                Path.of(programDirectory.getPath(), CONFIG_FILE)
         );
     }
 
