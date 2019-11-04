@@ -6,7 +6,7 @@ import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.gui.ServerFrame;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.nio.file.Path;
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
@@ -17,16 +17,19 @@ public class ServerMain {
     private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
 
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String KEY_PATH = "/safeboxkey.jks";
+    private static final Path KEY_PATH = Path.of("/safeboxkey.jks");
     @SuppressWarnings("SpellCheckingInspection")
     private static final String KEY_PASSWORD = "LYXeAqB4VfjyfVGbrc4J";
-    private static final String CONFIG_FILE = "config.json";
+    /** Path of the config file inside the app resources. */
+    private static final Path CONFIG_RESOURCE = Path.of("/config.json");
+    /** Path where the config file is extracted. */
+    private static final Path CONFIG_FILE = Path.of("config.json");
+
+    private static ConfigFile config;
 
     public static void main(String[] args) {
-        ConfigFile config;
         try {
-            // The file is extracted in the same directory as the application executable.
-            config = JsonConfig.getOrExtractResource("/" + CONFIG_FILE, CONFIG_FILE);
+            config = JsonConfig.ofResource(CONFIG_RESOURCE, CONFIG_FILE);
         } catch (IOException e) {
             logger.error("Could not load the config file.", e);
             return;
@@ -36,13 +39,7 @@ public class ServerMain {
         logger.trace("Config socket port: {}", socketPort);
         Server server = new Server(socketPort, KEY_PATH, KEY_PASSWORD);
 
-        SqlDaoManager daoManager;
-        try {
-            daoManager = getSqlDaoManager(config);
-        } catch (SQLException e) {
-            logger.error("Could not connect to the database.", e);
-            return;
-        }
+        SqlDaoManager daoManager = getSqlDaoManager();
 
         if (args.length > 0 && args[0].equalsIgnoreCase("-gui")) {
             SwingUtilities.invokeLater(() -> new ServerFrame(server, daoManager));
@@ -58,12 +55,12 @@ public class ServerMain {
         }
     }
 
-    private static SqlDaoManager getSqlDaoManager(ConfigFile config) throws SQLException {
+    private static SqlDaoManager getSqlDaoManager() {
         String rdbms = config.getString("rdbms");
         switch (rdbms.toLowerCase()) {
             case "sqlite": {
                 String sqliteFilepath = config.getString("sqlite.filepath");
-                return SqlDaoManager.ofSqlite(sqliteFilepath);
+                return SqlDaoManager.ofSqlite(Path.of(sqliteFilepath));
             }
 
             case "mysql": {

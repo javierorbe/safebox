@@ -60,7 +60,7 @@ public class ClientMain {
             throw new IllegalArgumentException("The path is not a directory.");
         }
 
-        return JsonConfig.getOrExtractResource(
+        return JsonConfig.ofResource(
                 "/" + CONFIG_FILE,
                 Path.of(programDirectory.getPath(), CONFIG_FILE).toString()
         );

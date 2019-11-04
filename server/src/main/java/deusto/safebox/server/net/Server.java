@@ -4,6 +4,8 @@ import deusto.safebox.common.net.SocketHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -27,7 +29,7 @@ public class Server extends Thread implements AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     private final int port;
-    private final String keyPath;
+    private final Path keyPath;
     private final String keyPassword;
 
     private SSLServerSocket serverSocket;
@@ -41,7 +43,7 @@ public class Server extends Thread implements AutoCloseable {
      * @param keyPath JKS file path.
      * @param keyPassword JKS file password.
      */
-    public Server(int port, String keyPath, String keyPassword) {
+    public Server(int port, Path keyPath, String keyPassword) {
         this.port = port;
         this.keyPath = keyPath;
         this.keyPassword = keyPassword;
@@ -131,10 +133,7 @@ public class Server extends Thread implements AutoCloseable {
             throws KeyStoreException, CertificateException, NoSuchAlgorithmException,
             IOException, UnrecoverableKeyException, KeyManagementException {
         KeyStore ks = KeyStore.getInstance("JKS");
-
-        try (InputStream inputStream = getClass().getResourceAsStream(keyPath)) {
-            ks.load(inputStream, keyPassword.toCharArray());
-        }
+        ks.load(Files.newInputStream(keyPath), keyPassword.toCharArray());
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, keyPassword.toCharArray());

@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import deusto.safebox.server.dao.DaoManager;
 import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.dao.UserDao;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -70,9 +71,9 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
      * @param path path to the database file.
      * @return a {@link SqlDaoManager} connected to a SQLite database.
      */
-    public static SqlDaoManager ofSqlite(String path) {
+    public static SqlDaoManager ofSqlite(Path path) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(String.format(SQLITE_URL, path));
+        config.setJdbcUrl(String.format(SQLITE_URL, path.toString()));
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);

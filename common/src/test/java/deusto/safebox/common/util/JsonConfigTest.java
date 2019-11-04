@@ -3,17 +3,16 @@ package deusto.safebox.common.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class JsonConfigTest {
 
-    private static final String TEST_CONFIG_FILEPATH = "./test_config.json";
+    private static final Path TEST_CONFIG = Path.of("./test_config.json");
     private static final String TEST_CONTENT = "{ val1: \"example\", val2: { val3: 1337 } }";
 
     private static ConfigFile configFile;
@@ -21,15 +20,13 @@ class JsonConfigTest {
     @BeforeAll
     static void setup() {
         try {
-            try (PrintWriter pw = new PrintWriter(TEST_CONFIG_FILEPATH)) {
-                pw.println(TEST_CONTENT);
-            }
-        } catch (FileNotFoundException e) {
-            fail(e);
+            Files.writeString(TEST_CONFIG, TEST_CONTENT);
+        } catch (IOException e) {
+            fail("Could not write to the test config file.", e);
         }
 
         try {
-            configFile = new JsonConfig(TEST_CONFIG_FILEPATH);
+            configFile = new JsonConfig(TEST_CONFIG);
         } catch (IOException e) {
             fail(e);
         }
@@ -49,11 +46,10 @@ class JsonConfigTest {
 
     @AfterAll
     static void clean() {
-        File file = new File(TEST_CONFIG_FILEPATH);
-        if (file.exists()) {
-            if (!file.delete()) {
-                fail("Could not delete test config file.");
-            }
+        try {
+            Files.deleteIfExists(TEST_CONFIG);
+        } catch (IOException e) {
+            fail("Could not delete the config file.", e);
         }
     }
 }
