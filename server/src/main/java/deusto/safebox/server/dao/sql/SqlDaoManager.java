@@ -25,7 +25,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     private final UserDao userDao;
     private final ItemCollectionDao itemCollectionDao;
 
-    private SqlDaoManager(HikariConfig config) {
+    private SqlDaoManager(SqlDatabase database, HikariConfig config) {
         dataSource = new HikariDataSource(config);
 
         logger.info("Connected to the database.");
@@ -40,8 +40,8 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
             }
         };
 
-        userDao = new SqlUserDao(connectionSupplier);
-        itemCollectionDao = new SqlItemCollectionDao(connectionSupplier);
+        userDao = new SqlUserDao(database, connectionSupplier);
+        itemCollectionDao = new SqlItemCollectionDao(database, connectionSupplier);
     }
 
     public DatabaseMetaData getDatabaseMetadata() throws SQLException {
@@ -77,7 +77,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
         config.addDataSourceProperty("useServerPrepStmts", true);
-        return new SqlDaoManager(config);
+        return new SqlDaoManager(SqlDatabase.SQLITE, config);
     }
 
     /**
@@ -99,6 +99,6 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
         config.addDataSourceProperty("useServerPrepStmts", true);
-        return new SqlDaoManager(config);
+        return new SqlDaoManager(SqlDatabase.MYSQL, config);
     }
 }

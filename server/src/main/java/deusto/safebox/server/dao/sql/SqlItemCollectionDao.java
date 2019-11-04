@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +26,20 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     private static final Logger logger = LoggerFactory.getLogger(SqlItemCollectionDao.class);
 
-    private static final String INSERT_ONE_ITEM
-            = "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_ONE_ITEM
-            = "UPDATE item SET data=?, last_modified=? WHERE id=?";
-    private static final String DELETE
-            = "DELETE FROM item WHERE user_id=?";
-    private static final String GET_ONE
-            = "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?";
-
     private final Supplier<Optional<Connection>> connectionSupplier;
+    
+    private final String insertOneItem;
+    private final String updateOneItem;
+    private final String delete;
+    private final String getOne;
 
-    SqlItemCollectionDao(Supplier<Optional<Connection>> connectionSupplier) {
+    SqlItemCollectionDao(SqlDatabase database, Supplier<Optional<Connection>> connectionSupplier) {
         this.connectionSupplier = connectionSupplier;
+        
+        insertOneItem = ItemCollectionStatement.INSERT_ONE_ITEM.get(database);
+        updateOneItem = ItemCollectionStatement.UPDATE_ONE_ITEM.get(database);
+        delete = ItemCollectionStatement.DELETE.get(database);
+        getOne = ItemCollectionStatement.GET_ONE.get(database);
     }
 
     private Connection getConnection() throws DaoException {
@@ -46,76 +49,53 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public boolean insert(ItemCollection collection) throws DaoException {
-        Connection connection = getConnection();
-
-        try (PreparedStatement statement = connection.prepareStatement(INSERT_ONE_ITEM)) {
-            connection.setAutoCommit(false);
-
-            for (ItemPacketData item : collection.getItems()) {
-                statement.setString(1, item.getId().toString());
-                statement.setString(2, collection.getUserId().toString());
-                statement.setByte(3, item.getType().getId());
-                statement.setString(4, item.getEncryptedData());
-                statement.setTimestamp(5, Timestamp.valueOf(item.getCreated()));
-                statement.setTimestamp(6, Timestamp.valueOf(item.getLastModified()));
-                statement.addBatch();
-            }
-
-            int[] results = statement.executeBatch();
-            connection.commit();
-            return Arrays.stream(results).allMatch(result -> result > 0);
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                logger.error("Error in transaction rollback.", rollbackEx);
-            }
-            return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
+        AtomicBoolean insertResult = new AtomicBoolean(false);
+        boolean transactionResult = transaction(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(insertOneItem)) {
+                for (ItemPacketData item : collection.getItems()) {
+                    statement.setString(1, item.getId().toString());
+                    statement.setString(2, collection.getUserId().toString());
+                    statement.setByte(3, item.getType().getId());
+                    statement.setString(4, item.getEncryptedData());
+                    statement.setTimestamp(5, Timestamp.valueOf(item.getCreated()));
+                    statement.setTimestamp(6, Timestamp.valueOf(item.getLastModified()));
+                    statement.setString(7, item.getEncryptedData());
+                    statement.setTimestamp(8, Timestamp.valueOf(item.getLastModified()));
+                    statement.addBatch();
+                }
+                int[] results = statement.executeBatch();
+                insertResult.set(Arrays.stream(results).allMatch(e -> e > 0));
             } catch (SQLException e) {
-                logger.error("Error in transaction rollback.", e);
+                logger.error("SQL error.", e);
+                insertResult.set(false);
             }
-        }
+        });
+        return insertResult.get() && transactionResult;
     }
 
     @Override
     public boolean update(ItemCollection collection) throws DaoException {
-        Connection connection = getConnection();
-
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE_ONE_ITEM)) {
-            connection.setAutoCommit(false);
-
-            for (ItemPacketData item : collection.getItems()) {
-                statement.setString(1, item.getEncryptedData());
-                statement.setTimestamp(2, Timestamp.valueOf(item.getLastModified()));
-                statement.setString(3, item.getId().toString());
-                statement.addBatch();
-            }
-
-            int[] results = statement.executeBatch();
-            connection.commit();
-            return Arrays.stream(results).allMatch(result -> result > 0);
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                logger.error("Error in transaction rollback.", rollbackEx);
-            }
-            return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
+        AtomicBoolean updateResult = new AtomicBoolean(false);
+        boolean transactionResult = transaction(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(updateOneItem)) {
+                for (ItemPacketData item : collection.getItems()) {
+                    statement.setString(1, item.getEncryptedData());
+                    statement.setTimestamp(2, Timestamp.valueOf(item.getLastModified()));
+                    statement.setString(3, item.getId().toString());
+                    statement.addBatch();
+                }
+                int[] results = statement.executeBatch();
+                updateResult.set(Arrays.stream(results).allMatch(e -> e > 0));
             } catch (SQLException e) {
-                logger.error("Error in transaction rollback.", e);
+                logger.error("SQL error.", e);
             }
-        }
+        });
+        return updateResult.get() && transactionResult;
     }
 
     @Override
     public boolean delete(ItemCollection collection) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(DELETE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(delete)) {
             statement.setString(1, collection.getUserId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -125,7 +105,7 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public Optional<ItemCollection> get(UUID userId) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(GET_ONE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
 
             List<ItemPacketData> items = new ArrayList<>();
@@ -153,5 +133,66 @@ public class SqlItemCollectionDao implements ItemCollectionDao {
         LocalDateTime created = set.getTimestamp("creation").toLocalDateTime();
         LocalDateTime lastModified = set.getTimestamp("last_modified").toLocalDateTime();
         return new ItemPacketData(id, type, data, created, lastModified);
+    }
+
+    private boolean transaction(Consumer<Connection> connectionConsumer) throws DaoException {
+        Connection connection = getConnection();
+
+        try {
+            connection.setAutoCommit(false);
+            connectionConsumer.accept(connection);
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                logger.error("Error in transaction rollback.", rollbackEx);
+            }
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.error("Error enabling auto commit.");
+            }
+        }
+    }
+    
+    private enum ItemCollectionStatement implements SqlStatement {
+        INSERT_ONE_ITEM(
+                "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
+            "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
+        ),
+        UPDATE_ONE_ITEM(
+                "UPDATE item SET data=?, last_modified=? WHERE id=?",
+                "UPDATE item SET data=?, last_modified=? WHERE id=?"
+        ),
+        DELETE(
+                "DELETE FROM item WHERE user_id=?",
+                "DELETE FROM item WHERE user_id=?"
+        ),
+        GET_ONE(
+                "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?",
+                "SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?"
+        ),
+        ;
+
+        private final String sqliteStmt;
+        private final String mysqlStmt;
+        
+        ItemCollectionStatement(String sqliteStmt, String mysqlStmt) {
+            this.sqliteStmt = sqliteStmt;
+            this.mysqlStmt = mysqlStmt;
+        }
+        
+        @Override
+        public String get(SqlDatabase database) {
+            if (database == SqlDatabase.SQLITE) {
+                return sqliteStmt;
+            } else {
+                return mysqlStmt;
+            }
+        }
     }
 }
