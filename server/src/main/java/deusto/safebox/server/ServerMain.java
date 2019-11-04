@@ -20,8 +20,8 @@ public class ServerMain {
     private static final Path KEY_PATH = Path.of("/safeboxkey.jks");
     @SuppressWarnings("SpellCheckingInspection")
     private static final String KEY_PASSWORD = "LYXeAqB4VfjyfVGbrc4J";
-    /** Path of the config file inside the app resources. */
-    private static final Path CONFIG_RESOURCE = Path.of("/config.json");
+    /** Resource name of the config file. */
+    private static final String CONFIG_RESOURCE = "config.json";
     /** Path where the config file is extracted. */
     private static final Path CONFIG_FILE = Path.of("config.json");
 

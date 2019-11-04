@@ -3,6 +3,7 @@ package deusto.safebox.common.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -98,14 +99,17 @@ public class JsonConfig implements ConfigFile {
      * If the file doesn't exist in the system disk, then the resource file in {@code resourcePath}
      * is first extracted to {@code extractionPath} and then read.
      *
-     * @param resource file path to the JSON file in the application resources.
+     * @param resourcePath file path to the JSON file in the application resources.
      * @param extract file path where to read or extract the file.
+     * @return the loaded JSON config file.
      * @throws IOException if there is an error reading or extracting the file.
      */
-    public static JsonConfig ofResource(Path resource, Path extract) throws IOException {
+    public static JsonConfig ofResource(String resourcePath, Path extract) throws IOException {
         if (!Files.exists(extract)) {
             logger.trace("Config file doesn't exist, creating it.");
-            Files.copy(resource, extract);
+            try (InputStream is = JsonConfig.class.getResourceAsStream("/" + resourcePath)) {
+                Files.copy(is, extract);
+            }
         }
         return new JsonConfig(extract);
     }

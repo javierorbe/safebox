@@ -3,8 +3,8 @@ package deusto.safebox.client;
 import deusto.safebox.client.gui.MainFrame;
 import deusto.safebox.common.util.ConfigFile;
 import deusto.safebox.common.util.JsonConfig;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
@@ -14,16 +14,20 @@ public class ClientMain {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
 
-    /** Program data folder name. */
-    private static final String FOLDER_NAME = ".safebox";
-    private static final String CONFIG_FILE = "config.json";
+    /** Program data directory. */
+    private static final Path PROGRAM_DIRECTORY = Path.of(getUserDataDirectory(), ".safebox");
+    /** Resource name of the config file. */
+    private static final String CONFIG_RESOURCE = "config.json";
+    /** Path where the config file is extracted inside the program data directory. */
+    private static final Path CONFIG_FILE = Path.of("config.json");
 
     public static void main(String[] args) {
-        final ConfigFile config;
+        ConfigFile config;
         try {
-            config = getClientConfig();
+            Files.createDirectories(PROGRAM_DIRECTORY);
+            config = JsonConfig.ofResource(CONFIG_RESOURCE, PROGRAM_DIRECTORY.resolve(CONFIG_FILE));
         } catch (IOException e) {
-            logger.error("Could not load client configuration file.", e);
+            logger.error("Error loading the config file.", e);
             return;
         }
 
@@ -39,31 +43,6 @@ public class ClientMain {
         logger.info("Selected language: {}", lang);
 
         SwingUtilities.invokeLater(MainFrame::new);
-    }
-
-    /**
-     * Returns a {@link JsonConfig} with the contents of the client configuration file.
-     *
-     * <p>The program data directory is created if it doesn't exist.
-     *
-     * @return a {@link JsonConfig} with the contents of the config file.
-     * @throws RuntimeException if the data directory cannot be created or the config file cannot be read.
-     * @throws IllegalArgumentException if the path to the data directory doesn't contain a directory.
-     */
-    private static JsonConfig getClientConfig() throws IOException {
-        File programDirectory = Path.of(getUserDataDirectory(), FOLDER_NAME).toFile();
-        if (!programDirectory.exists()) {
-            if (!programDirectory.mkdir()) {
-                throw new RuntimeException("Could not create the data directory " + programDirectory.toString());
-            }
-        } else if (!programDirectory.isDirectory()) {
-            throw new IllegalArgumentException("The path is not a directory.");
-        }
-
-        return JsonConfig.ofResource(
-                Path.of("/" + CONFIG_FILE),
-                Path.of(programDirectory.getPath(), CONFIG_FILE)
-        );
     }
 
     /**
