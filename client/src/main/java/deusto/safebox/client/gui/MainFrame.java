@@ -30,17 +30,14 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
         setJMenuBar(new MenuBar());
 
-        getContentPane().add(new ToolBar(this) {
-            @Override
-            protected void lock() {
-                // TEMP
-                if (currentPanel == PanelType.MAIN) {
-                    setCurrentPanel(PanelType.AUTH);
-                } else {
-                    setCurrentPanel(PanelType.MAIN);
-                }
+        getContentPane().add(new ToolBar(this, () -> {
+            // TEMP
+            if (currentPanel == PanelType.MAIN) {
+                setCurrentPanel(PanelType.AUTH);
+            } else {
+                setCurrentPanel(PanelType.MAIN);
             }
-        }, BorderLayout.PAGE_START);
+        }), BorderLayout.PAGE_START);
 
         panels.put(PanelType.MAIN, new MainPanel());
         panels.put(PanelType.AUTH, new AuthPanel());
