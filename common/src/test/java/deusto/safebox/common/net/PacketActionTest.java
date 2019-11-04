@@ -15,11 +15,11 @@ class PacketActionTest {
 
         Consumer<TestPacket> testPacketAction = testPacket -> {};
         packetAction.putAction(TestPacket.class, testPacketAction);
-        TestPacket testPacket = new TestPacket("Example");
 
+        TestPacket testPacket = new TestPacket("Example");
         packetAction.getAction(testPacket).ifPresentOrElse(
             action -> assertEquals(testPacketAction, action),
-            fail("There is no action defined for a TestPacket.")
+            () -> fail("There is no action defined for a TestPacket.")
         );
     }
 }
