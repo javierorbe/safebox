@@ -20,6 +20,7 @@ public class IconManager {
         FOLDER("folder_16"),
         GEAR("gear_20"),
         LOCK("lock_20"),
+        NEW_FILE_12("new_file_12"),
         NEW_FILE_16("new_file_16"),
         NEW_FILE_20("new_file_20"),
         PASSWORD_FIELD("password_field_20"),
