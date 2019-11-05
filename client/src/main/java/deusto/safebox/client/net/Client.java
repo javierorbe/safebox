@@ -2,14 +2,14 @@ package deusto.safebox.client.net;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
-import deusto.safebox.common.util.UnboundClassConsumerMap;
 import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.Packet;
 import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.util.BoundClassConsumerMap;
+import deusto.safebox.common.util.IBoundClassConsumerMap;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
@@ -50,7 +50,7 @@ public class Client extends SocketHandler {
 
     private final String hostname;
     private final int port;
-    private final UnboundClassConsumerMap packetAction = new UnboundClassConsumerMap();
+    private final IBoundClassConsumerMap<Packet> packetAction = new BoundClassConsumerMap<>();
 
     private SSLSocket socket;
 
@@ -77,6 +77,10 @@ public class Client extends SocketHandler {
                     () -> new EnumMap<>(ItemType.class),
                     toList())
                 );
+    }
+
+    public boolean isConnected() {
+        return socket != null && socket.isConnected();
     }
 
     /** Connect to the server. */

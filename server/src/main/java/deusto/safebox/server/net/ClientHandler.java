@@ -1,10 +1,11 @@
 package deusto.safebox.server.net;
 
-import deusto.safebox.common.util.UnboundClassConsumerMap;
 import deusto.safebox.common.net.SocketHandler;
 import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.Packet;
 import deusto.safebox.common.net.packet.TestPacket;
+import deusto.safebox.common.util.BoundClassConsumerMap;
+import deusto.safebox.common.util.IBoundClassConsumerMap;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.ssl.SSLSocket;
@@ -15,7 +16,7 @@ public abstract class ClientHandler extends SocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-    private final UnboundClassConsumerMap packetAction = new UnboundClassConsumerMap();
+    private final IBoundClassConsumerMap<Packet> packetAction = new BoundClassConsumerMap<>();
     private final SSLSocket socket;
 
     ClientHandler(SSLSocket socket) {

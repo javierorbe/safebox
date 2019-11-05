@@ -6,7 +6,9 @@ import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.gui.ServerFrame;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
@@ -16,10 +18,6 @@ public class ServerMain {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
 
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final Path KEY_PATH = Path.of("/safeboxkey.jks");
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String KEY_PASSWORD = "LYXeAqB4VfjyfVGbrc4J";
     /** Resource name of the config file. */
     private static final String CONFIG_RESOURCE = "config.json";
     /** Path where the config file is extracted. */
@@ -36,9 +34,11 @@ public class ServerMain {
         }
 
         int socketPort = config.getInt("socketPort");
-        logger.trace("Config socket port: {}", socketPort);
-        Server server = new Server(socketPort, KEY_PATH, KEY_PASSWORD);
+        // TODO: get a key path of the system disk provided in the config
+        Path keyPath = getDefaultKeyPath();
+        String keyPassword = config.getString("keyPassword");
 
+        Server server = new Server(socketPort, keyPath, keyPassword);
         SqlDaoManager daoManager = getSqlDaoManager();
 
         if (args.length > 0 && args[0].equalsIgnoreCase("-gui")) {
@@ -75,6 +75,18 @@ public class ServerMain {
             default: {
                 throw new IllegalArgumentException("Invalid RDBMS in config: " + rdbms);
             }
+        }
+    }
+
+    // TEMP
+    private static Path getDefaultKeyPath() {
+        try {
+            @SuppressWarnings("SpellCheckingInspection")
+            Path path = Paths.get(ServerMain.class.getResource("/safeboxkey.jks").toURI());
+            return path;
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

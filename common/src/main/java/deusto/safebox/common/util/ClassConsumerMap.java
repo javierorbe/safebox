@@ -7,9 +7,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * A {@link IBoundClassConsumerMap} with no bounds.
+ * An unbound implementation of {@link IBoundClassConsumerMap}.
  */
-public class UnboundClassConsumerMap implements IBoundClassConsumerMap<Object> {
+public class ClassConsumerMap implements IBoundClassConsumerMap<Object> {
 
     // Both wildcards must be of the same type (Java's type system is not powerful enough to express this).
     private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();

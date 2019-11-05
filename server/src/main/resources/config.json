@@ -1,5 +1,7 @@
 {
   "socketPort": 6819,
+  "keyPath": "",
+  "keyPassword": "LYXeAqB4VfjyfVGbrc4J",
   "rdbms":  "sqlite",
   "sqlite": {
     "filepath": "./dir/safebox.db"

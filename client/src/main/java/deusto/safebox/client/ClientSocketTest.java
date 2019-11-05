@@ -39,7 +39,9 @@ public class ClientSocketTest {
 
             @Override
             protected void close() {
-                client.sendPacket(new DisconnectPacket());
+                if (client.isConnected()) {
+                    client.sendPacket(new DisconnectPacket());
+                }
             }
         });
     }
@@ -47,6 +49,8 @@ public class ClientSocketTest {
     private abstract static class SocketTestWindow extends JFrame {
 
         SocketTestWindow() {
+            super("Socket Test Client");
+
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setSize(480, 320);
 

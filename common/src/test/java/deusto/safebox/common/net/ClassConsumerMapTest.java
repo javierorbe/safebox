@@ -4,15 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import deusto.safebox.common.net.packet.TestPacket;
-import deusto.safebox.common.util.UnboundClassConsumerMap;
+import deusto.safebox.common.util.ClassConsumerMap;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
-class UnboundClassConsumerMapTest {
+class ClassConsumerMapTest {
 
     @Test
     void test() {
-        UnboundClassConsumerMap packetAction = new UnboundClassConsumerMap();
+        ClassConsumerMap packetAction = new ClassConsumerMap();
 
         Consumer<TestPacket> testPacketAction = testPacket -> {};
         packetAction.put(TestPacket.class, testPacketAction);

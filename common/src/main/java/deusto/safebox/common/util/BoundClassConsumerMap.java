@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * An implementation of a {@link IBoundClassConsumerMap}.
+ * An implementation of {@link IBoundClassConsumerMap}.
  *
  * @param <S> the super class of accepted class types.
  */
