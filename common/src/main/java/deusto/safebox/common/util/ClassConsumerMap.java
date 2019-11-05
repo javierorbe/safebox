@@ -20,7 +20,15 @@ public class ClassConsumerMap implements IBoundClassConsumerMap<Object> {
     }
 
     @Override
-    public <T> Optional<Consumer<T>> get(T object) {
+    public <T> Optional<Consumer<T>> get(Class<T> classType) {
+        // Type safe because there is a type relationship between keys and values.
+        @SuppressWarnings("unchecked")
+        Consumer<T> consumer = (Consumer<T>) consumers.get(classType);
+        return Optional.ofNullable(consumer);
+    }
+
+    @Override
+    public <T> Optional<Consumer<T>> of(T object) {
         // Type safe because there is a type relationship between keys and values.
         @SuppressWarnings("unchecked")
         Consumer<T> consumer = (Consumer<T>) consumers.get(object.getClass());

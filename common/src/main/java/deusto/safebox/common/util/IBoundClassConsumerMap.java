@@ -11,5 +11,7 @@ public interface IBoundClassConsumerMap<S> {
 
     <T extends S> void put(Class<T> classType, Consumer<T> consumer);
 
-    <T extends S> Optional<Consumer<T>> get(T object);
+    <T extends S> Optional<Consumer<T>> get(Class<T> classType);
+
+    <T extends S> Optional<Consumer<T>> of(T object);
 }

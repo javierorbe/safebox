@@ -50,7 +50,7 @@ public abstract class ClientHandler extends SocketHandler {
     @Override
     protected void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
-        packetAction.get(packet).ifPresentOrElse(
+        packetAction.of(packet).ifPresentOrElse(
             action -> action.accept(packet),
             () -> logger.error("There is no action defined for the received packet ({})", packet)
         );
