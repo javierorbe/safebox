@@ -2,6 +2,7 @@ package deusto.safebox.common;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /** Serializable form of an item. */
@@ -16,7 +17,7 @@ public class ItemData implements Serializable {
     private final LocalDateTime lastModified;
 
     public ItemData(UUID id, ItemType type, String data, LocalDateTime created, LocalDateTime lastModified) {
-        this.id = id;
+        this.id = Objects.requireNonNull(id);
         this.type = type;
         this.data = data;
         this.created = created;
@@ -45,5 +46,10 @@ public class ItemData implements Serializable {
 
     public LocalDateTime getLastModified() {
         return lastModified;
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
     }
 }

@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * An implementation of {@link IBoundClassConsumerMap}.
  *
- * @param <S> the super class of accepted class types.
+ * @param <S> the type of the super class of accepted class types.
  */
 public class BoundClassConsumerMap<S> implements IBoundClassConsumerMap<S> {
 
