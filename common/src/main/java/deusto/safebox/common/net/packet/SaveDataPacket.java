@@ -2,7 +2,6 @@ package deusto.safebox.common.net.packet;
 
 import deusto.safebox.common.ItemData;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class SaveDataPacket extends Packet implements Serializable {
@@ -21,6 +20,6 @@ public class SaveDataPacket extends Packet implements Serializable {
 
     @Override
     public String toString() {
-        return "SaveItemsPacket: " + Arrays.toString(items.toArray());
+        return getClass().getName() + " (" + items.size() + " items)";
     }
 }

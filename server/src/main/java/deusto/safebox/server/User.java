@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public class User {
 
-    private UUID id;
-    private String name;
-    private String email;
-    private String password;
-    private LocalDate creation;
+    private final UUID id;
+    private final String name;
+    private final String email;
+    private final String password;
+    private final LocalDate creation;
 
     public User(UUID id, String name, String email, String password, LocalDate creation) {
         this.id = id;

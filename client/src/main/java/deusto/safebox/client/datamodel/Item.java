@@ -19,8 +19,12 @@ public abstract class Item extends AbstractItem {
         this(null, name, created, lastModified);
     }
 
-    public String getItemName() {
+    public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

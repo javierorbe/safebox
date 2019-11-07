@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,46 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
 
     private boolean running = false;
     private ObjectOutputStream out;
+
+    private Runnable connectionEstablished;
+    private Consumer<Packet> packetReceived;
+
+    /**
+     * Creates a socket handler with the specified behavior.
+     *
+     * @param connectionEstablished called when the connection is ready to send and receive data.
+     * @param packetReceived accepted when a packet is received from the other endpoint of the socket.
+     */
+    public SocketHandler(Runnable connectionEstablished, Consumer<Packet> packetReceived) {
+        this.connectionEstablished = connectionEstablished;
+        this.packetReceived = packetReceived;
+    }
+
+    /** Creates a socket handler with the default behavior. */
+    public SocketHandler() {
+        this(
+            () -> logger.info("Socket connection established."),
+            packet -> logger.info("Packet received ({}).", packet)
+        );
+    }
+
+    /**
+     * Set the connection established callback.
+     *
+     * @param connectionEstablished the callback.
+     */
+    public void setConnectionEstablished(Runnable connectionEstablished) {
+        this.connectionEstablished = connectionEstablished;
+    }
+
+    /**
+     * Set the packet received callback.
+     *
+     * @param packetReceived the callback.
+     */
+    public void setPacketReceived(Consumer<Packet> packetReceived) {
+        this.packetReceived = packetReceived;
+    }
 
     /** Starts listening to incoming data from the socket. */
     protected void listen() {
@@ -29,13 +70,13 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
         }
 
         try (ObjectInputStream in = new ObjectInputStream(getSocket().getInputStream())) {
-            connectionEstablished();
+            connectionEstablished.run();
 
             while (getSocket().isConnected()) {
                 try {
                     Object data = in.readObject();
                     if (data instanceof Packet) {
-                        receivePacket((Packet) data);
+                        packetReceived.accept((Packet) data);
                     } else {
                         logger.warn("Received an invalid object type ({})", data.getClass().getName());
                     }
@@ -65,16 +106,6 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
     }
 
     protected abstract Socket getSocket();
-
-    /** Called when the connection is ready to send and receive data. */
-    protected abstract void connectionEstablished();
-
-    /**
-     * Called when a packet is received from the other endpoint of the socket.
-     *
-     * @param packet the received packet.
-     */
-    protected abstract void receivePacket(Packet packet);
 
     /**
      * Send a packet to the other endpoint of the socket.

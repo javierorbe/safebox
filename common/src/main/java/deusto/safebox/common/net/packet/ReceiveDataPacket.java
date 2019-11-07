@@ -19,6 +19,6 @@ public class ReceiveDataPacket extends Packet {
 
     @Override
     public String toString() {
-        return "ReceiveDataPacket";
+        return getClass().getName() + " (" + getItems().size() + " items)";
     }
 }

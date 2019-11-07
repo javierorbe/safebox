@@ -65,7 +65,7 @@ public class Folder extends Item {
         StringBuilder builder = new StringBuilder();
         Folder current = this;
         do {
-            builder.insert(0, current.getItemName());
+            builder.insert(0, current.getName());
             builder.append('/');
             current = current.getParentFolder();
         } while (current != null);
@@ -75,6 +75,6 @@ public class Folder extends Item {
 
     @Override
     public String toString() {
-        return getItemName();
+        return getName();
     }
 }

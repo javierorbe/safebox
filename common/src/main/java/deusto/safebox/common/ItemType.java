@@ -19,8 +19,8 @@ public enum ItemType {
     private static final Map<Byte, ItemType> ID_MAPPER
             = Arrays.stream(values()).collect(toMap(ItemType::getId, e -> e));
 
-    private byte id;
-    private String name;
+    private final byte id;
+    private final String name;
 
     ItemType(byte id, String name) {
         this.id = id;

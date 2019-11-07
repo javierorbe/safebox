@@ -15,7 +15,7 @@ public class FolderTreeCellRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
         if (value instanceof Folder) {
-            setText(((Folder) value).getItemName());
+            setText(((Folder) value).getName());
             setIcon(IconType.FOLDER.getAsIcon());
         }
 

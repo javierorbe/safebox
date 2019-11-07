@@ -35,6 +35,10 @@ public abstract class AbstractItem {
         return lastModified;
     }
 
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
     public abstract ItemType getItemType();
 
     /**

@@ -1,6 +1,8 @@
 package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
+import deusto.safebox.client.security.Encryption;
+import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
@@ -14,29 +16,50 @@ public class Login extends LeafItem {
 
     private LocalDate passwordExpiration;
 
-    public Login(String itemName, Folder folder, LocalDateTime lastModified, LocalDateTime created,
+    public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                  String username, String password, String website, LocalDate passwordExpiration) {
-        super(itemName, folder, lastModified, created);
+        super(itemName, folder, created, lastModified);
         this.username = username;
         this.password = password;
         this.website = website;
         this.passwordExpiration = passwordExpiration;
     }
 
+    private Login(String itemName, LocalDateTime created, LocalDateTime lastModified,
+                 String username, String password, String website, LocalDate passwordExpiration) {
+        this(itemName, null, created, lastModified, username, password, website, passwordExpiration);
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getWebsite() {
         return website;
     }
 
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
     public LocalDate getPasswordExpiration() {
         return passwordExpiration;
+    }
+
+    public void setPasswordExpiration(LocalDate passwordExpiration) {
+        this.passwordExpiration = passwordExpiration;
     }
 
     @Override
@@ -50,6 +73,7 @@ public class Login extends LeafItem {
         root.addProperty("username", username);
         root.addProperty("password", password);
         root.addProperty("website", website);
+        root.add("passwordExpiration", Constants.GSON.toJsonTree(passwordExpiration));
         return root;
     }
 
@@ -57,7 +81,7 @@ public class Login extends LeafItem {
     public Object getProperty(int index) {
         switch (index) {
             case 0:
-                return getItemName();
+                return getName();
             case 1:
                 return username;
             case 2:

@@ -14,6 +14,6 @@ public class TestPacket extends Packet implements Serializable {
 
     @Override
     public String toString() {
-        return "TestPacket: " + text;
+        return getClass().getName() +  " (" + text + ")";
     }
 }

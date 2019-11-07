@@ -38,8 +38,8 @@ public class ServerMain {
         Path keyPath = getDefaultKeyPath();
         String keyPassword = config.getString("keyPassword");
 
-        Server server = new Server(socketPort, keyPath, keyPassword);
         SqlDaoManager daoManager = getSqlDaoManager();
+        Server server = new Server(socketPort, keyPath, keyPassword, daoManager);
 
         if (args.length > 0 && args[0].equalsIgnoreCase("-gui")) {
             SwingUtilities.invokeLater(() -> new ServerFrame(server, daoManager));

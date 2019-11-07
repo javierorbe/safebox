@@ -50,7 +50,7 @@ public class FolderTableModel extends AbstractTableModel {
         Item item = items.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return item.getItemName();
+                return item.getName();
             case 1:
                 return item.getItemType().getName();
             case 2:

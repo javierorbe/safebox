@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 
     private static final Dimension PREFERRED_SIZE = new Dimension(1280, 720);
 
-    private Map<PanelType, JPanel> panels = new EnumMap<>(PanelType.class);
+    private final Map<PanelType, JPanel> panels = new EnumMap<>(PanelType.class);
     private PanelType currentPanel;
 
     public MainFrame() {

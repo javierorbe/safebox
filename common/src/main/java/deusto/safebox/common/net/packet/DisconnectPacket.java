@@ -6,10 +6,8 @@ public class DisconnectPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = -1320778634686900238L;
 
-    public DisconnectPacket() {}
-
     @Override
     public String toString() {
-        return "DisconnectPacket";
+        return getClass().getName();
     }
 }

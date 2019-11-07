@@ -107,7 +107,7 @@ public class GridBagBuilder {
         BOTH(GridBagConstraints.BOTH),
         ;
 
-        private int id;
+        private final int id;
 
         Fill(int id) {
             this.id = id;
@@ -128,7 +128,7 @@ public class GridBagBuilder {
         PAGE_END(GridBagConstraints.PAGE_END),
         ;
 
-        private int id;
+        private final int id;
 
         Anchor(int id) {
             this.id = id;

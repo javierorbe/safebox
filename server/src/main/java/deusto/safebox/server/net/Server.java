@@ -1,17 +1,12 @@
 package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.SocketHandler;
+import deusto.safebox.server.dao.DaoManager;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.HashSet;
 import javax.net.ssl.KeyManagerFactory;
@@ -36,6 +31,8 @@ public class Server extends Thread implements AutoCloseable {
     private boolean running = false;
     private final Collection<ClientHandler> clients = new HashSet<>();
 
+    private final ServerPacketMap packetMap;
+
     /**
      * Creates a {@link Server} with the specified port.
      *
@@ -43,10 +40,11 @@ public class Server extends Thread implements AutoCloseable {
      * @param keyPath JKS file path.
      * @param keyPassword JKS file password.
      */
-    public Server(int port, Path keyPath, String keyPassword) {
+    public Server(int port, Path keyPath, String keyPassword, DaoManager daoManager) {
         this.port = port;
         this.keyPath = keyPath;
         this.keyPassword = keyPassword;
+        packetMap = new ServerPacketMap(this, daoManager);
     }
 
     public int getPort() {
@@ -63,8 +61,7 @@ public class Server extends Thread implements AutoCloseable {
         SSLServerSocketFactory ssf;
         try {
             ssf = createServerSocketFactory();
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException
-                | IOException | UnrecoverableKeyException | KeyManagementException e) {
+        } catch (Exception e) {
             logger.error("Could not create a secure socket factory. ", e);
             return;
         }
@@ -76,7 +73,7 @@ public class Server extends Thread implements AutoCloseable {
             return;
         }
 
-        logger.trace("Server started listening on port {}.", port);
+        logger.info("Server started listening on port {}.", port);
         listen();
     }
 
@@ -91,14 +88,7 @@ public class Server extends Thread implements AutoCloseable {
         try {
             while (running) {
                 SSLSocket socket = (SSLSocket) serverSocket.accept();
-                ClientHandler client = new ClientHandler(socket) {
-                    @Override
-                    protected void disconnect() {
-                        removeClient(this);
-                    }
-                };
-                clients.add(client);
-                client.start();
+                addClient(socket);
             }
         } catch (SocketException e) {
             logger.debug("Socket closing exception.");
@@ -124,14 +114,28 @@ public class Server extends Thread implements AutoCloseable {
         }
     }
 
-    private void removeClient(ClientHandler client) {
+    private void addClient(SSLSocket socket) {
+        ClientHandler client = new ClientHandler(socket);
+        client.setPacketReceived(packet -> {
+            logger.trace("Received a packet: {}", packet);
+            packetMap.of(packet).ifPresentOrElse(
+                action -> action.accept(client, packet),
+                () -> logger.error(
+                        "There is no action defined for the received packet ({}).",
+                        packet.getClass().getName()
+                )
+            );
+        });
+        clients.add(client);
+        client.start();
+    }
+
+    void removeClient(ClientHandler client) {
         clients.remove(client);
         client.close();
     }
 
-    private SSLServerSocketFactory createServerSocketFactory()
-            throws KeyStoreException, CertificateException, NoSuchAlgorithmException,
-            IOException, UnrecoverableKeyException, KeyManagementException {
+    private SSLServerSocketFactory createServerSocketFactory() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(Files.newInputStream(keyPath), keyPassword.toCharArray());
 

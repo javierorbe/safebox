@@ -1,22 +1,33 @@
 package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
+import deusto.safebox.client.security.Encryption;
+import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Note extends LeafItem {
 
     private String content;
 
-    public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                String content) {
+    public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified, String content) {
         super(name, folder, created, lastModified);
         this.content = content;
     }
 
+    public Note(String name, LocalDateTime created, LocalDateTime lastModified, String content) {
+        this(name, null, created, lastModified, content);
+        setItemId(UUID.randomUUID());
+    }
+
     public String getContent() {
         return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override
@@ -35,7 +46,7 @@ public class Note extends LeafItem {
     public Object getProperty(int index) {
         switch (index) {
             case 0:
-                return getItemName();
+                return getName();
             case 1:
                 return content;
             case 2:
