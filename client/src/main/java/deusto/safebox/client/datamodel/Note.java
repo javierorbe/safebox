@@ -1,8 +1,6 @@
 package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
-import deusto.safebox.client.security.Encryption;
-import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDateTime;
