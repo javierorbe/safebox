@@ -26,6 +26,12 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     private final UserDao userDao;
     private final ItemCollectionDao itemCollectionDao;
 
+    /**
+     * Creates a {@link SqlDaoManager} for the specified DBMS and configuration.
+     *
+     * @param database the DBMS.
+     * @param config the Hikari configuration for the database connection.
+     */
     private SqlDaoManager(SqlDatabase database, HikariConfig config) {
         dataSource = new HikariDataSource(config);
 
@@ -49,6 +55,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
         return dataSource.getConnection().getMetaData();
     }
 
+    /** Closes the connection to the database. */
     @Override
     public void close() {
         dataSource.close();

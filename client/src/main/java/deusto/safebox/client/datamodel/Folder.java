@@ -5,25 +5,23 @@ import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Folder extends Item {
 
-    private Folder parentFolder;
     private final List<LeafItem> items = new ArrayList<>();
     private final List<Folder> subFolders = new ArrayList<>();
 
-    public Folder(String name, Folder parentFolder, LocalDateTime created, LocalDateTime lastModified) {
-        super(name, created, lastModified);
-        this.parentFolder = parentFolder;
+    private Folder(UUID id, String name, Folder parentFolder, LocalDateTime created, LocalDateTime lastModified) {
+        super(id, ItemType.FOLDER, name, parentFolder, created, lastModified);
+    }
+
+    public Folder(UUID id, String name, LocalDateTime created, LocalDateTime lastModified) {
+        this(id, name, null, created, lastModified);
     }
 
     public Folder(String name, LocalDateTime created, LocalDateTime lastModified) {
-        this(name, null, created, lastModified);
-    }
-
-    @Override
-    public ItemType getItemType() {
-        return ItemType.FOLDER;
+        this(UUID.randomUUID(), name, created, lastModified);
     }
 
     @Override
@@ -31,17 +29,16 @@ public class Folder extends Item {
         return new JsonObject();
     }
 
-    public Folder getParentFolder() {
-        return parentFolder;
-    }
-
     public List<LeafItem> getItems() {
         return items;
     }
 
-    public void addItem(LeafItem item) {
+    void addItem(LeafItem item) {
         items.add(item);
-        item.setFolder(this);
+    }
+
+    public void removeItem(LeafItem item) {
+        items.remove(item);
     }
 
     public List<Folder> getSubFolders() {
@@ -50,7 +47,11 @@ public class Folder extends Item {
 
     public void addSubFolder(Folder folder) {
         subFolders.add(folder);
-        folder.parentFolder = this;
+        folder.setFolder(this);
+    }
+
+    private void removeSubFolder(Folder folder) {
+        subFolders.remove(folder);
     }
 
     public boolean isLeafFolder() {
@@ -67,7 +68,7 @@ public class Folder extends Item {
         do {
             builder.insert(0, current.getName());
             builder.append('/');
-            current = current.getParentFolder();
+            current = current.getFolder();
         } while (current != null);
         builder.append('/');
         return builder.toString();

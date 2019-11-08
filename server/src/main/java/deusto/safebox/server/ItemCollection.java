@@ -4,6 +4,7 @@ import deusto.safebox.common.ItemData;
 import java.util.Collection;
 import java.util.UUID;
 
+/** Represents a collection of items owned by a user. */
 public class ItemCollection {
 
     private final UUID userId;
@@ -24,6 +25,6 @@ public class ItemCollection {
 
     @Override
     public String toString() {
-        return userId + "(" + items.size() + " items)";
+        return userId + " (" + items.size() + " items)";
     }
 }

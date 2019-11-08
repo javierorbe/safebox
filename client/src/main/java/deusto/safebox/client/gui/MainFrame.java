@@ -1,11 +1,10 @@
 package deusto.safebox.client.gui;
 
-import static deusto.safebox.client.util.IconManager.IconType;
-
 import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
+import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -11,6 +11,15 @@ public class User {
     private final String password;
     private final LocalDate creation;
 
+    /**
+     * Creates a user with the specified information.
+     *
+     * @param id the user id.
+     * @param name user's full name.
+     * @param email user's email address.
+     * @param password user's password hash.
+     * @param creation user's account creation date.
+     */
     public User(UUID id, String name, String email, String password, LocalDate creation) {
         this.id = id;
         this.name = name;

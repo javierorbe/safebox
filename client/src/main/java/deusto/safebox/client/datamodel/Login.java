@@ -5,27 +5,28 @@ import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Login extends LeafItem {
 
     private String username;
     private String password;
     private String website;
-
     private LocalDate passwordExpiration;
 
-    public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                 String username, String password, String website, LocalDate passwordExpiration) {
-        super(itemName, folder, created, lastModified);
+    private Login(UUID id, String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
+                  String username, String password, String website, LocalDate passwordExpiration) {
+        super(id, ItemType.LOGIN, itemName, folder, created, lastModified);
         this.username = username;
         this.password = password;
         this.website = website;
         this.passwordExpiration = passwordExpiration;
     }
 
-    private Login(String itemName, LocalDateTime created, LocalDateTime lastModified,
+    public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                  String username, String password, String website, LocalDate passwordExpiration) {
-        this(itemName, null, created, lastModified, username, password, website, passwordExpiration);
+        this(UUID.randomUUID(), itemName, folder, created, lastModified,
+                username, password, website, passwordExpiration);
     }
 
     public String getUsername() {
@@ -61,11 +62,6 @@ public class Login extends LeafItem {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.LOGIN;
-    }
-
-    @Override
     protected JsonObject getCustomData() {
         JsonObject root = new JsonObject();
         root.addProperty("username", username);
@@ -90,8 +86,8 @@ public class Login extends LeafItem {
                 return Constants.DATE_TIME_FORMATTER.format(getCreated());
             case 5:
                 return Constants.DATE_TIME_FORMATTER.format(getLastModified());
-            default:
-                return "";
         }
+
+        throw new IllegalArgumentException("No property with index " + index);
     }
 }

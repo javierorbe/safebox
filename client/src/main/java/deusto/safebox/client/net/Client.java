@@ -60,22 +60,17 @@ public class Client extends SocketHandler {
     public void run() {
         logger.info("Connecting to {}:{}", hostname, port);
 
-        SSLContext sslContext;
         try {
-            sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, TRUST_ALL_CERTS, new SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            logger.error("Could not create a secure socket context.", e);
-            return;
-        }
+            SSLSocketFactory socketFactory = sslContext.getSocketFactory();
 
-        SSLSocketFactory socketFactory = sslContext.getSocketFactory();
-        try {
             socket = (SSLSocket) socketFactory.createSocket(hostname, port);
             socket.addHandshakeCompletedListener(e -> logger.trace("Handshake completed."));
             socket.startHandshake();
-        } catch (IOException e) {
-            logger.error("Could not start a socket.", e);
+        } catch (IOException | NoSuchAlgorithmException | KeyManagementException e) {
+            logger.error("Could not create a socket.", e);
+            return;
         }
 
         listen();

@@ -52,7 +52,7 @@ public class FolderTableModel extends AbstractTableModel {
             case 0:
                 return item.getName();
             case 1:
-                return item.getItemType().getName();
+                return item.getType().getName();
             case 2:
                 return Constants.DATE_TIME_FORMATTER.format(item.getCreated());
             case 3:

@@ -1,8 +1,7 @@
 package deusto.safebox.client.gui.renderer;
 
-import static deusto.safebox.client.util.IconManager.IconType;
-
 import deusto.safebox.client.datamodel.Folder;
+import deusto.safebox.client.util.IconType;
 import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;

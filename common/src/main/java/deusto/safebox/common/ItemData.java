@@ -25,7 +25,7 @@ public class ItemData implements Serializable {
     }
 
     public ItemData(AbstractItem item) {
-        this(item.getItemId(), item.getItemType(), item.getEncryptedData(), item.getCreated(), item.getLastModified());
+        this(item.getId(), item.getType(), item.getEncryptedData(), item.getCreated(), item.getLastModified());
     }
 
     public UUID getId() {

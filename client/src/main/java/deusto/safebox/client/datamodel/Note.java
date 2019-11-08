@@ -10,14 +10,15 @@ public class Note extends LeafItem {
 
     private String content;
 
-    public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified, String content) {
-        super(name, folder, created, lastModified);
+    private Note(UUID id, String name, Folder folder, LocalDateTime created, LocalDateTime lastModified,
+                 String content) {
+        super(id, ItemType.NOTE, name, folder, created, lastModified);
         this.content = content;
     }
 
-    public Note(String name, LocalDateTime created, LocalDateTime lastModified, String content) {
-        this(name, null, created, lastModified, content);
-        setItemId(UUID.randomUUID());
+    public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified,
+                String content) {
+        this(UUID.randomUUID(), name, folder, created, lastModified, content);
     }
 
     public String getContent() {
@@ -26,11 +27,6 @@ public class Note extends LeafItem {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    @Override
-    public ItemType getItemType() {
-        return ItemType.NOTE;
     }
 
     @Override
@@ -51,8 +47,8 @@ public class Note extends LeafItem {
                 return Constants.DATE_TIME_FORMATTER.format(getCreated());
             case 3:
                 return Constants.DATE_TIME_FORMATTER.format(getLastModified());
-            default:
-                return "";
         }
+
+        throw new IllegalArgumentException("No property with index " + index);
     }
 }

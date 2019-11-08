@@ -1,7 +1,6 @@
 package deusto.safebox.client.gui.component;
 
-import static deusto.safebox.client.util.IconManager.IconType;
-
+import deusto.safebox.client.util.IconType;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 

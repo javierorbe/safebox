@@ -13,8 +13,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -88,6 +91,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                 updateResult.set(Arrays.stream(results).allMatch(e -> e > 0));
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
+                updateResult.set(false);
             }
         });
         return updateResult.get() && transactionResult;
@@ -108,7 +112,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
         try (PreparedStatement statement = getConnection().prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
 
-            List<ItemData> items = new ArrayList<>();
+            Collection<ItemData> items = new HashSet<>();
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     items.add(convert(set));
@@ -135,6 +139,13 @@ class SqlItemCollectionDao implements ItemCollectionDao {
         return new ItemData(id, type, data, created, lastModified);
     }
 
+    /**
+     * Performs a transaction.
+     *
+     * @param connectionConsumer the operation to be executed during the transaction.
+     * @return true if the transaction succeeds, otherwise false.
+     * @throws DaoException if there is an error getting the connection to the database.
+     */
     private boolean transaction(Consumer<Connection> connectionConsumer) throws DaoException {
         Connection connection = getConnection();
 

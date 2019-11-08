@@ -1,36 +1,29 @@
 package deusto.safebox.client.datamodel;
 
 import deusto.safebox.client.gui.model.ItemTableModel;
+import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
- * Super type for items contained in a folder.
+ * Super class for items contained in a folder.
  * All items (except for folders) should inherit this class.
  */
 public abstract class LeafItem extends Item {
 
-    private Folder folder;
-
-    LeafItem(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
-        super(name, created, lastModified);
-        this.folder = folder;
-    }
-
-    LeafItem(String name, LocalDateTime created, LocalDateTime lastModified) {
-        this(name, null, created, lastModified);
-    }
-
     /**
-     * Returns the folder where the item is.
+     * Creates a {@link LeafItem} and adds itself to the specified folder.
      *
-     * @return a reference of the folder.
+     * @param id the item id.
+     * @param type the item type.
+     * @param name the item name.
+     * @param folder the parent folder.
+     * @param created the item creation timestamp.
+     * @param lastModified the item last modification timestamp
      */
-    public Folder getFolder() {
-        return folder;
-    }
-
-    public void setFolder(Folder folder) {
-        this.folder = folder;
+    LeafItem(UUID id, ItemType type, String name, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
+        super(id, type, name, folder, created, lastModified);
+        folder.addItem(this);
     }
 
     /**

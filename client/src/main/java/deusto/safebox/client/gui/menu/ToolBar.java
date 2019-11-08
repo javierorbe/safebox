@@ -1,9 +1,8 @@
 package deusto.safebox.client.gui.menu;
 
-import static deusto.safebox.client.util.IconManager.IconType;
-
 import deusto.safebox.client.gui.component.SearchBox;
 import deusto.safebox.client.gui.panel.SettingsDialog;
+import deusto.safebox.client.util.IconType;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;

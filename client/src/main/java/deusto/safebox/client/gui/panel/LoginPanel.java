@@ -1,11 +1,11 @@
 package deusto.safebox.client.gui.panel;
 
-import static deusto.safebox.client.util.IconManager.IconType;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.ShowPasswordField;
+import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.SimpleButton;
 import java.awt.GridBagConstraints;

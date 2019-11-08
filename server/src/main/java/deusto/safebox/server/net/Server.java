@@ -36,9 +36,11 @@ public class Server extends Thread implements AutoCloseable {
     /**
      * Creates a {@link Server} with the specified port.
      *
-     * @param port server port number.
+     * @param port server socket port number.
      * @param keyPath JKS file path.
      * @param keyPassword JKS file password.
+     * @param daoManager the {@link DaoManager} that is being used.
+     *                   It is used for dependency injection on {@link ServerPacketMap}.
      */
     public Server(int port, Path keyPath, String keyPassword, DaoManager daoManager) {
         this.port = port;
@@ -58,17 +60,10 @@ public class Server extends Thread implements AutoCloseable {
     /** Start the socket server. */
     @Override
     public void run() {
-        SSLServerSocketFactory ssf;
         try {
-            ssf = createServerSocketFactory();
-        } catch (Exception e) {
-            logger.error("Could not create a secure socket factory. ", e);
-            return;
-        }
-
-        try {
+            SSLServerSocketFactory ssf = createServerSocketFactory();
             serverSocket = (SSLServerSocket) ssf.createServerSocket(port);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Could not create a server socket.", e);
             return;
         }

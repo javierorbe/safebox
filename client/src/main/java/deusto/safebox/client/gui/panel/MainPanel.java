@@ -51,7 +51,7 @@ public class MainPanel extends JPanel {
 
         Login login = new Login(
                 "ExampleLogin",
-                null,
+                f1,
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 "MyUsername",
@@ -62,15 +62,13 @@ public class MainPanel extends JPanel {
 
         Note note = new Note(
                 "ExampleNote",
-                null,
+                f2,
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 "My secret note content."
         );
 
         f1.addSubFolder(f2);
-        f2.addItem(login);
-        f1.addItem(note);
 
         exampleFolders.add(f1);
         exampleFolders.add(f3);

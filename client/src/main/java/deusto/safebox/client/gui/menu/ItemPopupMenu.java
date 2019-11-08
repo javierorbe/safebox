@@ -1,7 +1,6 @@
 package deusto.safebox.client.gui.menu;
 
-import static deusto.safebox.client.util.IconManager.IconType;
-
+import deusto.safebox.client.util.IconType;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
