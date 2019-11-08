@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.component;
 
-import deusto.safebox.client.datamodel.Item;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.gui.model.ItemTreeModel;
 import deusto.safebox.client.gui.renderer.ItemTreeCellRenderer;
@@ -22,7 +21,7 @@ public class ItemTree extends JTree {
             Object o = e.getPath().getLastPathComponent();
             if (o instanceof ItemType) {
                 table.selectItemModel((ItemType) o);
-            } else if (o instanceof Item) {
+            } else if (o instanceof LeafItem) {
                 // TODO: show item info on display box
             }
         });

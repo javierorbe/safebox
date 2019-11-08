@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.model;
 
-import deusto.safebox.client.datamodel.Item;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.common.util.Constants;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class FolderTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Item item = items.get(rowIndex);
+        LeafItem item = items.get(rowIndex);
         switch (columnIndex) {
             case 0:
                 return item.getName();

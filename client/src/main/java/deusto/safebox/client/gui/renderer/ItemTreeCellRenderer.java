@@ -1,6 +1,6 @@
 package deusto.safebox.client.gui.renderer;
 
-import deusto.safebox.client.datamodel.Item;
+import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.ItemType;
 import java.awt.Component;
@@ -18,8 +18,8 @@ public class ItemTreeCellRenderer extends DefaultTreeCellRenderer {
             setText(((ItemType) value).getName());
             // TODO: set different icons for each item type
             setIcon(IconType.FOLDER.getAsIcon());
-        } else if (value instanceof Item) {
-            setText(((Item) value).getName());
+        } else if (value instanceof LeafItem) {
+            setText(((LeafItem) value).getName());
             // TODO: customize the icon of each item
             setIcon(IconType.NEW_FILE_16.getAsIcon());
         }

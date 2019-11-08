@@ -6,7 +6,7 @@ import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public abstract class Item extends AbstractItem {
+abstract class Item extends AbstractItem {
 
     private String name;
     private Folder folder;
