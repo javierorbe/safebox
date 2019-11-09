@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ClientMain" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="Client" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="deusto.safebox.client.ClientMain" />
     <module name="client" />
     <extension name="coverage">

@@ -99,7 +99,8 @@ class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public boolean delete(ItemCollection collection) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(delete)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(delete)) {
             statement.setString(1, collection.getUserId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -109,7 +110,8 @@ class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public Optional<ItemCollection> get(UUID userId) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(getOne)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
 
             Collection<ItemData> items = new HashSet<>();
@@ -147,26 +149,28 @@ class SqlItemCollectionDao implements ItemCollectionDao {
      * @throws DaoException if there is an error getting the connection to the database.
      */
     private boolean transaction(Consumer<Connection> connectionConsumer) throws DaoException {
-        Connection connection = getConnection();
-
-        try {
-            connection.setAutoCommit(false);
-            connectionConsumer.accept(connection);
-            connection.commit();
-            return true;
-        } catch (SQLException e) {
+        try (Connection connection = getConnection()) {
             try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                logger.error("Error in transaction rollback.", rollbackEx);
-            }
-            return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true);
+                connection.setAutoCommit(false);
+                connectionConsumer.accept(connection);
+                connection.commit();
+                return true;
             } catch (SQLException e) {
-                logger.error("Error enabling auto commit.");
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    logger.error("Error in transaction rollback.", rollbackEx);
+                }
+                return false;
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException e) {
+                    logger.error("Error enabling auto commit.");
+                }
             }
+        } catch (SQLException e) {
+            throw new DaoException("SQL error.", e);
         }
     }
 

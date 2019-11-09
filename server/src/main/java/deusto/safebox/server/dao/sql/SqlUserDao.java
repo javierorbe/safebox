@@ -44,7 +44,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public boolean insert(User user) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(insert)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(insert)) {
             statement.setString(1, user.getId().toString());
             statement.setString(2, user.getName());
             statement.setString(3, user.getEmail());
@@ -61,7 +62,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public boolean update(User user) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(update)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(update)) {
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
@@ -74,7 +76,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public boolean delete(User user) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(delete)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(delete)) {
             statement.setString(1, user.getId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -84,7 +87,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public Optional<User> get(UUID userId) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(getOne)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
@@ -101,7 +105,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public List<User> getAll() throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(getAll)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(getAll)) {
             List<User> users = new ArrayList<>();
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -116,7 +121,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public Optional<User> getByEmail(String email) throws DaoException {
-        try (PreparedStatement statement = getConnection().prepareStatement(getOneEmail)) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(getOneEmail)) {
             statement.setString(1, email);
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
@@ -155,10 +161,10 @@ class SqlUserDao implements UserDao {
             "SELECT id, name, email, password, creation FROM user WHERE id=?"
         ),
         GET_ALL(
-            "SELECT id, name, email, password FROM user"
+            "SELECT id, name, email, password, creation FROM user"
         ),
         GET_ONE_EMAIL(
-            "SELECT id, name, email, password FROM user WHERE email=?"
+            "SELECT id, name, email, password, creation FROM user WHERE email=?"
         )
         ;
 

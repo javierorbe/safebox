@@ -47,4 +47,9 @@ public class User {
     public LocalDate getCreation() {
         return creation;
     }
+
+    @Override
+    public String toString() {
+        return id.toString() + " (" + email + ")";
+    }
 }
