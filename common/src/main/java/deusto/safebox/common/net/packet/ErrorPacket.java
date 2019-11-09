@@ -6,7 +6,7 @@ public class ErrorPacket extends Packet {
 
     private final ErrorType errorType;
 
-    public ErrorPacket(ErrorType errorType) {
+    private ErrorPacket(ErrorType errorType) {
         this.errorType = errorType;
     }
 
@@ -22,6 +22,11 @@ public class ErrorPacket extends Packet {
     public enum ErrorType {
         UNKNOWN_ERROR,
         EMAIL_ALREADY_IN_USE,
-        INVALID_LOGIN
+        INVALID_LOGIN,
+        ;
+
+        public ErrorPacket get() {
+            return new ErrorPacket(this);
+        }
     }
 }
