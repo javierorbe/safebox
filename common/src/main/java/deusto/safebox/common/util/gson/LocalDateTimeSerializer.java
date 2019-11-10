@@ -1,4 +1,4 @@
-package deusto.safebox.common.json;
+package deusto.safebox.common.util.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;

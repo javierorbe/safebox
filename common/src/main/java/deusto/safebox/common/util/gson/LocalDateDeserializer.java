@@ -1,4 +1,4 @@
-package deusto.safebox.common.json;
+package deusto.safebox.common.util.gson;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -13,6 +13,6 @@ public class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
     @Override
     public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
-        return LocalDate.parse(json.getAsString(), Constants.DATE_TIME_FORMATTER);
+        return LocalDate.parse(json.getAsString(), Constants.DATE_FORMATTER);
     }
 }
