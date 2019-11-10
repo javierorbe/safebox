@@ -6,8 +6,6 @@ import java.net.URL;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public enum IconType {
 
@@ -26,8 +24,6 @@ public enum IconType {
     INFO_BOOK("info_book"),
     STRONGBOX("strongbox"),
     ;
-
-    private static final Logger logger = LoggerFactory.getLogger(IconType.class);
 
     private final Image image;
     private final ImageIcon imageIcon;
@@ -50,8 +46,7 @@ public enum IconType {
         try {
             return ImageIO.read(url);
         } catch (IOException e) {
-            logger.error("Could load image " + filename + ".", e);
-            return null;
+            throw new RuntimeException("Could not load the image " + filename, e);
         }
     }
 }

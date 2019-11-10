@@ -1,6 +1,7 @@
 package deusto.safebox.common;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class AbstractItem {
@@ -10,8 +11,8 @@ public abstract class AbstractItem {
     private final LocalDateTime created;
     private LocalDateTime lastModified;
 
-    public AbstractItem(UUID id, ItemType type, LocalDateTime created, LocalDateTime lastModified) {
-        this.id = id;
+    protected AbstractItem(UUID id, ItemType type, LocalDateTime created, LocalDateTime lastModified) {
+        this.id = Objects.requireNonNull(id);
         this.type = type;
         this.created = created;
         this.lastModified = lastModified;
@@ -38,7 +39,7 @@ public abstract class AbstractItem {
     }
 
     /**
-     * Returns an encrypted JSON string with the data specific to the type of the item.
+     * Returns an encrypted JSON string with the data specific for the item type.
      *
      * @return an encrypted string of data.
      */

@@ -5,19 +5,19 @@ import deusto.safebox.common.ItemType;
 import deusto.safebox.server.ItemCollection;
 import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.ItemCollectionDao;
+import deusto.safebox.server.util.CheckedConsumer;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -54,6 +54,11 @@ class SqlItemCollectionDao implements ItemCollectionDao {
     public boolean insert(ItemCollection collection) throws DaoException {
         AtomicBoolean insertResult = new AtomicBoolean(false);
         boolean transactionResult = transaction(connection -> {
+            // First delete all the saved items.
+            try (PreparedStatement statement = connection.prepareStatement(delete)) {
+                statement.setString(1, collection.getUserId().toString());
+            }
+
             try (PreparedStatement statement = connection.prepareStatement(insertOneItem)) {
                 for (ItemData item : collection.getItems()) {
                     statement.setString(1, item.getId().toString());
@@ -68,33 +73,14 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                 }
                 int[] results = statement.executeBatch();
                 insertResult.set(Arrays.stream(results).allMatch(e -> e > 0));
-            } catch (SQLException e) {
-                logger.error("SQL error.", e);
-                insertResult.set(false);
             }
         });
         return insertResult.get() && transactionResult;
     }
 
     @Override
-    public boolean update(ItemCollection collection) throws DaoException {
-        AtomicBoolean updateResult = new AtomicBoolean(false);
-        boolean transactionResult = transaction(connection -> {
-            try (PreparedStatement statement = connection.prepareStatement(updateOneItem)) {
-                for (ItemData item : collection.getItems()) {
-                    statement.setString(1, item.getEncryptedData());
-                    statement.setTimestamp(2, Timestamp.valueOf(item.getLastModified()));
-                    statement.setString(3, item.getId().toString());
-                    statement.addBatch();
-                }
-                int[] results = statement.executeBatch();
-                updateResult.set(Arrays.stream(results).allMatch(e -> e > 0));
-            } catch (SQLException e) {
-                logger.error("SQL error.", e);
-                updateResult.set(false);
-            }
-        });
-        return updateResult.get() && transactionResult;
+    public boolean update(ItemCollection collection) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -128,7 +114,6 @@ class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public List<ItemCollection> getAll() {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
@@ -148,7 +133,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
      * @return true if the transaction succeeds, otherwise false.
      * @throws DaoException if there is an error getting the connection to the database.
      */
-    private boolean transaction(Consumer<Connection> connectionConsumer) throws DaoException {
+    private boolean transaction(CheckedConsumer<Connection, SQLException> connectionConsumer) throws DaoException {
         try (Connection connection = getConnection()) {
             try {
                 connection.setAutoCommit(false);
@@ -170,7 +155,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("SQL error.", e);
+            throw new DaoException("Error getting a connection.", e);
         }
     }
 

@@ -1,9 +1,10 @@
 package deusto.safebox.common.net.packet;
 
 import deusto.safebox.common.ItemData;
+import java.io.Serializable;
 import java.util.Collection;
 
-public class ReceiveDataPacket extends Packet {
+public class ReceiveDataPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = -4010470347016376157L;
 
@@ -19,6 +20,6 @@ public class ReceiveDataPacket extends Packet {
 
     @Override
     public String toString() {
-        return getClass().getName() + " (" + getItems().size() + " items)";
+        return getClass().getSimpleName() + " (" + getItems().size() + " items)";
     }
 }

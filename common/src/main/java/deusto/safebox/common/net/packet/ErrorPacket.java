@@ -1,6 +1,8 @@
 package deusto.safebox.common.net.packet;
 
-public class ErrorPacket extends Packet {
+import java.io.Serializable;
+
+public class ErrorPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = 2244582856053708269L;
 
@@ -16,7 +18,7 @@ public class ErrorPacket extends Packet {
 
     @Override
     public String toString() {
-        return getClass().getName() + " (" + errorType.toString() + ")";
+        return getClass().getSimpleName() + " (" + errorType.toString() + ")";
     }
 
     public enum ErrorType {

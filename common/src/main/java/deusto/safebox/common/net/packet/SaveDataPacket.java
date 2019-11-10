@@ -20,6 +20,6 @@ public class SaveDataPacket extends Packet implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getName() + " (" + items.size() + " items)";
+        return getClass().getSimpleName() + " (" + items.size() + " items)";
     }
 }

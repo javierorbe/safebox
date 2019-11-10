@@ -51,10 +51,6 @@ public class Client extends SocketHandler {
         this.port = port;
     }
 
-    public boolean isConnected() {
-        return socket != null && socket.isConnected();
-    }
-
     /** Connect to the server. */
     @Override
     public void run() {

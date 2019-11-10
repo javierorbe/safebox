@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.function.Consumer;
+import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,13 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
      * @param connectionEstablished called when the connection is ready to send and receive data.
      * @param packetReceived accepted when a packet is received from the other endpoint of the socket.
      */
-    public SocketHandler(Runnable connectionEstablished, Consumer<Packet> packetReceived) {
+    private SocketHandler(Runnable connectionEstablished, Consumer<Packet> packetReceived) {
         this.connectionEstablished = connectionEstablished;
         this.packetReceived = packetReceived;
     }
 
     /** Creates a socket handler with the default behavior. */
-    public SocketHandler() {
+    protected SocketHandler() {
         this(
             () -> logger.info("Socket connection established."),
             packet -> logger.info("Packet received ({}).", packet)
@@ -84,7 +85,7 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
                     logger.error("Could not deserialize the received object.", e);
                 }
             }
-        } catch (EOFException e) { // This exception is thrown when the input stream is closed.
+        } catch (EOFException | SSLException e) { // This exception is thrown when the input stream is closed.
             if (running) {
                 close();
             }

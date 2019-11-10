@@ -24,6 +24,6 @@ public class RequestLoginPacket extends Packet implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getName() + " (" + email + ")";
+        return getClass().getSimpleName() + " (" + email + ")";
     }
 }
