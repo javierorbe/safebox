@@ -6,7 +6,6 @@ import deusto.safebox.server.ItemCollection;
 import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.util.CheckedConsumer;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,6 @@ class SqlItemCollectionDao implements ItemCollectionDao {
     private final Supplier<Optional<Connection>> connectionSupplier;
 
     private final String insertOneItem;
-    private final String updateOneItem;
     private final String delete;
     private final String getOne;
 
@@ -40,7 +37,6 @@ class SqlItemCollectionDao implements ItemCollectionDao {
         this.connectionSupplier = connectionSupplier;
 
         insertOneItem = ItemCollectionStatement.INSERT_ONE_ITEM.get(database);
-        updateOneItem = ItemCollectionStatement.UPDATE_ONE_ITEM.get(database);
         delete = ItemCollectionStatement.DELETE.get(database);
         getOne = ItemCollectionStatement.GET_ONE.get(database);
     }
@@ -161,11 +157,10 @@ class SqlItemCollectionDao implements ItemCollectionDao {
 
     private enum ItemCollectionStatement implements SqlStatement {
         INSERT_ONE_ITEM(
-            "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
-            "INSERT INTO item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
-        ),
-        UPDATE_ONE_ITEM(
-            "UPDATE item SET data=?, last_modified=? WHERE id=?"
+            "INSERT INTO item (id, user_id, type, data, creation, last_modified) "
+                    + "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
+            "INSERT INTO item (id, user_id, type, data, creation, last_modified) "
+                    + "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
         ),
         DELETE(
             "DELETE FROM item WHERE user_id=?"

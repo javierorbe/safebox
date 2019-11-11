@@ -7,10 +7,27 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** JSON formatted config file loader. */
+/**
+ * JSON formatted config file.
+ *
+ * <p>The path used in some of the methods is a string of keys separated by a period.
+ *
+ * <p>For example, the path to access the street attribute in this JSON object is <code>address.street</code>
+ * <pre>
+ * {
+ *  name: "John",
+ *  age: 31,
+ *  address: {
+ *      street: "Sesame Street"
+ *  }
+ * }
+ * </pre>
+ */
 public class JsonConfig implements ConfigFile {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonConfig.class);
@@ -25,30 +42,43 @@ public class JsonConfig implements ConfigFile {
 
     @Override
     public int getInt(String path) {
-        return getFromPath(path).getAsInt();
+        return elementAtPath(path).getAsInt();
     }
 
     @Override
     public void setInt(int value, String path) {
-        // TODO
+        String[] s = path.split("\\.");
+        getObjectAt(s).addProperty(s[s.length - 1], value);
     }
 
     @Override
     public String getString(String path) {
-        return getFromPath(path).getAsString();
+        return elementAtPath(path).getAsString();
     }
 
     @Override
     public void setString(String value, String path) {
-        // TODO
+        String[] s = path.split("\\.");
+        getObjectAt(s).addProperty(s[s.length - 1], value);
     }
 
-    private JsonObject getPathObject(String[] path) {
+    private JsonObject getObjectAt(String[] path) {
         JsonObject current = root;
         for (int i = 0; i < path.length - 1; i++) {
             current = current.getAsJsonObject(path[i]);
         }
         return current;
+    }
+
+    public Map<String, String> getStringMap(String path) {
+        Map<String, String> stringMap = new HashMap<>();
+        JsonElement object = objectAtPath(path);
+        object.getAsJsonObject().entrySet().forEach(entry -> {
+            String key = entry.getKey();
+            String string = entry.getValue().getAsString();
+            stringMap.put(key, string);
+        });
+        return stringMap;
     }
 
     @Override
@@ -67,28 +97,27 @@ public class JsonConfig implements ConfigFile {
 
     /**
      * Returns the element in the specified JSON path.
-     * The path is a string of keys separated by a period.
-     *
-     * <p>For example, the path to access the street attribute in this JSON object is <code>address.street</code>
-     * <pre>
-     * {
-     *  name: "John",
-     *  age: 31,
-     *  address: {
-     *      street: "Sesame Street"
-     *  }
-     * }
-     * </pre>
      *
      * @param path the path to the element.
      * @return the {@link JsonElement} in the path.
      */
-    private JsonElement getFromPath(String path) {
+    private JsonElement elementAtPath(String path) {
         JsonElement current = root;
         String[] s = path.split("\\.");
         for (String value : s) {
             if (current instanceof JsonObject) {
                 current = current.getAsJsonObject().get(value);
+            }
+        }
+        return current;
+    }
+
+    private JsonObject objectAtPath(String path) {
+        JsonObject current = root;
+        String[] s = path.split("\\.");
+        if (s.length > 1) {
+            for (String value : s) {
+                current = current.get(value).getAsJsonObject();
             }
         }
         return current;
