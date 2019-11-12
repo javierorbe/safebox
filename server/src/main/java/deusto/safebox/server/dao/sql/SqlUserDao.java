@@ -3,6 +3,7 @@ package deusto.safebox.server.dao.sql;
 import deusto.safebox.server.User;
 import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.UserDao;
+import deusto.safebox.server.util.CheckedSupplier;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -13,11 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 class SqlUserDao implements UserDao {
 
-    private final Supplier<Optional<Connection>> connectionSupplier;
+    private final CheckedSupplier<Connection, SQLException> connectionSupplier;
 
     private final String insert;
     private final String update;
@@ -26,7 +26,7 @@ class SqlUserDao implements UserDao {
     private final String getAll;
     private final String getOneEmail;
 
-    SqlUserDao(SqlDatabase database, Supplier<Optional<Connection>> connectionSupplier) {
+    SqlUserDao(SqlDatabase database, CheckedSupplier<Connection, SQLException> connectionSupplier) {
         this.connectionSupplier = connectionSupplier;
 
         insert = UserStatement.INSERT.get(database);
@@ -37,14 +37,9 @@ class SqlUserDao implements UserDao {
         getOneEmail = UserStatement.GET_ONE_EMAIL.get(database);
     }
 
-    private Connection getConnection() throws DaoException {
-        return connectionSupplier.get()
-                .orElseThrow(() -> new DaoException("Could not get a connection from the pool."));
-    }
-
     @Override
     public boolean insert(User user) throws DaoException {
-        try (Connection connection = getConnection();
+        try (Connection connection = connectionSupplier.get();
                 PreparedStatement statement = connection.prepareStatement(insert)) {
             statement.setString(1, user.getId().toString());
             statement.setString(2, user.getName());
@@ -62,8 +57,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public boolean update(User user) throws DaoException {
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(update)) {
+        try (Connection connection = connectionSupplier.get();
+             PreparedStatement statement = connection.prepareStatement(update)) {
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
@@ -76,8 +71,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public boolean delete(User user) throws DaoException {
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(delete)) {
+        try (Connection connection = connectionSupplier.get();
+             PreparedStatement statement = connection.prepareStatement(delete)) {
             statement.setString(1, user.getId().toString());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -87,8 +82,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public Optional<User> get(UUID userId) throws DaoException {
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(getOne)) {
+        try (Connection connection = connectionSupplier.get();
+             PreparedStatement statement = connection.prepareStatement(getOne)) {
             statement.setString(1, userId.toString());
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
@@ -105,8 +100,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public List<User> getAll() throws DaoException {
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(getAll)) {
+        try (Connection connection = connectionSupplier.get();
+             PreparedStatement statement = connection.prepareStatement(getAll)) {
             List<User> users = new ArrayList<>();
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -121,8 +116,8 @@ class SqlUserDao implements UserDao {
 
     @Override
     public Optional<User> getByEmail(String email) throws DaoException {
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(getOneEmail)) {
+        try (Connection connection = connectionSupplier.get();
+             PreparedStatement statement = connection.prepareStatement(getOneEmail)) {
             statement.setString(1, email);
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
@@ -147,25 +142,12 @@ class SqlUserDao implements UserDao {
     }
 
     private enum UserStatement implements SqlStatement {
-        INSERT(
-            "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET name=?, email=?, password=?",
-            "INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=?, email=?, password=?"
-        ),
-        UPDATE(
-            "UPDATE user SET name=?, email=?, password=? WHERE id=?"
-        ),
-        DELETE(
-            "DELETE FROM user WHERE id=?"
-        ),
-        GET_ONE(
-            "SELECT id, name, email, password, creation FROM user WHERE id=?"
-        ),
-        GET_ALL(
-            "SELECT id, name, email, password, creation FROM user"
-        ),
-        GET_ONE_EMAIL(
-            "SELECT id, name, email, password, creation FROM user WHERE email=?"
-        )
+        INSERT("INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?)"),
+        UPDATE("UPDATE user SET name=?, email=?, password=? WHERE id=?"),
+        DELETE("DELETE FROM user WHERE id=?"),
+        GET_ONE("SELECT id, name, email, password, creation FROM user WHERE id=?"),
+        GET_ALL("SELECT id, name, email, password, creation FROM user"),
+        GET_ONE_EMAIL("SELECT id, name, email, password, creation FROM user WHERE email=?")
         ;
 
         private final String sqliteStmt;
@@ -184,9 +166,10 @@ class SqlUserDao implements UserDao {
         public String get(SqlDatabase database) {
             if (database == SqlDatabase.SQLITE) {
                 return sqliteStmt;
-            } else {
+            } else if (database == SqlDatabase.MYSQL) {
                 return mysqlStmt;
             }
+            throw new IllegalArgumentException("Unknown database (" + database + ")");
         }
     }
 }

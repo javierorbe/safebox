@@ -6,11 +6,8 @@ import deusto.safebox.server.dao.DaoManager;
 import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.dao.UserDao;
 import java.nio.file.Path;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.Optional;
-import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +34,8 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
 
         logger.info("Connected to the database.");
 
-        Supplier<Optional<Connection>> connectionSupplier = () -> {
-            try {
-                Connection connection = dataSource.getConnection();
-                return Optional.of(connection);
-            } catch (SQLException e) {
-                logger.error("Error getting a connection pool.", e);
-                return Optional.empty();
-            }
-        };
-
-        userDao = new SqlUserDao(database, connectionSupplier);
-        itemCollectionDao = new SqlItemCollectionDao(database, connectionSupplier);
+        userDao = new SqlUserDao(database, dataSource::getConnection);
+        itemCollectionDao = new SqlItemCollectionDao(database, dataSource::getConnection);
     }
 
     public DatabaseMetaData getDatabaseMetadata() throws SQLException {
@@ -75,12 +62,12 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     /**
      * Creates a connection to a SQLite database.
      *
-     * @param path path to the database file.
+     * @param file path to the database file.
      * @return a {@link SqlDaoManager} connected to a SQLite database.
      */
-    public static SqlDaoManager ofSqlite(Path path) {
+    public static SqlDaoManager ofSqlite(Path file) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(String.format(SQLITE_URL, path.toString()));
+        config.setJdbcUrl(String.format(SQLITE_URL, file.toString()));
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
