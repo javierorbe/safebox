@@ -1,5 +1,4 @@
 package deusto.safebox.client.gui.panel;
-
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
@@ -8,8 +7,6 @@ import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
 import deusto.safebox.common.ItemType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,7 +47,16 @@ public class MainPanel extends JPanel {
                 LocalDateTime.of(2019, 2, 7, 14, 15),
                 LocalDateTime.of(2019, 2, 7, 14, 15)
         );
-
+        Folder f4 = new Folder(
+                "Folder 4",
+                LocalDateTime.of(2019, 11, 13, 18, 38),
+                LocalDateTime.of(2019, 12, 24, 23,59)
+        );
+        Folder f5 = new Folder(
+                "Folder5",
+                LocalDateTime.of(2019, 11, 13, 18, 38),
+                LocalDateTime.of(2019, 12, 24, 23,59)
+        );
         Login login = new Login(
                 "ExampleLogin",
                 f1,
@@ -71,15 +77,12 @@ public class MainPanel extends JPanel {
         );
 
         f1.addSubFolder(f2);
-
+        f1.addSubFolder(f4);
+        f4.addSubFolder(f5);
         exampleFolders.add(f1);
         exampleFolders.add(f3);
         exampleItems.get(ItemType.LOGIN).add(login);
         exampleItems.get(ItemType.NOTE).add(note);
-
-        Logger logger = LoggerFactory.getLogger(MainPanel.class);
-        logger.info(f2.getFullPath());
-
     }
 
     public MainPanel() {
@@ -106,6 +109,17 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        // TODO: automatically expand all tree nodes
+        expandAll(folderTree, exampleFolders, 0);
+
+    }
+
+    private static void expandAll(JTree tree, List<Folder> folders, int i) { ;
+        for (Folder folder : folders) {
+            if (!folder.isLeafFolder()) {
+                tree.expandRow(i);
+                expandAll(tree, folder.getSubFolders(), ++i);
+            }
+            i++;
+        }
     }
 }

@@ -70,7 +70,6 @@ public class Folder extends Item {
             builder.insert(0, "/");
             current = current.getFolder();
         } while (current != null);
-        builder.append('/');
         return builder.toString();
     }
 
