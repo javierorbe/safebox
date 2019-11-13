@@ -2,10 +2,9 @@ package deusto.safebox.client;
 
 import deusto.safebox.client.gui.MainFrame;
 import deusto.safebox.client.net.Client;
-import deusto.safebox.client.net.ClientPacketMap;
+import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.common.net.packet.Packet;
 import deusto.safebox.common.util.ConfigFile;
-import deusto.safebox.common.util.IBoundClassConsumerMap;
 import deusto.safebox.common.util.JsonConfig;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,22 +39,17 @@ public class ClientMain {
 
         Client client = new Client(hostname, port);
         client.setPacketReceived(ClientMain::receivePacket);
-        // client.start();
 
         String lang = config.getString("lang");
         logger.info("Selected language: {}", lang);
 
+        // client.start();
         SwingUtilities.invokeLater(MainFrame::new);
     }
 
-    private static final IBoundClassConsumerMap<Packet> packetAction = new ClientPacketMap();
-
     private static void receivePacket(Packet packet) {
         logger.trace("Received a packet: {}", packet);
-        packetAction.of(packet).ifPresentOrElse(
-            action -> action.accept(packet),
-            () -> logger.error("There is no action defined for the received packet ({})", packet)
-        );
+        PacketHandler.INSTANCE.fire(packet);
     }
 
     /**
