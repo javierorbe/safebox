@@ -31,7 +31,7 @@ public class Server extends Thread implements AutoCloseable {
     private boolean running = false;
     private final Collection<ClientHandler> clients = new HashSet<>();
 
-    private final ServerPacketMap packetMap;
+    private final PacketHandler packetMap;
 
     /**
      * Creates a {@link Server} with the specified port.
@@ -40,13 +40,13 @@ public class Server extends Thread implements AutoCloseable {
      * @param keyPath JKS file path.
      * @param keyPassword JKS file password.
      * @param daoManager the {@link DaoManager} that is being used.
-     *                   It is used for dependency injection on {@link ServerPacketMap}.
+     *                   It is used for dependency injection on {@link PacketHandler}.
      */
     public Server(int port, Path keyPath, String keyPassword, DaoManager daoManager) {
         this.port = port;
         this.keyPath = keyPath;
         this.keyPassword = keyPassword;
-        packetMap = new ServerPacketMap(this, daoManager);
+        packetMap = new PacketHandler(this, daoManager);
     }
 
     public int getPort() {
