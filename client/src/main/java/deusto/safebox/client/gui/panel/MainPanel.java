@@ -8,6 +8,8 @@ import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
 import deusto.safebox.common.ItemType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.BorderLayout;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,6 +76,10 @@ public class MainPanel extends JPanel {
         exampleFolders.add(f3);
         exampleItems.get(ItemType.LOGIN).add(login);
         exampleItems.get(ItemType.NOTE).add(note);
+
+        Logger logger = LoggerFactory.getLogger(MainPanel.class);
+        logger.info(f2.getFullPath());
+
     }
 
     public MainPanel() {

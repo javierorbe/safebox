@@ -67,7 +67,7 @@ public class Folder extends Item {
         Folder current = this;
         do {
             builder.insert(0, current.getName());
-            builder.append('/');
+            builder.insert(0, "/");
             current = current.getFolder();
         } while (current != null);
         builder.append('/');
