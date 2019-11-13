@@ -2,6 +2,8 @@ package deusto.safebox.server.net;
 
 import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.Packet;
+import deusto.safebox.common.net.packet.RequestLoginPacket;
+import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.net.packet.TestPacket;
 import deusto.safebox.server.dao.DaoManager;
 import java.util.HashMap;
@@ -9,13 +11,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/** Maps each packet type to an operation. */
-class ServerPacketMap {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServerPacketMap.class);
+/** Received packet handler. */
+class PacketHandler {
 
     private final Server server;
     private final DaoManager daoManager;
@@ -23,16 +21,18 @@ class ServerPacketMap {
     // Both wildcards must be of the same type.
     private final Map<Class<? extends Packet>, BiConsumer<ClientHandler, ? extends Packet>> map = new HashMap<>();
 
-    ServerPacketMap(Server server, DaoManager daoManager) {
+    PacketHandler(Server server, DaoManager daoManager) {
         this.server = server;
         this.daoManager = daoManager;
 
         put(TestPacket.class, this::onTest);
         put(DisconnectPacket.class, this::onDisconnect);
+        put(RequestLoginPacket.class, this::onRequestLogin);
+        put(SaveDataPacket.class, this::onSaveData);
     }
 
     /**
-     * Adds an operation for a packet type.
+     * Adds the operation for a packet type.
      *
      * @param packetClass the packet class type.
      * @param consumer the operation for the packet.
@@ -63,5 +63,13 @@ class ServerPacketMap {
 
     private void onDisconnect(ClientHandler client, DisconnectPacket packet) {
         server.removeClient(client);
+    }
+
+    private void onRequestLogin(ClientHandler client, RequestLoginPacket packet) {
+        // TODO
+    }
+
+    private void onSaveData(ClientHandler client, SaveDataPacket packet) {
+        // TODO
     }
 }
