@@ -13,6 +13,14 @@ Caja fuerte virtual para guardar tu información de forma segura.
 
 * JRE 12+
 
+## Estructura del proyecto
+
+El código está separado en tres módulos:
+
+* _client_: aplicación del cliente.
+* _server_: aplicación del servidor.
+* _common_: código compartido entre la aplicación cliente y servidor.
+
 ## Desarrollado con
 
 * [Maven](https://maven.apache.org) - Gestión de dependencias
