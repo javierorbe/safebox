@@ -93,21 +93,42 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
         expandAll(folderTree);
+        collapseAll(folderTree);
     }
 
-    private static void expandAll(JTree tree){
+    /**
+     * Expand all nodes in a tree
+     * @param tree An JTree
+     */
+    private static void expandAll(JTree tree) {
         int i = 0;
-        if(tree != null) {
-            expandAll(tree, i);
+        if( tree != null) {
+            expandRecursively(tree, i);
         }
     }
 
-    private static void expandAll(JTree tree, int i){
-        if (i < tree.getRowCount()) {
-            if (tree.isCollapsed(i)) {
-                tree.expandRow(i);
-            }
-            expandAll(tree, ++i);
+    /**
+     * Expand nodes in a tree recursively
+     * If index > 0 expandRecursively will expand all nodes since of index until the final node
+     * else if index = 0 expandRecursively will expand all tree's nodes
+     * @param tree An JTree
+     * @param index Index of the first node that is going to be expanded
+     *              until the final node
+     */
+    private static void expandRecursively(JTree tree, int index) {
+        if (index < tree.getRowCount()) {
+            tree.expandRow(index);
+            expandRecursively(tree, ++index);
+        }
+    }
+
+    /**
+     * Collapse all nodes in a tree
+     * @param tree An JTree
+     */
+    private static void collapseAll(JTree tree) {
+        for (int i = 0; i < tree.getRowCount(); i++){
+            tree.collapseRow(i);
         }
     }
 }
