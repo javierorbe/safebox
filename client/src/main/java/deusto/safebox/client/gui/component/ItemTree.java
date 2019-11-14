@@ -11,7 +11,7 @@ import javax.swing.JTree;
 public class ItemTree extends JTree {
 
     public ItemTree(Map<ItemType, List<LeafItem>> items, DataTable table) {
-        super(new ItemTreeModel(items));
+        super(new ItemTreeModel());
 
         setRootVisible(false);
         setShowsRootHandles(true);

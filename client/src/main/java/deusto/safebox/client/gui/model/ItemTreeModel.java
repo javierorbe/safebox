@@ -1,11 +1,11 @@
 package deusto.safebox.client.gui.model;
 
+import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.common.ItemType;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -18,11 +18,6 @@ public class ItemTreeModel implements TreeModel {
     );
 
     private final Collection<TreeModelListener> listeners = new HashSet<>();
-    private final Map<ItemType, List<LeafItem>> items;
-
-    public ItemTreeModel(Map<ItemType, List<LeafItem>> items) {
-        this.items = items;
-    }
 
     @Override
     public Object getRoot() {
@@ -32,7 +27,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public Object getChild(Object parent, int index) {
         if (parent instanceof ItemType) {
-            return items.get(parent).get(index);
+            return ItemManager.INSTANCE.getItems((ItemType) parent).get(index);
         } else {
             return ITEM_TYPE_ORDER.get(index);
         }
@@ -41,7 +36,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public int getChildCount(Object parent) {
         if (parent instanceof ItemType) {
-            return items.get(parent).size();
+            return ItemManager.INSTANCE.getItems((ItemType) parent).size();
         } else {
             return ITEM_TYPE_ORDER.size();
         }
@@ -50,7 +45,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public boolean isLeaf(Object node) {
         if (node instanceof ItemType) {
-            if (items.get(node).isEmpty()) {
+            if (ItemManager.INSTANCE.getItems((ItemType) node).isEmpty()) {
                 return true;
             }
         }
@@ -63,7 +58,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public int getIndexOfChild(Object parent, Object child) {
         if (parent instanceof ItemType && child instanceof LeafItem) {
-            return items.get(parent).indexOf(child);
+            return ItemManager.INSTANCE.getItems((ItemType) parent).indexOf(child);
         } else if (child instanceof ItemType) {
             return ITEM_TYPE_ORDER.indexOf(child);
         } else {

@@ -4,38 +4,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.JTextField;
-import javax.swing.text.Document;
 
 /**
  * A {@link JTextField} with a placeholder text.
  */
 public class PlaceholderTextField extends JTextField {
 
-    private String placeholder = "";
+    private String placeholder;
 
-    public PlaceholderTextField() {}
-
-    public PlaceholderTextField(String text) {
-        super(text);
-    }
-
-    public PlaceholderTextField(int columns) {
+    public PlaceholderTextField(int columns, String placeholder) {
         super(columns);
-    }
-
-    public PlaceholderTextField(String text, int columns) {
-        super(text, columns);
-    }
-
-    public PlaceholderTextField(Document doc, String text, int columns) {
-        super(doc, text, columns);
-    }
-
-    public String getPlaceholder() {
-        return placeholder;
-    }
-
-    public void setPlaceholder(String placeholder) {
         this.placeholder = placeholder;
     }
 

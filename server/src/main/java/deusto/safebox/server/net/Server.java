@@ -31,7 +31,7 @@ public class Server extends Thread implements AutoCloseable {
     private boolean running = false;
     private final Collection<ClientHandler> clients = new HashSet<>();
 
-    private final PacketHandler packetMap;
+    private final PacketHandler packetHandler;
 
     /**
      * Creates a {@link Server} with the specified port.
@@ -46,7 +46,7 @@ public class Server extends Thread implements AutoCloseable {
         this.port = port;
         this.keyPath = keyPath;
         this.keyPassword = keyPassword;
-        packetMap = new PacketHandler(this, daoManager);
+        packetHandler = new PacketHandler(this, daoManager);
     }
 
     public int getPort() {
@@ -113,13 +113,7 @@ public class Server extends Thread implements AutoCloseable {
         ClientHandler client = new ClientHandler(socket);
         client.setPacketReceived(packet -> {
             logger.trace("Received a packet: {}", packet);
-            packetMap.of(packet).ifPresentOrElse(
-                action -> action.accept(client, packet),
-                () -> logger.error(
-                        "There is no action defined for the received packet ({}).",
-                        packet.getClass().getName()
-                )
-            );
+            packetHandler.fire(client, packet);
         });
         clients.add(client);
         client.start();

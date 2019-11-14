@@ -63,7 +63,7 @@ public class SettingsDialog extends JDialog {
 
         put(new ButtonPanel(
             () -> { /* TODO */ },
-            () -> { /* TODO */ },
+            this::dispose,
             () -> { /* TODO */ }
         ));
 

@@ -10,8 +10,7 @@ public class SearchBox extends PlaceholderTextField {
     private static final Logger logger = LoggerFactory.getLogger(SearchBox.class);
 
     public SearchBox() {
-        super(30);
-        setPlaceholder("Search...");
+        super(30, "Search...");
         setMaximumSize(getPreferredSize());
         getDocument().addDocumentListener(new DocumentListener() {
             @Override

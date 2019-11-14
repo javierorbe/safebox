@@ -7,6 +7,7 @@ import javax.net.ssl.SSLSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Handles the connection of a single client. */
 class ClientHandler extends SocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
