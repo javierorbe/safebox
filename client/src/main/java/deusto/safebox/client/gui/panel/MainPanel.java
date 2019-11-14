@@ -92,17 +92,22 @@ public class MainPanel extends JPanel {
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeTabbedPane, rightSplitPane);
 
         add(mainSplitPane, BorderLayout.CENTER);
-
-        expandAll(folderTree, exampleFolders, 0);
+        expandAll(folderTree);
     }
 
-    private static void expandAll(JTree tree, List<Folder> folders, int i) {
-        for (Folder folder : folders) {
-            if (!folder.isLeafFolder()) {
+    private static void expandAll(JTree tree){
+        int i = 0;
+        if(tree != null) {
+            expandAll(tree, i);
+        }
+    }
+
+    private static void expandAll(JTree tree, int i){
+        if (i < tree.getRowCount()) {
+            if (tree.isCollapsed(i)) {
                 tree.expandRow(i);
-                expandAll(tree, folder.getSubFolders(), ++i);
             }
-            i++;
+            expandAll(tree, ++i);
         }
     }
 }
