@@ -1,4 +1,5 @@
 package deusto.safebox.client.gui.panel;
+
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
@@ -23,6 +24,7 @@ import javax.swing.JTree;
 
 public class MainPanel extends JPanel {
 
+    // TODO: remove this example collections and use the ItemManager.
     private static final List<Folder> exampleFolders = new ArrayList<>();
     private static final Map<ItemType, List<LeafItem>> exampleItems = new EnumMap<>(ItemType.class);
 
@@ -32,31 +34,12 @@ public class MainPanel extends JPanel {
             exampleItems.put(value, new ArrayList<>());
         }
 
-        Folder f1 = new Folder(
-                "Folder1",
-                LocalDateTime.of(2019, 1, 5, 14, 30),
-                LocalDateTime.of(2019, 1, 5, 14, 30)
-        );
-        Folder f2 = new Folder(
-                "Folder2",
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                LocalDateTime.of(2019, 2, 7, 14, 15)
-        );
-        Folder f3 = new Folder(
-                "Folder3",
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                LocalDateTime.of(2019, 2, 7, 14, 15)
-        );
-        Folder f4 = new Folder(
-                "Folder 4",
-                LocalDateTime.of(2019, 11, 13, 18, 38),
-                LocalDateTime.of(2019, 12, 24, 23,59)
-        );
-        Folder f5 = new Folder(
-                "Folder5",
-                LocalDateTime.of(2019, 11, 13, 18, 38),
-                LocalDateTime.of(2019, 12, 24, 23,59)
-        );
+        Folder f1 = new Folder("Folder1");
+        Folder f2 = new Folder("Folder2");
+        Folder f3 = new Folder("Folder3");
+        Folder f4 = new Folder("Folder4");
+        Folder f5 = new Folder("Folder5");
+
         Login login = new Login(
                 "ExampleLogin",
                 f1,
@@ -77,10 +60,11 @@ public class MainPanel extends JPanel {
         );
 
         f1.addSubFolder(f2);
-        f1.addSubFolder(f4);
+        f2.addSubFolder(f3);
         f4.addSubFolder(f5);
+
         exampleFolders.add(f1);
-        exampleFolders.add(f3);
+        exampleFolders.add(f4);
         exampleItems.get(ItemType.LOGIN).add(login);
         exampleItems.get(ItemType.NOTE).add(note);
     }
@@ -110,10 +94,9 @@ public class MainPanel extends JPanel {
         add(mainSplitPane, BorderLayout.CENTER);
 
         expandAll(folderTree, exampleFolders, 0);
-
     }
 
-    private static void expandAll(JTree tree, List<Folder> folders, int i) { ;
+    private static void expandAll(JTree tree, List<Folder> folders, int i) {
         for (Folder folder : folders) {
             if (!folder.isLeafFolder()) {
                 tree.expandRow(i);
