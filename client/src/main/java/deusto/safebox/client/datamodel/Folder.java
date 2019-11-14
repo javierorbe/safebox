@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public class Folder extends Item {
 
+    public static final String NO_PARENT_FOLDER_ID = "none";
+
     private final List<LeafItem> items = new ArrayList<>();
     private final List<Folder> subFolders = new ArrayList<>();
 
@@ -20,12 +22,12 @@ public class Folder extends Item {
         this(id, name, null, created, lastModified);
     }
 
-    public Folder(String name, LocalDateTime created, LocalDateTime lastModified) {
-        this(UUID.randomUUID(), name, created, lastModified);
+    public Folder(String name) {
+        this(UUID.randomUUID(), name, LocalDateTime.now(), LocalDateTime.now());
     }
 
     @Override
-    protected JsonObject getCustomData() {
+    JsonObject getCustomData() {
         return new JsonObject();
     }
 
@@ -33,7 +35,7 @@ public class Folder extends Item {
         return items;
     }
 
-    void addItem(LeafItem item) {
+    public void addItem(LeafItem item) {
         items.add(item);
     }
 
@@ -43,6 +45,16 @@ public class Folder extends Item {
 
     public List<Folder> getSubFolders() {
         return subFolders;
+    }
+
+    public List<Folder> getAllSubFolders() {
+        List<Folder> folders = new ArrayList<>(getSubFolders());
+        getSubFolders().forEach(subFolder -> {
+            if (!subFolder.isLeafFolder()) {
+                folders.addAll(subFolder.getSubFolders());
+            }
+        });
+        return folders;
     }
 
     public void addSubFolder(Folder folder) {
@@ -58,19 +70,28 @@ public class Folder extends Item {
         return subFolders.size() == 0;
     }
 
+    private boolean isRootFolder() {
+        return getFolder() == null;
+    }
+
     public int getSubFolderCount() {
         return subFolders.size();
     }
 
+    /** Returns the full path of the folder. */
     public String getFullPath() {
         StringBuilder builder = new StringBuilder();
-        Folder current = this;
-        do {
-            builder.insert(0, current.getName());
-            builder.insert(0, "/");
-            current = current.getFolder();
-        } while (current != null);
+        getFullPath(builder);
         return builder.toString();
+    }
+
+    /** Build the folder path recursively. */
+    private void getFullPath(StringBuilder builder) {
+        // Put the current folder name at the start of the string.
+        builder.insert(0, '/' + getName());
+        if (!isRootFolder()) {
+            getFolder().getFullPath(builder);
+        }
     }
 
     @Override

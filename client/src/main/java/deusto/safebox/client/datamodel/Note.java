@@ -21,6 +21,10 @@ public class Note extends LeafItem {
         this(UUID.randomUUID(), name, folder, created, lastModified, content);
     }
 
+    public Note(Folder folder) {
+        this("", folder, LocalDateTime.now(), LocalDateTime.now(), "");
+    }
+
     public String getContent() {
         return content;
     }

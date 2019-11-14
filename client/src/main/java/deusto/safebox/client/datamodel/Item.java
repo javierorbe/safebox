@@ -31,14 +31,16 @@ abstract class Item extends AbstractItem {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
+    /** Returns the parent folder of this item. */
     public Folder getFolder() {
         return folder;
     }
 
+    /** Sets the parent folder of this item. */
     public void setFolder(Folder folder) {
         this.folder = folder;
     }
@@ -48,13 +50,13 @@ abstract class Item extends AbstractItem {
      *
      * @return a {@link JsonObject} with the data.
      */
-    protected abstract JsonObject getCustomData();
+    abstract JsonObject getCustomData();
 
     @Override
     public String getEncryptedData() {
         JsonObject root = getCustomData();
         root.addProperty("name", name);
-        root.addProperty("folder", folder == null ? "none" : folder.getId().toString());
+        root.addProperty("folder", folder == null ? Folder.NO_PARENT_FOLDER_ID : folder.getId().toString());
         String unencryptedData = root.toString();
         // TODO: encrypt data
         return unencryptedData;

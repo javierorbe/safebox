@@ -29,6 +29,10 @@ public class Login extends LeafItem {
                 username, password, website, passwordExpiration);
     }
 
+    public Login(Folder folder) {
+        this("", folder, LocalDateTime.now(), LocalDateTime.now(), "", "", "", null);
+    }
+
     public String getUsername() {
         return username;
     }

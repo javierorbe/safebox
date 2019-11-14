@@ -23,7 +23,6 @@ public abstract class LeafItem extends Item {
      */
     LeafItem(UUID id, ItemType type, String name, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type, name, folder, created, lastModified);
-        folder.addItem(this);
     }
 
     /**
