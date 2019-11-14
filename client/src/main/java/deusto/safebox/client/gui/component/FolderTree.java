@@ -21,7 +21,7 @@ public class FolderTree extends JTree {
             }
 
             Folder folder = (Folder) e.getPath().getLastPathComponent();
-            table.getFolderTableModel().setItems(folder.getItems());
+            table.getFolderTableModel().setFolder(folder);
         });
     }
 }
