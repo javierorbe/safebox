@@ -1,14 +1,19 @@
 package deusto.safebox.client.gui;
 
+import deusto.safebox.client.ItemManager;
+import deusto.safebox.client.ItemParser;
 import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.net.Client;
 import deusto.safebox.client.util.IconType;
+import deusto.safebox.common.ItemData;
+import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -31,7 +36,10 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         JMenuBar menuBar = new MenuBar(
-                () -> { /* TODO */ },
+                new Thread(() -> {
+                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.INSTANCE.getAll());
+                    client.sendPacket(new SaveDataPacket(items));
+                })::start,
                 () -> { /* TODO */ },
                 () -> { /* TODO */ }
         );

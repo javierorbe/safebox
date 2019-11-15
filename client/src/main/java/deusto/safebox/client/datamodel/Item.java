@@ -1,6 +1,7 @@
 package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
+import deusto.safebox.client.security.ClientSecurity;
 import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
@@ -56,9 +57,8 @@ abstract class Item extends AbstractItem {
     public String getEncryptedData() {
         JsonObject root = getCustomData();
         root.addProperty("name", name);
-        root.addProperty("folder", folder == null ? Folder.NO_PARENT_FOLDER_ID : folder.getId().toString());
-        String unencryptedData = root.toString();
-        // TODO: encrypt data
-        return unencryptedData;
+        String folderId = folder == null ? Folder.NO_PARENT_FOLDER_ID : folder.getId().toString();
+        root.addProperty("folder", folderId);
+        return ClientSecurity.encrypt(root.toString());
     }
 }

@@ -1,12 +1,19 @@
 package deusto.safebox.client.net;
 
+import deusto.safebox.client.ItemManager;
+import deusto.safebox.client.ItemParser;
+import deusto.safebox.client.datamodel.Folder;
+import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.util.EventHandler;
 import deusto.safebox.client.util.IEventHandler;
+import deusto.safebox.client.util.Pair;
+import deusto.safebox.common.ItemType;
 import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.Packet;
 import deusto.safebox.common.net.packet.ReceiveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -59,7 +66,9 @@ public enum PacketHandler {
     }
 
     private void onReceiveData(ReceiveDataPacket packet) {
-        // TODO
+        Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
+        ItemManager.INSTANCE.set(decryptPair.getLeft(), decryptPair.getRight());
+        // TODO: show main panel
     }
 
     private void onSuccessfulRegister(SuccessfulRegisterPacket packet) {
