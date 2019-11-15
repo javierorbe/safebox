@@ -4,41 +4,52 @@ import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
 import deusto.safebox.client.gui.component.ChangingToggleButton;
-import deusto.safebox.client.gui.component.ShowPasswordField;
+import deusto.safebox.client.gui.component.LimitedTextField;
+import deusto.safebox.client.gui.component.PasswordField;
+import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.util.IconType;
+import deusto.safebox.client.util.TextValidator;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.SimpleButton;
+import deusto.safebox.common.net.packet.ErrorPacket;
+import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 class RegisterPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
-    RegisterPanel() {
-        super(new GridBagLayout());
+    private final JTextField nameField = new LimitedTextField(50, true);
+    private final JTextField emailField = new LimitedTextField(50, true);
+    private final PasswordField pwdField = new PasswordField(100, false);
+    private final PasswordField confirmPwdField = new PasswordField(100, false);
+    private final JButton registerBtn;
 
+    private final Consumer<RequestRegisterPacket> sendRegisterRequest;
+
+    RegisterPanel(Consumer<RequestRegisterPacket> sendRegisterRequest) {
+        super(new GridBagLayout());
+        this.sendRegisterRequest = sendRegisterRequest;
         setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 
-        final JTextField nameField  = new JTextField();
-        final JTextField emailField = new JTextField();
-        final ShowPasswordField pwdField = new ShowPasswordField(false);
-        final ShowPasswordField confirmPwdField = new ShowPasswordField(false);
-        final JButton registerBtn = new SimpleButton("Register");
-        final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+        registerBtn = new SimpleButton("Register", this::registerAction);
+        ChangingToggleButton showPwdBtn = new ChangingToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
                 false,
                 pwdField::showPassword,
                 pwdField::hidePassword
         );
-        final ChangingToggleButton showRPasswordBtn = new ChangingToggleButton(
+        ChangingToggleButton showConfirmPwdBtn = new ChangingToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
                 false,
@@ -64,20 +75,52 @@ class RegisterPanel extends JPanel {
         gbb.setWeightX(1);
         put(pwdField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        put(showPasswordBtn);
+        put(showPwdBtn);
 
         gbb.setGridWidthAndWeightX(1, 0);
         put(new JLabel("Confirm Password"));
         gbb.setWeightX(1);
         put(confirmPwdField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        put(showRPasswordBtn);
+        put(showConfirmPwdBtn);
 
         gbb.setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
         put(registerBtn);
+
+        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.EMAIL_ALREADY_IN_USE,
+                () -> SwingUtilities.invokeLater(() -> {
+                    registerBtn.setEnabled(true);
+                    // TODO: show error message
+                }));
     }
 
     private void put(JComponent component) {
         add(component, gbb.getConstraints());
+    }
+
+    private void registerAction() {
+        registerBtn.setEnabled(false);
+
+        String email = emailField.getText();
+        if (!TextValidator.EMAIL.isValid(email)) {
+            registerBtn.setEnabled(true);
+            // TODO: show error message
+            return;
+        }
+
+        String password = new String(pwdField.getPassword());
+        String confirmPassword = new String(confirmPwdField.getPassword());
+
+        if (!password.equals(confirmPassword)) {
+            registerBtn.setEnabled(true);
+            // TODO: show error message
+            return;
+        }
+
+        String name = nameField.getText();
+
+        new Thread(() -> {
+            // TODO: send register request
+        }).start();
     }
 }

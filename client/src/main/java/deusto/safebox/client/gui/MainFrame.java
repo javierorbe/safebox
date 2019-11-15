@@ -4,6 +4,7 @@ import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
+import deusto.safebox.client.net.Client;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
@@ -11,6 +12,7 @@ import java.awt.Dimension;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 public class MainFrame extends JFrame {
@@ -20,14 +22,20 @@ public class MainFrame extends JFrame {
     private final Map<PanelType, JPanel> panels = new EnumMap<>(PanelType.class);
     private PanelType currentPanel;
 
-    public MainFrame() {
+    public MainFrame(Client client) {
         super("SafeBox");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         GuiUtil.setDefaultLookAndFeel();
         setPreferredSize(PREFERRED_SIZE);
         setIconImage(IconType.APP.getAsImage());
         setLayout(new BorderLayout());
-        setJMenuBar(new MenuBar());
+
+        JMenuBar menuBar = new MenuBar(
+                () -> { /* TODO */ },
+                () -> { /* TODO */ },
+                () -> { /* TODO */ }
+        );
+        setJMenuBar(menuBar);
 
         getContentPane().add(new ToolBar(this, () -> {
             // TEMP
@@ -38,9 +46,12 @@ public class MainFrame extends JFrame {
             }
         }), BorderLayout.PAGE_START);
 
-        panels.put(PanelType.MAIN, new MainPanel());
-        panels.put(PanelType.AUTH, new AuthPanel());
+        // Load all panels
+        panels.put(PanelType.MAIN, new MainPanel(this));
+        AuthPanel authPanel = new AuthPanel(client::sendPacket, client::sendPacket);
+        panels.put(PanelType.AUTH, authPanel);
 
+        // Set initial panel
         currentPanel = PanelType.AUTH;
         getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 

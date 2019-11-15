@@ -3,22 +3,29 @@ package deusto.safebox.client.gui.component;
 import deusto.safebox.client.gui.LimitedDocument;
 import javax.swing.JTextField;
 
+/**
+ * A {@link JTextField} with limited text length.
+ */
 public class LimitedTextField extends JTextField {
 
-    public LimitedTextField(int limit) {
-        this(null, 0, limit);
+    /**
+     * Creates a {@link LimitedTextField} with the specified limit.
+     *
+     * @param limit text length limit.
+     * @param initialText initial text content.
+     * @param beep if true, a beep sound is emitted when the trying to surpass the limit.
+     */
+    public LimitedTextField(int limit, String initialText, boolean beep) {
+        super(new LimitedDocument(limit, beep), initialText, 0);
     }
 
-    public LimitedTextField(String text, int limit) {
-        this(text, 0, limit);
-    }
-
-    public LimitedTextField(int columns, int limit) {
-        this(null, columns, limit);
-    }
-
-    public LimitedTextField(String text, int columns, int limit) {
-        super(text, columns);
-        setDocument(new LimitedDocument(limit));
+    /**
+     * Creates a {@link LimitedTextField} with the specified limit.
+     *
+     * @param limit text length limit.
+     * @param beep if true, a beep sound is emitted when the trying to surpass the limit.
+     */
+    public LimitedTextField(int limit, boolean beep) {
+        this(limit, null, beep);
     }
 }
