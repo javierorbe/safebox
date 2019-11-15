@@ -106,7 +106,7 @@ public class MainPanel extends JPanel {
      */
     private static void expandAll(JTree tree) {
         int i = 0;
-        if( tree != null) {
+        if (tree != null) {
             expandRecursively(tree, i);
         }
     }
