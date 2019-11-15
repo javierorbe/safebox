@@ -19,6 +19,8 @@ class PacketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
 
+    private static final int ARGON2_SERVER_ITERATIONS = 4;
+
     private final Server server;
     private final DaoManager daoManager;
     // Both wildcards must be of the same type.
