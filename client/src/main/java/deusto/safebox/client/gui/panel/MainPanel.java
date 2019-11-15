@@ -1,5 +1,6 @@
 package deusto.safebox.client.gui.panel;
 
+import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
@@ -7,33 +8,63 @@ import deusto.safebox.client.datamodel.Note;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
-import deusto.safebox.common.ItemType;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTree;
 
 public class MainPanel extends JPanel {
 
-    // TODO: remove this example collections and use the ItemManager.
-    private static final List<Folder> exampleFolders = new ArrayList<>();
-    private static final Map<ItemType, List<LeafItem>> exampleItems = new EnumMap<>(ItemType.class);
+    private JScrollPane itemInfoPane = new JScrollPane();
+
+    public MainPanel(JFrame owner) {
+        super(new BorderLayout());
+
+        DataTable table = new DataTable(owner, this::updateItemInfo);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+
+        FolderTree folderTree = new FolderTree(owner, table);
+        JScrollPane folderTreeScrollPane = new JScrollPane(folderTree);
+
+        ItemTree itemTree = new ItemTree(table, this::updateItemInfo);
+        JScrollPane itemTreeScrollPane = new JScrollPane(itemTree);
+
+        JTabbedPane treeTabbedPane = new JTabbedPane();
+        treeTabbedPane.setRequestFocusEnabled(false);
+        treeTabbedPane.addTab("Folders", folderTreeScrollPane);
+        treeTabbedPane.addTab("Categories", itemTreeScrollPane);
+        treeTabbedPane.setPreferredSize(new Dimension(180, 0));
+
+        ItemManager.INSTANCE.addChangeListener(() -> {
+            table.updateFolderModel();
+            table.updateItemModels();
+            folderTree.updateModel();
+            itemTree.updateModel();
+        });
+
+        JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, itemInfoPane);
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeTabbedPane, rightSplitPane);
+
+        add(mainSplitPane, BorderLayout.CENTER);
+
+        addExampleItems();
+
+        expandAll(folderTree);
+        expandAll(itemTree);
+    }
+
+    private void updateItemInfo(LeafItem item) {
+        // TODO: set item info pane
+    }
 
     // TEMP
-    static {
-        for (ItemType value : ItemType.values()) {
-            exampleItems.put(value, new ArrayList<>());
-        }
-
+    private void addExampleItems() {
         Folder f1 = new Folder("Folder1");
         Folder f2 = new Folder("Folder2");
         Folder f3 = new Folder("Folder3");
@@ -63,37 +94,10 @@ public class MainPanel extends JPanel {
         f2.addSubFolder(f3);
         f4.addSubFolder(f5);
 
-        exampleFolders.add(f1);
-        exampleFolders.add(f4);
-        exampleItems.get(ItemType.LOGIN).add(login);
-        exampleItems.get(ItemType.NOTE).add(note);
-    }
-
-    public MainPanel() {
-        super(new BorderLayout());
-
-        DataTable table = new DataTable(exampleItems);
-        JScrollPane tableScrollPane = new JScrollPane(table);
-
-        JTree folderTree = new FolderTree(exampleFolders, table);
-        JScrollPane folderTreeScrollPane = new JScrollPane(folderTree);
-
-        JTree itemTree = new ItemTree(exampleItems, table);
-        JScrollPane itemTreeScrollPane = new JScrollPane(itemTree);
-
-        JTabbedPane treeTabbedPane = new JTabbedPane();
-        treeTabbedPane.setRequestFocusEnabled(false);
-        treeTabbedPane.addTab("Folders", folderTreeScrollPane);
-        treeTabbedPane.addTab("Categories", itemTreeScrollPane);
-
-        JTextArea exampleTestArea = new JTextArea();
-
-        JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, exampleTestArea);
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeTabbedPane, rightSplitPane);
-
-        add(mainSplitPane, BorderLayout.CENTER);
-        expandAll(folderTree);
-        collapseAll(folderTree);
+        ItemManager.INSTANCE.addItem(login);
+        ItemManager.INSTANCE.addItem(note);
+        ItemManager.INSTANCE.addRootFolder(f1);
+        ItemManager.INSTANCE.addRootFolder(f4);
     }
 
     /**

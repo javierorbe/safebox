@@ -1,6 +1,6 @@
 package deusto.safebox.client.gui.model;
 
-import deusto.safebox.client.datamodel.LeafItem;
+import deusto.safebox.client.ItemManager;
 import deusto.safebox.common.ItemType;
 import java.util.EnumMap;
 import java.util.List;
@@ -30,16 +30,14 @@ public class ItemTableModel extends AbstractTableModel {
     }
 
     private final ItemType itemType;
-    private final List<LeafItem> items;
 
-    public ItemTableModel(ItemType itemType, List<LeafItem> items) {
+    public ItemTableModel(ItemType itemType) {
         this.itemType = itemType;
-        this.items = items;
     }
 
     @Override
     public int getRowCount() {
-        return items.size();
+        return ItemManager.INSTANCE.getItems(itemType).size();
     }
 
     @Override
@@ -54,6 +52,6 @@ public class ItemTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return items.get(rowIndex).getProperty(columnIndex);
+        return ItemManager.INSTANCE.getItems(itemType).get(rowIndex).getProperty(columnIndex);
     }
 }
