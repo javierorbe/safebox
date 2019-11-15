@@ -1,25 +1,21 @@
 package deusto.safebox.client.gui.model;
 
+import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.Folder;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-public class FolderTreeModel implements TreeModel {
+@SuppressWarnings("serial")
+public class FolderTreeModel extends DefaultTreeModel {
 
     private final Collection<TreeModelListener> listeners = new HashSet<>();
-    private final List<Folder> folders;
 
-    public FolderTreeModel(List<Folder> folders) {
-        this.folders = folders;
-    }
-
-    @Override
-    public Object getRoot() {
-        return "Root";
+    public FolderTreeModel() {
+        super(new DefaultMutableTreeNode());
     }
 
     @Override
@@ -27,7 +23,7 @@ public class FolderTreeModel implements TreeModel {
         if (parent instanceof Folder) {
             return ((Folder) parent).getSubFolders().get(index);
         } else {
-            return folders.get(index);
+            return ItemManager.INSTANCE.getRootFolders().get(index);
         }
     }
 
@@ -36,7 +32,7 @@ public class FolderTreeModel implements TreeModel {
         if (parent instanceof Folder) {
             return ((Folder) parent).getSubFolderCount();
         } else {
-            return folders.size();
+            return ItemManager.INSTANCE.getRootFolders().size();
         }
     }
 
@@ -58,7 +54,7 @@ public class FolderTreeModel implements TreeModel {
             if (parent instanceof Folder) {
                 return ((Folder) parent).getSubFolders().indexOf(child);
             } else {
-                return folders.indexOf(child);
+                return ItemManager.INSTANCE.getRootFolders().indexOf(child);
             }
         } else {
             return 0;
