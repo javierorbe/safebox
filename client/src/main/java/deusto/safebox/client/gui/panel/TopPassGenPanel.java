@@ -8,23 +8,21 @@ import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class TopPassGenPanel extends JPanel {
+class TopPassGenPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
-    public TopPassGenPanel() {
+    TopPassGenPanel() {
 
         super(new GridBagLayout());
 
@@ -82,14 +80,6 @@ public class TopPassGenPanel extends JPanel {
         gbb.setGridX(2)
                 .setGridWidthAndWeightX(1,0);
         put(p);
-    }
-
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.setSize(new Dimension(500,400));
-        f.add(new TopPassGenPanel());
-        f.setVisible(true);
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void put(JComponent component) {

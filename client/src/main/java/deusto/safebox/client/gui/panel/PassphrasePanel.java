@@ -1,39 +1,44 @@
 package deusto.safebox.client.gui.panel;
+
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
+
 import deusto.safebox.common.gui.GridBagBuilder;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import javax.swing.*;
-import java.awt.*;
-
-public class PassphraseTabPanel extends JPanel {
+class PassphrasePanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
-    PassphraseTabPanel() {
+    PassphrasePanel() {
 
         super(new GridBagLayout());
 
-        JSlider sPassLength = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
-        JLabel pLength = new JLabel(String.valueOf(sPassLength.getValue()));
+        JSlider sWordCount = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
+        JLabel wCountLength = new JLabel(String.valueOf(sWordCount.getValue()));
         JTextField wSep = new JTextField();
 
-        sPassLength.addChangeListener(e -> pLength.setText(String.valueOf(sPassLength.getValue())));
+        sWordCount.addChangeListener(e -> wCountLength.setText(String.valueOf(sWordCount.getValue())));
 
         gbb.setInsets(6,6,6,6);
         gbb.setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        put(new JLabel("Password's length"));
+        put(new JLabel("Word Count: "));
         gbb.setGridWidthAndWeightX(GridBagConstraints.RELATIVE, 1);
-        put(sPassLength);
+        put(sWordCount);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
-        put(pLength);
+        put(wCountLength);
         gbb.setGridWidthAndWeightX(1, 0);
-        put(new JLabel("Word Separator"));
+        put(new JLabel("Word Separator: "));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
         put(wSep);
-
     }
 
     private void put(JComponent component) {
