@@ -25,11 +25,10 @@ public class ToolBar extends JToolBar {
 
         final JButton lockBtn = new ToolBarButton("Lock database", IconType.LOCK, lockAction);
 
-        final JToggleButton pwdGenBtn = new ToolBarToggleButton(
+        final JButton pwdGenBtn = new ToolBarButton(
             "Password generator",
             IconType.PASSWORD_FIELD,
-            () -> { new PassGenDialog(mainFrame);
-            }
+            () -> new PassGenDialog(mainFrame)
         );
 
         final JButton settingsBtn = new ToolBarButton(
