@@ -43,5 +43,5 @@ public abstract class AbstractItem {
      *
      * @return an encrypted string of data.
      */
-    public abstract String getEncryptedData();
+    protected abstract String getEncryptedData();
 }

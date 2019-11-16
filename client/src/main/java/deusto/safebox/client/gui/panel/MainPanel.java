@@ -21,7 +21,7 @@ import javax.swing.JTree;
 
 public class MainPanel extends JPanel {
 
-    private JScrollPane itemInfoPane = new JScrollPane();
+    private final JScrollPane itemInfoPane = new JScrollPane();
 
     public MainPanel(JFrame owner) {
         super(new BorderLayout());

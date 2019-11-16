@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.component;
 
-import deusto.safebox.client.gui.LimitedDocument;
 import javax.swing.JTextField;
 
 /**

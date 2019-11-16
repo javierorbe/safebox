@@ -54,7 +54,7 @@ abstract class Item extends AbstractItem {
     abstract JsonObject getCustomData();
 
     @Override
-    public String getEncryptedData() {
+    protected String getEncryptedData() {
         JsonObject root = getCustomData();
         root.addProperty("name", name);
         String folderId = folder == null ? Folder.NO_PARENT_FOLDER_ID : folder.getId().toString();
