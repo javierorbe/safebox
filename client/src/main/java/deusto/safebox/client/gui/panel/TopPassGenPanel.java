@@ -15,8 +15,8 @@ import javax.swing.SwingConstants;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 class TopPassGenPanel extends JPanel {
 
@@ -35,12 +35,7 @@ class TopPassGenPanel extends JPanel {
                 passwordField::hidePassword
         );
         final JProgressBar progressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 30);
-        passwordField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
+        passwordField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 progressBar.setValue(passwordField.getPassword().length);
@@ -48,7 +43,7 @@ class TopPassGenPanel extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                progressBar.setValue(passwordField.getPassword().length);
             }
         });
 
@@ -68,12 +63,14 @@ class TopPassGenPanel extends JPanel {
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
         put(showPasswordBtn);
 
-        gbb.setGridX(1)
+        gbb.setInsetTop(-10)
+                .setGridX(1)
                 .setGridWidthAndWeightX(2,0)
                 .setAnchor(Anchor.NORTH);
         put(progressBar);
 
-        gbb.setGridX(1)
+        gbb.setInsetTop(4)
+                .setGridX(1)
                 .setGridWidthAndWeightX(1, 1);
         put(quality);
         p.add(entropy);

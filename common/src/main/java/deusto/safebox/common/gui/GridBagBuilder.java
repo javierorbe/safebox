@@ -100,6 +100,11 @@ public class GridBagBuilder {
         return this;
     }
 
+    public GridBagBuilder setInsetTop(int top) {
+        gbc.insets.top = top;
+        return this;
+    }
+
     public enum Fill {
         NONE(GridBagConstraints.NONE),
         HORIZONTAL(GridBagConstraints.HORIZONTAL),

@@ -1,6 +1,7 @@
 package deusto.safebox.client.gui.menu;
 
 import deusto.safebox.client.gui.component.SearchBox;
+import deusto.safebox.client.gui.panel.PassGenDialog;
 import deusto.safebox.client.gui.panel.SettingsDialog;
 import deusto.safebox.client.util.IconType;
 import javax.swing.BorderFactory;
@@ -27,7 +28,8 @@ public class ToolBar extends JToolBar {
         final JToggleButton pwdGenBtn = new ToolBarToggleButton(
             "Password generator",
             IconType.PASSWORD_FIELD,
-            () -> { /* TODO */ }
+            () -> { new PassGenDialog(mainFrame);
+            }
         );
 
         final JButton settingsBtn = new ToolBarButton(
