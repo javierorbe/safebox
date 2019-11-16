@@ -10,13 +10,15 @@ class PassOptionsPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
+    final JButton close = new JButton("Close");
+
     PassOptionsPanel() {
 
         super(new GridBagLayout());
 
         final JButton regenerate = new JButton("Regenerate");
         final JButton copy = new JButton("Copy");
-        final JButton close = new JButton("Close");
+
 
         //TODO: Adds listeners of JButtons
 

@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 class BotPassGenPanel extends JPanel{
 
     private final GridBagBuilder gbb = new GridBagBuilder();
+    final PassOptionsPanel optionsPanel = new PassOptionsPanel();
 
     BotPassGenPanel() {
 
@@ -18,7 +19,7 @@ class BotPassGenPanel extends JPanel{
         final JTabbedPane tabbedPane = new JTabbedPane();
         final PassPanel passPanel = new PassPanel();
         final PassphrasePanel passphrasePanel = new PassphrasePanel();
-        final PassOptionsPanel optionsPanel = new PassOptionsPanel();
+
 
         tabbedPane.addTab("Password", passPanel);
         tabbedPane.addTab("Passphrase", passphrasePanel);
