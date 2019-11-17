@@ -33,7 +33,7 @@ public class DataTable extends JTable {
                 JTable table = (JTable) event.getSource();
                 int row = table.rowAtPoint(event.getPoint());
 
-                if (table.getSelectedRow() != 1) {
+                if (table.getSelectedRow() != -1) {
                     AbstractTableModel model;
                     LeafItem item;
 

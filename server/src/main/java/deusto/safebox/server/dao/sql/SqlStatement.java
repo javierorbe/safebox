@@ -1,6 +1,6 @@
 package deusto.safebox.server.dao.sql;
 
-/** Represents a SQL statement that can vary in each DBMS. */
+/** SQL statement that can vary in each DBMS. */
 interface SqlStatement {
 
     /**

@@ -68,7 +68,6 @@ public enum PacketHandler {
     private void onReceiveData(ReceiveDataPacket packet) {
         Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
         ItemManager.INSTANCE.set(decryptPair.getLeft(), decryptPair.getRight());
-        // TODO: show main panel
     }
 
     private void onSuccessfulRegister(SuccessfulRegisterPacket packet) {

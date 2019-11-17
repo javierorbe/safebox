@@ -7,8 +7,11 @@ import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
 import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.net.Client;
+import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.ItemData;
+import deusto.safebox.common.net.packet.LogOutPacket;
+import deusto.safebox.common.net.packet.ReceiveDataPacket;
 import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
@@ -32,23 +35,23 @@ public class MainFrame extends JFrame {
         setIconImage(IconType.APP.getAsImage());
         setLayout(new BorderLayout());
 
-        setJMenuBar(new MenuBar(
-                new Thread(() -> {
-                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.INSTANCE.getAll());
-                    client.sendPacket(new SaveDataPacket(items));
-                })::start,
-                () -> { /* TODO */ },
-                () -> { /* TODO */ }
-        ));
-
-        getContentPane().add(new ToolBar(this, () -> {
-            // TEMP
+        Runnable logOut = () -> {
             if (currentPanel == PanelType.MAIN) {
                 setCurrentPanel(PanelType.AUTH);
-            } else {
-                setCurrentPanel(PanelType.MAIN);
+                client.sendPacket(new LogOutPacket());
             }
-        }), BorderLayout.PAGE_START);
+        };
+
+        setJMenuBar(new MenuBar(
+                () -> new Thread(() -> {
+                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.INSTANCE.getAll());
+                    client.sendPacket(new SaveDataPacket(items));
+                }).start(),
+                () -> { /* TODO */ },
+                logOut
+        ));
+
+        getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);
 
         // Load all panels
         panels.put(PanelType.MAIN, new MainPanel(this));
@@ -57,6 +60,8 @@ public class MainFrame extends JFrame {
         // Set initial panel
         currentPanel = PanelType.AUTH;
         getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
+
+        PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));
