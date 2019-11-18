@@ -21,7 +21,7 @@ class PassPanel extends JPanel {
         final CharacterTypesPanel charTypesPan = new CharacterTypesPanel();
 
         sPassLength.addChangeListener(e -> pLength.setText(String.valueOf(sPassLength.getValue())));
-
+        sPassLength.setPaintTicks(true);
         gbb.setInsets(6,6,6,6);
         gbb.setFillAndAnchor(GridBagBuilder.Fill.HORIZONTAL, GridBagBuilder.Anchor.WEST);
 
