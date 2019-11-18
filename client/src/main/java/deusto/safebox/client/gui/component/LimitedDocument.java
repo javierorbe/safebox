@@ -1,4 +1,4 @@
-package deusto.safebox.client.gui;
+package deusto.safebox.client.gui.component;
 
 import java.awt.Toolkit;
 import javax.swing.text.AttributeSet;
@@ -7,7 +7,7 @@ import javax.swing.text.PlainDocument;
 
 /** Document that has a limited length. */
 @SuppressWarnings("serial")
-public class LimitedDocument extends PlainDocument {
+class LimitedDocument extends PlainDocument {
 
     private final int limit;
     private final boolean beep;
@@ -18,13 +18,9 @@ public class LimitedDocument extends PlainDocument {
      * @param limit the limit.
      * @param beep if true, a beep sound is emitted when the trying to surpass the limit.
      */
-    public LimitedDocument(int limit, boolean beep) {
+    LimitedDocument(int limit, boolean beep) {
         this.limit = limit;
         this.beep = beep;
-    }
-
-    public LimitedDocument(int limit) {
-        this(limit, false);
     }
 
     @Override
@@ -33,12 +29,8 @@ public class LimitedDocument extends PlainDocument {
             if ((getLength() + str.length()) <= limit) {
                 super.insertString(offs, str, a);
             } else if (beep) {
-                beep();
+                Toolkit.getDefaultToolkit().beep();
             }
         }
-    }
-
-    private static void beep() {
-        Toolkit.getDefaultToolkit().beep();
     }
 }

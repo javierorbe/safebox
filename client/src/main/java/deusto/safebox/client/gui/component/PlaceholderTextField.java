@@ -8,11 +8,11 @@ import javax.swing.JTextField;
 /**
  * A {@link JTextField} with a placeholder text.
  */
-public class PlaceholderTextField extends JTextField {
+class PlaceholderTextField extends JTextField {
 
-    private String placeholder;
+    private final String placeholder;
 
-    public PlaceholderTextField(int columns, String placeholder) {
+    PlaceholderTextField(int columns, String placeholder) {
         super(columns);
         this.placeholder = placeholder;
     }

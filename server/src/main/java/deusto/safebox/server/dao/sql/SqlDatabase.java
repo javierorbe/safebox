@@ -1,6 +1,6 @@
 package deusto.safebox.server.dao.sql;
 
-/** Database managing systems.  */
+/** Database managing system. */
 enum SqlDatabase {
     MYSQL, SQLITE
 }

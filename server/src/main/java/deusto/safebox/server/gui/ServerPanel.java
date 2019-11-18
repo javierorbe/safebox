@@ -31,7 +31,7 @@ class ServerPanel extends JPanel {
 
         JLabel serverState = new JLabel("Off");
         JLabel socketServerPort = new JLabel(String.valueOf(server.getPort()));
-        String sqlServerUrl = getSqlServerUrl().orElse("unknown");
+        String sqlServerUrl = getSqlServerUrl().orElse("Unknown");
         JLabel sqlServer = new JLabel(sqlServerUrl);
 
         SimpleButton startBtn = new SimpleButton("Start server");
