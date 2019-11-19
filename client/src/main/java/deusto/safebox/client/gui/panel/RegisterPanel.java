@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -96,7 +95,7 @@ class RegisterPanel extends JPanel {
         ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.EMAIL_ALREADY_IN_USE,
                 () -> SwingUtilities.invokeLater(() -> {
                     registerBtn.setEnabled(true);
-                    new ToastDialog("Email already in use.", Color.RED,2, this);
+                    new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
         ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
         PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> enableRegisterBtn.run());
@@ -112,7 +111,7 @@ class RegisterPanel extends JPanel {
         String email = emailField.getText();
         if (!TextValidator.EMAIL.isValid(email)) {
             registerBtn.setEnabled(true);
-            new ToastDialog("Invalid email address.", Color.RED,2, this);
+            new ToastDialog("Invalid email address.", Color.RED, 2, this);
             return;
         }
 

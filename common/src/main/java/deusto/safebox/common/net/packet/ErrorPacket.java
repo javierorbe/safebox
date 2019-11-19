@@ -26,6 +26,7 @@ public class ErrorPacket extends Packet implements Serializable {
         EMAIL_ALREADY_IN_USE,
         INVALID_LOGIN,
         REGISTER_ERROR,
+        SAVE_DATA_ERROR,
         ;
 
         public ErrorPacket get() {

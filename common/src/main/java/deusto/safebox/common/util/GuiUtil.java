@@ -13,6 +13,7 @@ public class GuiUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(GuiUtil.class);
 
+    /** Returns the location where the component would be centered in the screen. */
     public static Point getCenteredLocation(Component component) {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         return new Point(

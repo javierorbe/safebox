@@ -25,7 +25,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -81,9 +80,12 @@ class LoginPanel extends JPanel {
         put(loginBtn);
 
         Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, enableLoginBtn);
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
         PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> enableLoginBtn.run());
+        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
+        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
+            loginBtn.setEnabled(true);
+            new ToastDialog("Invalid login details.", Color.RED, 2, this);
+        }));
     }
 
     private void put(JComponent component) {
@@ -96,7 +98,7 @@ class LoginPanel extends JPanel {
         String email = emailField.getText();
         if (!TextValidator.EMAIL.isValid(email)) {
             loginBtn.setEnabled(true);
-            new ToastDialog("Invalid email address.", Color.RED,2, this);
+            new ToastDialog("Invalid email address.", Color.RED, 2, this);
             return;
         }
 
