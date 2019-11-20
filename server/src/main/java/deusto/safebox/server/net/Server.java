@@ -124,6 +124,14 @@ public class Server extends Thread implements AutoCloseable {
         client.close();
     }
 
+    public int getClientCount() {
+        return clients.size();
+    }
+
+    public int getAuthenticatedClientCount() {
+        return packetHandler.getAuthenticatedClientCount();
+    }
+
     private SSLServerSocketFactory createServerSocketFactory() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(Files.newInputStream(keyPath), keyPassword.toCharArray());

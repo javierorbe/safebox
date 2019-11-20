@@ -1,4 +1,4 @@
-package deusto.safebox.client.gui.component;
+package deusto.safebox.common.gui;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;

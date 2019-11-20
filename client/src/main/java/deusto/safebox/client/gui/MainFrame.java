@@ -45,6 +45,7 @@ public class MainFrame extends JFrame {
         setJMenuBar(new MenuBar(
                 () -> new Thread(() -> {
                     Collection<ItemData> items = ItemParser.toItemData(ItemManager.INSTANCE.getAll());
+                    // TODO: display an indeterminate progress bar while saving
                     client.sendPacket(new SaveDataPacket(items));
                 }).start(),
                 () -> { /* TODO */ },

@@ -1,6 +1,7 @@
 package deusto.safebox.server.gui;
 
 import deusto.safebox.common.gui.GridBagBuilder;
+import deusto.safebox.common.gui.RightAlignedLabel;
 import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.net.Server;
@@ -8,10 +9,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +25,8 @@ class ServerPanel extends JPanel {
 
     private final SqlDaoManager daoManager;
     private final GridBagBuilder gbb = new GridBagBuilder();
+
+    // TODO:
 
     ServerPanel(Server server, SqlDaoManager daoManager) {
         super(new GridBagLayout());
@@ -33,6 +39,8 @@ class ServerPanel extends JPanel {
         JLabel socketServerPort = new JLabel(String.valueOf(server.getPort()));
         String sqlServerUrl = getSqlServerUrl().orElse("Unknown");
         JLabel sqlServer = new JLabel(sqlServerUrl);
+        JLabel clientCount = new JLabel("0");
+        JLabel authClientCount = new JLabel("0");
 
         SimpleButton startBtn = new SimpleButton("Start server");
         SimpleButton stopBtn = new SimpleButton("Stop server");
@@ -60,9 +68,11 @@ class ServerPanel extends JPanel {
                 .setFillAndAnchor(GridBagBuilder.Fill.HORIZONTAL, GridBagBuilder.Anchor.WEST);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
 
-        addInfo("Server state: ", serverState);
-        addInfo("Socket server port: ", socketServerPort);
-        addInfo("SQL server: ", sqlServer);
+        addInfo("Server state:", serverState);
+        addInfo("Socket server port:", socketServerPort);
+        addInfo("SQL server:", sqlServer);
+        addInfo("Clients:", clientCount);
+        addInfo("Authenticated clients:", authClientCount);
 
         JPanel btnPanel = new JPanel();
         btnPanel.add(startBtn);
@@ -70,6 +80,12 @@ class ServerPanel extends JPanel {
         gbb.setGridWidth(GridBagConstraints.REMAINDER)
                 .setFillAndAnchor(GridBagBuilder.Fill.NONE, GridBagBuilder.Anchor.SOUTH);
         put(btnPanel);
+
+        Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(() -> SwingUtilities.invokeLater(() -> {
+                    clientCount.setText(String.valueOf(server.getClientCount()));
+                    authClientCount.setText(String.valueOf(server.getAuthenticatedClientCount()));
+                }), 5, 5, TimeUnit.SECONDS);
     }
 
     private void put(JComponent component) {
@@ -78,7 +94,7 @@ class ServerPanel extends JPanel {
 
     private void addInfo(String labelName, JLabel info) {
         gbb.setGridWidthAndWeightX(1, 0);
-        put(new JLabel(labelName));
+        put(new RightAlignedLabel(labelName));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
         put(info);
     }
