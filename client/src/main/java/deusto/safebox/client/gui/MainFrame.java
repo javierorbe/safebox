@@ -59,7 +59,7 @@ public class MainFrame extends JFrame {
 
         // Set initial panel
         currentPanel = PanelType.AUTH;
-        getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
+        getContentPane().add(panels.get(PanelType.MAIN), BorderLayout.CENTER);
 
         PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
 

@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class Note extends LeafItem {
@@ -14,6 +16,9 @@ public class Note extends LeafItem {
                  String content) {
         super(id, ItemType.NOTE, name, folder, created, lastModified);
         this.content = content;
+        setFeatures(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(content, "Content")
+        )));
     }
 
     public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified,

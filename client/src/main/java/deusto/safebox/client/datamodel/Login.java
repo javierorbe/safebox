@@ -5,6 +5,8 @@ import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class Login extends LeafItem {
@@ -21,6 +23,12 @@ public class Login extends LeafItem {
         this.password = password;
         this.website = website;
         this.passwordExpiration = passwordExpiration;
+        setFeatures(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(username, "Username: "),
+                new ItemProperty<>(password, "Password: "),
+                new ItemProperty<>(website, "Website: "),
+                new ItemProperty<>(passwordExpiration, "Password expiration: ")
+        )));
     }
 
     public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,

@@ -3,6 +3,8 @@ package deusto.safebox.client.datamodel;
 import deusto.safebox.client.gui.model.ItemTableModel;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,6 +12,8 @@ import java.util.UUID;
  * All items (except for folders) should inherit this class.
  */
 public abstract class LeafItem extends Item {
+
+    private List<ItemProperty> features= new ArrayList<>();
 
     /**
      * Creates a {@link LeafItem} and adds itself to the specified folder.
@@ -23,6 +27,7 @@ public abstract class LeafItem extends Item {
      */
     LeafItem(UUID id, ItemType type, String name, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type, name, folder, created, lastModified);
+
     }
 
     /**
@@ -33,4 +38,12 @@ public abstract class LeafItem extends Item {
      * @return the property in the specified index.
      */
     public abstract Object getProperty(int index);
+
+    public List<ItemProperty> getFeatures() {
+        return features;
+    }
+
+    void setFeatures(List<ItemProperty> features) {
+        this.features = features;
+    }
 }

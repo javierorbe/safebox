@@ -46,6 +46,8 @@ abstract class Item extends AbstractItem {
         this.folder = folder;
     }
 
+
+
     /**
      * Returns a {@link JsonObject} containing the properties that are specific to the item type.
      *
