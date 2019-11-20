@@ -11,6 +11,7 @@ import java.util.Optional;
  * Event handler for specified error types.
  * Singleton.
  */
+// TODO: change this to an static-method class
 public enum ErrorHandler {
     INSTANCE;
 

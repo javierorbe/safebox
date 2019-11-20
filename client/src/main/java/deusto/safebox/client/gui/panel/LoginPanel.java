@@ -6,7 +6,7 @@ import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
-import deusto.safebox.client.gui.component.RightAlignedLabel;
+import deusto.safebox.common.gui.RightAlignedLabel;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.security.ClientSecurity;
@@ -30,6 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 class LoginPanel extends JPanel {
+
+    // TODO: once logged in, clean the password field
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 

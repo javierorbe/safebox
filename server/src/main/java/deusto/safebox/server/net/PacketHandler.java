@@ -86,11 +86,16 @@ class PacketHandler {
                 );
     }
 
+    int getAuthenticatedClientCount() {
+        return authenticatedUsers.size();
+    }
+
     private void onTest(ClientHandler client, TestPacket packet) {
         System.out.println("Test packet action.");
     }
 
     private void onDisconnect(ClientHandler client, DisconnectPacket packet) {
+        authenticatedUsers.remove(client);
         server.removeClient(client);
     }
 

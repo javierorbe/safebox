@@ -19,6 +19,7 @@ import java.util.function.Function;
  * Manages the items and provides an item change event.
  * Singleton.
  */
+// TODO: change this to an static-method class
 public enum ItemManager {
     INSTANCE;
 

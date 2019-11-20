@@ -21,6 +21,7 @@ import java.util.function.Consumer;
  * Handles the received packets.
  * Singleton.
  */
+// TODO: change this to an static-method class
 public enum PacketHandler {
     INSTANCE;
 
