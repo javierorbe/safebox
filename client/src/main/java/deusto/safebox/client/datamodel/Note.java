@@ -16,14 +16,13 @@ public class Note extends LeafItem {
                  String content) {
         super(id, ItemType.NOTE, name, folder, created, lastModified);
         this.content = content;
-        getFeatures().addAll(new ArrayList<>(Arrays.asList(
-                new ItemProperty<>(content, "Content: ")
-        )));
+        updateFeatures();
     }
 
     public Note(String name, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                 String content) {
         this(UUID.randomUUID(), name, folder, created, lastModified, content);
+        updateFeatures();
     }
 
     public Note(Folder folder) {
@@ -59,5 +58,12 @@ public class Note extends LeafItem {
         }
 
         throw new IllegalArgumentException("No property with index " + index);
+    }
+
+    @Override
+    public void updateFeatures() {
+        getFeatures().addAll(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(content, "Content: ")
+        )));
     }
 }

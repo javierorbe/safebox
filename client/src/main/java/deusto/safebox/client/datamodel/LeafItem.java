@@ -30,9 +30,7 @@ public abstract class LeafItem extends Item {
         super(id, type, name, folder, created, lastModified);
         setFeatures(new ArrayList<>(Arrays.asList(
                 new ItemProperty<>(name, "Name: "),
-                new ItemProperty<>(folder, "Parent's folder: "),
-                new ItemProperty<>(created, "Created: "),
-                new ItemProperty<>(lastModified, "Last modified: ")
+                new ItemProperty<>(created, "Created: ")
         )));
     }
 
@@ -44,6 +42,8 @@ public abstract class LeafItem extends Item {
      * @return the property in the specified index.
      */
     public abstract Object getProperty(int index);
+
+    public abstract void updateFeatures();
 
     public List<ItemProperty> getFeatures() {
         return features;

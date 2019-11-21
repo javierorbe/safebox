@@ -23,18 +23,14 @@ public class Login extends LeafItem {
         this.password = password;
         this.website = website;
         this.passwordExpiration = passwordExpiration;
-        getFeatures().addAll(new ArrayList<>(Arrays.asList(
-                new ItemProperty<>(username, "Username: "),
-                new ItemProperty<>(password, "Password: "),
-                new ItemProperty<>(website, "Website: "),
-                new ItemProperty<>(passwordExpiration, "Password expiration: ")
-        )));
+        updateFeatures();
     }
 
     public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                  String username, String password, String website, LocalDate passwordExpiration) {
         this(UUID.randomUUID(), itemName, folder, created, lastModified,
                 username, password, website, passwordExpiration);
+        updateFeatures();
     }
 
     public Login(Folder folder) {
@@ -101,5 +97,15 @@ public class Login extends LeafItem {
         }
 
         throw new IllegalArgumentException("No property with index " + index);
+    }
+
+    @Override
+    public void updateFeatures() {
+        getFeatures().addAll(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(username, "Username: "),
+                new ItemProperty<>(password, "Password: "),
+                new ItemProperty<>(website, "Website: "),
+                new ItemProperty<>(passwordExpiration, "Password expiration: ")
+        )));
     }
 }
