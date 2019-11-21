@@ -47,8 +47,7 @@ public class DataTable extends JTable {
                     }
 
                     if (event.getClickCount() == 2) {
-                        // TODO: show item modification dialog
-                        EditItemDialog editDialog = new EditItemDialog(owner, item);
+                        new EditItemDialog(owner, item);
                         model.fireTableDataChanged();
                     } else {
                         itemSelectionEvent.accept(item);

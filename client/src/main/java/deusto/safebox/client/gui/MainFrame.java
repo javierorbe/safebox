@@ -11,7 +11,7 @@ import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.net.packet.LogOutPacket;
-import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
@@ -60,9 +60,9 @@ public class MainFrame extends JFrame {
 
         // Set initial panel
         currentPanel = PanelType.AUTH;
-        getContentPane().add(panels.get(PanelType.MAIN), BorderLayout.CENTER);
+        getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
+        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));

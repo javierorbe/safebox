@@ -15,7 +15,7 @@ import deusto.safebox.client.util.TextValidator;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
-import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.RequestLoginPacket;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -82,7 +82,7 @@ class LoginPanel extends JPanel {
         put(loginBtn);
 
         Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> enableLoginBtn.run());
+        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableLoginBtn.run());
         ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
         ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
             loginBtn.setEnabled(true);

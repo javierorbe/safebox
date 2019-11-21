@@ -1,4 +1,4 @@
-package deusto.safebox.client.gui.panel;
+package deusto.safebox.client.gui.panel.pwdgen;
 
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;

@@ -8,14 +8,10 @@ public abstract class AbstractItem {
 
     private final UUID id;
     private final ItemType type;
-    private final LocalDateTime created;
-    private LocalDateTime lastModified;
 
-    protected AbstractItem(UUID id, ItemType type, LocalDateTime created, LocalDateTime lastModified) {
+    protected AbstractItem(UUID id, ItemType type) {
         this.id = Objects.requireNonNull(id);
         this.type = type;
-        this.created = created;
-        this.lastModified = lastModified;
     }
 
     public UUID getId() {
@@ -26,17 +22,9 @@ public abstract class AbstractItem {
         return type;
     }
 
-    public LocalDateTime getCreated() {
-        return created;
-    }
+    public abstract LocalDateTime getCreated();
 
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(LocalDateTime lastModified) {
-        this.lastModified = lastModified;
-    }
+    public abstract LocalDateTime getLastModified();
 
     /**
      * Returns an encrypted JSON string with the data specific for the item type.

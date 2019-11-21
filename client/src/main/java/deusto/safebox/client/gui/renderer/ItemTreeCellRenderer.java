@@ -19,7 +19,7 @@ public class ItemTreeCellRenderer extends DefaultTreeCellRenderer {
             // TODO: set different icons for each item type
             setIcon(IconType.FOLDER.getAsIcon());
         } else if (value instanceof LeafItem) {
-            setText(((LeafItem) value).getName());
+            setText(((LeafItem) value).getTitle());
             // TODO: customize the icon of each item
             setIcon(IconType.NEW_FILE_16.getAsIcon());
         }

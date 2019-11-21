@@ -13,7 +13,7 @@ import javax.swing.table.AbstractTableModel;
 public class FolderTableModel extends AbstractTableModel {
 
     private static final List<Pair<String, Function<LeafItem, Object>>> COLUMNS = List.of(
-            new Pair<>("Title", LeafItem::getName),
+            new Pair<>("Title", LeafItem::getTitle),
             new Pair<>("Type", LeafItem::getType),
             new Pair<>("Created", item -> Constants.DATE_TIME_FORMATTER.format(item.getCreated())),
             new Pair<>("Last Modified", item -> Constants.DATE_TIME_FORMATTER.format(item.getLastModified()))

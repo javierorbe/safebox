@@ -42,11 +42,11 @@ public interface Dao<E, K> {
 
     /**
      * Returns an {@link Optional} with the object associated to the specified key
-     * or an empty {@link Optional} if there is no object associated to the key.
+     * or an empty {@code Optional} if there is no object associated to the key.
      *
      * @param key the key whose associated object is to be returned.
-     * @return an {@link Optional} with the object associated to the specified key
-     *         or an empty {@link Optional} if there is no object associated to the key.
+     * @return an {@code Optional} with the object associated to the specified key
+     *         or an empty {@code Optional} if there is no object associated to the key.
      * @throws DaoException if there is an error getting the object.
      */
     Optional<E> get(K key) throws DaoException;

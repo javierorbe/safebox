@@ -9,7 +9,7 @@ import static deusto.safebox.common.net.packet.ErrorPacket.ErrorType.UNKNOWN_ERR
 import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.LogOutPacket;
 import deusto.safebox.common.net.packet.Packet;
-import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.RequestLoginPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import deusto.safebox.common.net.packet.SaveDataPacket;
@@ -115,7 +115,7 @@ class PacketHandler {
             try {
                 daoManager.getItemCollectionDao().get(user.getId()).ifPresentOrElse(
                         itemCollection -> {
-                            client.sendPacket(new ReceiveDataPacket(itemCollection.getItems()));
+                            client.sendPacket(new RetrieveDataPacket(itemCollection.getItems()));
                             authenticatedUsers.put(client, user.getId());
                         },
                         () -> client.sendPacket(UNKNOWN_ERROR.get()));

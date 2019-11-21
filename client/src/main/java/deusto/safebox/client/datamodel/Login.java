@@ -1,111 +1,67 @@
 package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
+import deusto.safebox.client.datamodel.property.DateProperty;
+import deusto.safebox.client.datamodel.property.PasswordProperty;
+import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class Login extends LeafItem {
 
-    private String username;
-    private String password;
-    private String website;
-    private LocalDate passwordExpiration;
+    private final StringProperty username;
+    private final PasswordProperty password;
+    private final StringProperty website;
+    private final DateProperty expiration;
 
-    private Login(UUID id, String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                  String username, String password, String website, LocalDate passwordExpiration) {
-        super(id, ItemType.LOGIN, itemName, folder, created, lastModified);
-        this.username = username;
-        this.password = password;
-        this.website = website;
-        this.passwordExpiration = passwordExpiration;
-        updateFeatures();
-    }
+    // TODO: custom website property with a clickable component that redirects to the website
 
-    public Login(String itemName, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                 String username, String password, String website, LocalDate passwordExpiration) {
-        this(UUID.randomUUID(), itemName, folder, created, lastModified,
-                username, password, website, passwordExpiration);
-        updateFeatures();
+    private Login(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
+                  String username, String password, String website, LocalDate expiration) {
+        super(id, ItemType.LOGIN, title, folder, created, lastModified);
+        this.username = new StringProperty("Username", 50, username);
+        this.password = new PasswordProperty("Password", 100, password);
+        this.website = new StringProperty("Website", 200, website);
+        this.expiration = new DateProperty("Expiration", expiration);
+        addProperties(List.of(
+                this.username,
+                this.password,
+                this.website,
+                this.expiration
+        ));
     }
 
     public Login(Folder folder) {
-        this("", folder, LocalDateTime.now(), LocalDateTime.now(), "", "", "", null);
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public LocalDate getPasswordExpiration() {
-        return passwordExpiration;
-    }
-
-    public void setPasswordExpiration(LocalDate passwordExpiration) {
-        this.passwordExpiration = passwordExpiration;
+        this(UUID.randomUUID(), "", folder, LocalDateTime.now(), LocalDateTime.now(),
+                "", "", "", null);
     }
 
     @Override
-    protected JsonObject getCustomData() {
+    JsonObject getCustomData() {
         JsonObject root = new JsonObject();
-        root.addProperty("username", username);
-        root.addProperty("password", password);
-        root.addProperty("website", website);
-        root.add("passwordExpiration", Constants.GSON.toJsonTree(passwordExpiration));
+        root.addProperty("username", username.get());
+        root.addProperty("password", password.get());
+        root.addProperty("website", website.get());
+        root.add("expiration", Constants.GSON.toJsonTree(expiration.get()));
         return root;
     }
 
-    @Override
-    public Object getProperty(int index) {
-        switch (index) {
-            case 0:
-                return getName();
-            case 1:
-                return username;
-            case 2:
-                return password;
-            case 3:
-                return website;
-            case 4:
-                return Constants.DATE_TIME_FORMATTER.format(getCreated());
-            case 5:
-                return Constants.DATE_TIME_FORMATTER.format(getLastModified());
-        }
-
-        throw new IllegalArgumentException("No property with index " + index);
-    }
-
-    @Override
-    public void updateFeatures() {
-        getFeatures().addAll(new ArrayList<>(Arrays.asList(
-                new ItemProperty<>(username, "Username: "),
-                new ItemProperty<>(password, "Password: "),
-                new ItemProperty<>(website, "Website: "),
-                new ItemProperty<>(passwordExpiration, "Password expiration: ")
-        )));
+    public static Login of(ItemData itemData, Folder folder, JsonObject data) {
+        return new Login(
+                itemData.getId(),
+                data.get("title").getAsString(),
+                folder,
+                itemData.getCreated(),
+                itemData.getLastModified(),
+                data.get("username").getAsString(),
+                data.get("password").getAsString(),
+                data.get("website").getAsString(),
+                Constants.GSON.fromJson(data.get("expiration"), LocalDate.class)
+        );
     }
 }

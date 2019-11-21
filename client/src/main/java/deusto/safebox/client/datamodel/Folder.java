@@ -14,12 +14,8 @@ public class Folder extends Item {
     private final List<LeafItem> items = new ArrayList<>();
     private final List<Folder> subFolders = new ArrayList<>();
 
-    private Folder(UUID id, String name, Folder parentFolder, LocalDateTime created, LocalDateTime lastModified) {
-        super(id, ItemType.FOLDER, name, parentFolder, created, lastModified);
-    }
-
     public Folder(UUID id, String name, LocalDateTime created, LocalDateTime lastModified) {
-        this(id, name, null, created, lastModified);
+        super(id, ItemType.FOLDER, name, null, created, lastModified);
     }
 
     public Folder(String name) {
@@ -88,7 +84,7 @@ public class Folder extends Item {
     /** Build the folder path recursively. */
     private void getFullPath(StringBuilder builder) {
         // Put the current folder name at the start of the string.
-        builder.insert(0, '/' + getName());
+        builder.insert(0, '/' + getTitle());
         if (!isRootFolder()) {
             getFolder().getFullPath(builder);
         }
@@ -96,6 +92,6 @@ public class Folder extends Item {
 
     @Override
     public String toString() {
-        return getName();
+        return getTitle();
     }
 }

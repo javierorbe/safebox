@@ -1,7 +1,7 @@
 package deusto.safebox.client.gui.menu;
 
 import deusto.safebox.client.gui.component.SearchBox;
-import deusto.safebox.client.gui.panel.PassGenDialog;
+import deusto.safebox.client.gui.panel.pwdgen.PassGenDialog;
 import deusto.safebox.client.gui.panel.SettingsDialog;
 import deusto.safebox.client.util.IconType;
 import javax.swing.BorderFactory;

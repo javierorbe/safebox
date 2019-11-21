@@ -15,7 +15,7 @@ import deusto.safebox.client.util.TextValidator;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
-import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -100,7 +100,7 @@ class RegisterPanel extends JPanel {
                     new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
         ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.INSTANCE.addListener(ReceiveDataPacket.class, ignored -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
     }
 
     private void put(JComponent component) {

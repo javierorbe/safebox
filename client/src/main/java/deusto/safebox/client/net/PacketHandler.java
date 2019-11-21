@@ -10,7 +10,7 @@ import deusto.safebox.client.util.Pair;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.Packet;
-import deusto.safebox.common.net.packet.ReceiveDataPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ public enum PacketHandler {
 
     PacketHandler() {
         addListener(ErrorPacket.class, this::onError);
-        addListener(ReceiveDataPacket.class, this::onReceiveData);
+        addListener(RetrieveDataPacket.class, this::onReceiveData);
         addListener(SuccessfulRegisterPacket.class, this::onSuccessfulRegister);
         // TODO: add the remaining listeners
     }
@@ -66,7 +66,7 @@ public enum PacketHandler {
         ErrorHandler.INSTANCE.fire(packet.getErrorType());
     }
 
-    private void onReceiveData(ReceiveDataPacket packet) {
+    private void onReceiveData(RetrieveDataPacket packet) {
         Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
         ItemManager.INSTANCE.set(decryptPair.getLeft(), decryptPair.getRight());
     }

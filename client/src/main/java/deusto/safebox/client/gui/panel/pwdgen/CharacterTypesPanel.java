@@ -1,4 +1,4 @@
-package deusto.safebox.client.gui.panel;
+package deusto.safebox.client.gui.panel.pwdgen;
 
 import deusto.safebox.common.gui.GridBagBuilder;
 

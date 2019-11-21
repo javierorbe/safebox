@@ -1,17 +1,18 @@
 package deusto.safebox.client.gui.panel;
 
+import static deusto.safebox.common.net.packet.ErrorPacket.ErrorType;
+
 import deusto.safebox.client.ItemManager;
-import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.datamodel.LeafItem;
-import deusto.safebox.client.datamodel.Login;
-import deusto.safebox.client.datamodel.Note;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
+import deusto.safebox.client.net.ErrorHandler;
+import deusto.safebox.client.net.PacketHandler;
+import deusto.safebox.common.net.packet.SuccessfulSaveDataPacket;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,7 +54,10 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        addExampleItems();
+        PacketHandler.INSTANCE.addListener(SuccessfulSaveDataPacket.class,
+                ignored -> new ToastDialog("Data was successfully saved.", Color.GREEN, 2, this));
+        ErrorHandler.INSTANCE.addListener(ErrorType.SAVE_DATA_ERROR,
+                () -> new ToastDialog("Error saving data.", Color.RED, 2, this));
 
         expandAll(folderTree);
         expandAll(itemTree);
@@ -61,43 +65,6 @@ public class MainPanel extends JPanel {
 
     private void updateItemInfo(LeafItem item) {
         itemInfoPane.setViewportView(new ItemInfoPanel(item));
-    }
-
-    // TEMP
-    private void addExampleItems() {
-        Folder f1 = new Folder("Folder1");
-        Folder f2 = new Folder("Folder2");
-        Folder f3 = new Folder("Folder3");
-        Folder f4 = new Folder("Folder4");
-        Folder f5 = new Folder("Folder5");
-
-        Login login = new Login(
-                "ExampleLogin",
-                f1,
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                "MyUsername",
-                "MySecretPassword",
-                "http://www.website.com",
-                LocalDate.of(2020, 5, 7)
-        );
-
-        Note note = new Note(
-                "ExampleNote",
-                f2,
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                LocalDateTime.of(2019, 2, 7, 14, 15),
-                "My secret note content."
-        );
-
-        f1.addSubFolder(f2);
-        f2.addSubFolder(f3);
-        f4.addSubFolder(f5);
-
-        ItemManager.INSTANCE.addItem(login);
-        ItemManager.INSTANCE.addItem(note);
-        ItemManager.INSTANCE.addRootFolder(f1);
-        ItemManager.INSTANCE.addRootFolder(f4);
     }
 
     /**

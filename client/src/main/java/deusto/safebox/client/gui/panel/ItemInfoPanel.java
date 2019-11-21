@@ -1,44 +1,72 @@
 package deusto.safebox.client.gui.panel;
 
 import deusto.safebox.client.datamodel.LeafItem;
+import deusto.safebox.client.datamodel.property.LongStringProperty;
+import deusto.safebox.client.datamodel.property.PasswordProperty;
+import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.PasswordField;
+import deusto.safebox.client.gui.component.ScrollTextArea;
+import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
+import deusto.safebox.common.gui.RightAlignedLabel;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 class ItemInfoPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     ItemInfoPanel(LeafItem item) {
         super(new GridBagLayout());
 
-        gbb.setInsets(6, 6, 6, 6);
         gbb.setFillAndAnchor(GridBagBuilder.Fill.HORIZONTAL, GridBagBuilder.Anchor.WEST);
 
-        put(panelByItemType(item));
-    }
+        JLabel itemPath = new JLabel(item.getFolder().getFullPath() + "/" + item.getTitle());
+        itemPath.setFont(new Font("Monospaced", Font.BOLD, 12));
+        gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0)
+                .setInsets(4, 12, 4, 0);
+        put(itemPath);
 
-    private JPanel panelByItemType(LeafItem item) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        item.getFeatures().forEach(feature -> {
-            gbb.setGridWidthAndWeightX(1, 1);
-            put(new JLabel(feature.getName()));
-            gbb.setGridWidth(GridBagConstraints.REMAINDER);
-            if (feature.getFeature() instanceof LocalDateTime) {
-                put(new JLabel(((LocalDateTime) feature.getFeature()).format(formatter)));
+        gbb.setInsets(4, 4, 4, 4);
+
+        item.getProperties().forEach(property -> {
+            gbb.setGridWidthAndWeightX(1, 0);
+            JLabel label = new RightAlignedLabel(property.getDisplayName() + ":");
+            label.setFont(new Font("Tahoma", Font.BOLD, 11));
+            put(label);
+
+            if (property instanceof PasswordProperty) {
+                PasswordField passwordField = new PasswordField(property.toString(), false);
+                passwordField.setEditable(false);
+                passwordField.setBorder(BorderFactory.createEmptyBorder());
+                ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+                        IconType.EYE,
+                        IconType.EYE_CLOSED,
+                        false,
+                        passwordField::showPassword,
+                        passwordField::hidePassword
+                );
+
+                put(showPasswordBtn);
+                gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
+                put(passwordField);
+            } else if (property instanceof LongStringProperty) {
+                ScrollTextArea scrollTextArea = ((LongStringProperty) property).newComponent();
+                scrollTextArea.getTextArea().setEditable(false);
+                gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
+                put(scrollTextArea);
             } else {
-                put(new JLabel(feature.getFeature().toString()));
+                gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
+                put(new JLabel(property.toString()));
             }
         });
-        return panel;
     }
+
     private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }

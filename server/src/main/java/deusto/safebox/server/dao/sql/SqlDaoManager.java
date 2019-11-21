@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of {@link DaoManager} for SQL databases.
+ */
 public class SqlDaoManager implements DaoManager, AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(SqlDaoManager.class);
@@ -24,7 +27,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     private final ItemCollectionDao itemCollectionDao;
 
     /**
-     * Creates a {@link SqlDaoManager} for the specified DBMS and configuration.
+     * Constructs a {@code SqlDaoManager} for the specified DBMS and configuration.
      *
      * @param database the DBMS.
      * @param config the Hikari configuration for the database connection.
@@ -60,10 +63,10 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     }
 
     /**
-     * Creates a connection to a SQLite database.
+     * Returns a {@code SqlDaoManager} connected to the specified SQLite database.
      *
      * @param file path to the database file.
-     * @return a {@link SqlDaoManager} connected to a SQLite database.
+     * @return a {@code SqlDaoManager} connected to the specified SQLite database.
      */
     public static SqlDaoManager ofSqlite(Path file) {
         HikariConfig config = new HikariConfig();
@@ -76,13 +79,13 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
     }
 
     /**
-     * Creates a connection to a MySQL database.
+     * Returns a {@code SqlDaoManager} connected to the specified MySQL database.
      *
      * @param host server address.
      * @param database database name.
      * @param username database access username.
      * @param password database access password.
-     * @return a {@link SqlDaoManager} connected to a MySQL database.
+     * @return a {@code SqlDaoManager} connected to the specified MySQL database.
      * @see <a href="https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration" target="_top">MySQL Configuration</a>
      */
     public static SqlDaoManager ofMysql(String host, String database, String username, String password) {

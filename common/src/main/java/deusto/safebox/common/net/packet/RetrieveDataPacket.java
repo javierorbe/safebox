@@ -4,13 +4,13 @@ import deusto.safebox.common.ItemData;
 import java.io.Serializable;
 import java.util.Collection;
 
-public class ReceiveDataPacket extends Packet implements Serializable {
+public class RetrieveDataPacket extends Packet implements Serializable {
 
     private static final long serialVersionUID = -4010470347016376157L;
 
     private final Collection<ItemData> items;
 
-    public ReceiveDataPacket(Collection<ItemData> items) {
+    public RetrieveDataPacket(Collection<ItemData> items) {
         this.items = items;
     }
 

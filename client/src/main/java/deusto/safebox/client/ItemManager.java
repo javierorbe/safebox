@@ -1,9 +1,14 @@
 package deusto.safebox.client;
 
+import deusto.safebox.client.datamodel.BankAccount;
+import deusto.safebox.client.datamodel.CreditCard;
 import deusto.safebox.client.datamodel.Folder;
+import deusto.safebox.client.datamodel.Identity;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
 import deusto.safebox.client.datamodel.Note;
+import deusto.safebox.client.datamodel.WirelessRouter;
+import deusto.safebox.client.gui.panel.EditItemDialog;
 import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
 import java.util.ArrayList;
@@ -14,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import javax.swing.JFrame;
 
 /**
  * Manages the items and provides an item change event.
@@ -30,7 +36,10 @@ public enum ItemManager {
     static {
         ITEM_CONSTRUCTORS.put(ItemType.LOGIN, Login::new);
         ITEM_CONSTRUCTORS.put(ItemType.NOTE, Note::new);
-        // TODO: add the remaining constructors
+        ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
+        ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
+        ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
+        ITEM_CONSTRUCTORS.put(ItemType.BANK_ACCOUNT, BankAccount::new);
     }
 
     /** Folders at the top of the hierarchy. */
@@ -65,7 +74,7 @@ public enum ItemManager {
         changeListeners.add(runnable);
     }
 
-    private void fireChange() {
+    public void fireChange() {
         changeListeners.forEach(Runnable::run);
     }
 
@@ -106,5 +115,11 @@ public enum ItemManager {
         Collection<Folder> folders = new HashSet<>(rootFolders);
         rootFolders.forEach(rootFolder -> folders.addAll(rootFolder.getAllSubFolders()));
         return folders;
+    }
+
+    public void openNewItemDialog(JFrame owner, ItemType type, Folder folder) {
+        LeafItem item = ITEM_CONSTRUCTORS.get(type).apply(folder);
+        addItem(item);
+        new EditItemDialog(owner, item);
     }
 }
