@@ -10,12 +10,15 @@ import deusto.safebox.client.net.Client;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.ItemData;
+import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.LogOutPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.util.GuiUtil;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,6 +37,13 @@ public class MainFrame extends JFrame {
         setPreferredSize(new Dimension(1280, 720));
         setIconImage(IconType.APP.getAsImage());
         setLayout(new BorderLayout());
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                client.sendPacket(new DisconnectPacket());
+            }
+        });
 
         Runnable logOut = () -> {
             if (currentPanel == PanelType.MAIN) {

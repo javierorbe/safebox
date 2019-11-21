@@ -46,9 +46,6 @@ class SqlUserDao implements UserDao {
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
             statement.setDate(5, Date.valueOf(user.getCreation()));
-            statement.setString(6, user.getName());
-            statement.setString(7, user.getEmail());
-            statement.setString(8, user.getPassword());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("SQL error.", e);
