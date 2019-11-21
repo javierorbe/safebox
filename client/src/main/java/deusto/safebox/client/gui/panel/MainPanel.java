@@ -8,11 +8,16 @@ import deusto.safebox.client.datamodel.Note;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 
 public class MainPanel extends JPanel {
 
@@ -55,7 +60,6 @@ public class MainPanel extends JPanel {
     }
 
     private void updateItemInfo(LeafItem item) {
-        // TODO: set item info pane
         itemInfoPane.setViewportView(new ItemInfoPanel(item));
     }
 

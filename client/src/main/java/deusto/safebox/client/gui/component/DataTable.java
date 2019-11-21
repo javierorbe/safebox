@@ -4,6 +4,7 @@ import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.gui.model.FolderTableModel;
 import deusto.safebox.client.gui.model.ItemTableModel;
+import deusto.safebox.client.gui.panel.EditItemDialog;
 import deusto.safebox.common.ItemType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -47,6 +48,7 @@ public class DataTable extends JTable {
 
                     if (event.getClickCount() == 2) {
                         // TODO: show item modification dialog
+                        EditItemDialog editDialog = new EditItemDialog(owner, item);
                         model.fireTableDataChanged();
                     } else {
                         itemSelectionEvent.accept(item);

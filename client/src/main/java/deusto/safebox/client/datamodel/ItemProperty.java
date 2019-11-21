@@ -1,17 +1,26 @@
 package deusto.safebox.client.datamodel;
 
-public class ItemProperty <T, String>{
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DateTimePicker;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public class ItemProperty <T>{
 
     private T feature;
     private String name;
+    private JComponent component;
 
     ItemProperty(T feature, String name) {
         this.name = name;
         this.feature = feature;
+        updateComponent();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public T getFeature() {
+        return feature;
     }
 
     public void setFeature(T feature) {
@@ -22,7 +31,25 @@ public class ItemProperty <T, String>{
         return name;
     }
 
-    public T getFeature() {
-        return feature;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public JComponent getComponent() {
+        return component;
+    }
+
+    public void setComponent(JComponent component) {
+        this.component = component;
+    }
+
+    private void updateComponent(){
+        if (feature instanceof String || feature instanceof Folder) {
+            component = new JTextField();
+        } else if (feature instanceof LocalDate) {
+            component = new DatePicker();
+        } else if (feature instanceof LocalDateTime) {
+            component = new DateTimePicker();
+        }
     }
 }

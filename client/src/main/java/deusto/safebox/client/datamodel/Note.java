@@ -16,8 +16,8 @@ public class Note extends LeafItem {
                  String content) {
         super(id, ItemType.NOTE, name, folder, created, lastModified);
         this.content = content;
-        setFeatures(new ArrayList<>(Arrays.asList(
-                new ItemProperty<>(content, "Content")
+        getFeatures().addAll(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(content, "Content: ")
         )));
     }
 

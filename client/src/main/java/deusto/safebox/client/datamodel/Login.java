@@ -23,7 +23,7 @@ public class Login extends LeafItem {
         this.password = password;
         this.website = website;
         this.passwordExpiration = passwordExpiration;
-        setFeatures(new ArrayList<>(Arrays.asList(
+        getFeatures().addAll(new ArrayList<>(Arrays.asList(
                 new ItemProperty<>(username, "Username: "),
                 new ItemProperty<>(password, "Password: "),
                 new ItemProperty<>(website, "Website: "),

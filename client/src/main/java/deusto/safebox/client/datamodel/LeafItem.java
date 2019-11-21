@@ -4,6 +4,7 @@ import deusto.safebox.client.gui.model.ItemTableModel;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,12 @@ public abstract class LeafItem extends Item {
      */
     LeafItem(UUID id, ItemType type, String name, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type, name, folder, created, lastModified);
-
+        setFeatures(new ArrayList<>(Arrays.asList(
+                new ItemProperty<>(name, "Name: "),
+                new ItemProperty<>(folder, "Parent's folder: "),
+                new ItemProperty<>(created, "Created: "),
+                new ItemProperty<>(lastModified, "Last modified: ")
+        )));
     }
 
     /**
@@ -43,7 +49,7 @@ public abstract class LeafItem extends Item {
         return features;
     }
 
-    void setFeatures(List<ItemProperty> features) {
+    private void setFeatures(List<ItemProperty> features) {
         this.features = features;
     }
 }
