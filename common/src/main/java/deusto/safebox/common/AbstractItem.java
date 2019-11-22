@@ -11,7 +11,7 @@ public abstract class AbstractItem {
 
     protected AbstractItem(UUID id, ItemType type) {
         this.id = Objects.requireNonNull(id);
-        this.type = type;
+        this.type = Objects.requireNonNull(type);
     }
 
     public UUID getId() {

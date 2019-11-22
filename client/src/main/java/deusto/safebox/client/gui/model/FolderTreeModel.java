@@ -23,7 +23,7 @@ public class FolderTreeModel extends DefaultTreeModel {
         if (parent instanceof Folder) {
             return ((Folder) parent).getSubFolders().get(index);
         } else {
-            return ItemManager.INSTANCE.getRootFolders().get(index);
+            return ItemManager.getRootFolders().get(index);
         }
     }
 
@@ -32,7 +32,7 @@ public class FolderTreeModel extends DefaultTreeModel {
         if (parent instanceof Folder) {
             return ((Folder) parent).getSubFolderCount();
         } else {
-            return ItemManager.INSTANCE.getRootFolders().size();
+            return ItemManager.getRootFolders().size();
         }
     }
 
@@ -54,7 +54,7 @@ public class FolderTreeModel extends DefaultTreeModel {
             if (parent instanceof Folder) {
                 return ((Folder) parent).getSubFolders().indexOf(child);
             } else {
-                return ItemManager.INSTANCE.getRootFolders().indexOf(child);
+                return ItemManager.getRootFolders().indexOf(child);
             }
         } else {
             return 0;

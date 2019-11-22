@@ -27,7 +27,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public Object getChild(Object parent, int index) {
         if (parent instanceof ItemType) {
-            return ItemManager.INSTANCE.getItems((ItemType) parent).get(index);
+            return ItemManager.getItems((ItemType) parent).get(index);
         } else {
             return ITEM_TYPE_ORDER.get(index);
         }
@@ -36,7 +36,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public int getChildCount(Object parent) {
         if (parent instanceof ItemType) {
-            return ItemManager.INSTANCE.getItems((ItemType) parent).size();
+            return ItemManager.getItems((ItemType) parent).size();
         } else {
             return ITEM_TYPE_ORDER.size();
         }
@@ -45,7 +45,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public boolean isLeaf(Object node) {
         if (node instanceof ItemType) {
-            if (ItemManager.INSTANCE.getItems((ItemType) node).isEmpty()) {
+            if (ItemManager.getItems((ItemType) node).isEmpty()) {
                 return true;
             }
         }
@@ -58,7 +58,7 @@ public class ItemTreeModel implements TreeModel {
     @Override
     public int getIndexOfChild(Object parent, Object child) {
         if (parent instanceof ItemType && child instanceof LeafItem) {
-            return ItemManager.INSTANCE.getItems((ItemType) parent).indexOf(child);
+            return ItemManager.getItems((ItemType) parent).indexOf(child);
         } else if (child instanceof ItemType) {
             return ITEM_TYPE_ORDER.indexOf(child);
         } else {

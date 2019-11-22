@@ -41,7 +41,9 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                client.sendPacket(new DisconnectPacket());
+                if (client.isRunning()) {
+                    client.sendPacket(new DisconnectPacket());
+                }
             }
         });
 
@@ -54,7 +56,7 @@ public class MainFrame extends JFrame {
 
         setJMenuBar(new MenuBar(
                 () -> new Thread(() -> {
-                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.INSTANCE.getAll());
+                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.getAll());
                     // TODO: display an indeterminate progress bar while saving
                     client.sendPacket(new SaveDataPacket(items));
                 }).start(),
@@ -72,7 +74,7 @@ public class MainFrame extends JFrame {
         currentPanel = PanelType.AUTH;
         getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
+        PacketHandler.addListener(RetrieveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));

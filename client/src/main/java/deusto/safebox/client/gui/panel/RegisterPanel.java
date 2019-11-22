@@ -94,13 +94,13 @@ class RegisterPanel extends JPanel {
         put(registerBtn);
 
         Runnable enableRegisterBtn = () -> SwingUtilities.invokeLater(() -> registerBtn.setEnabled(true));
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.EMAIL_ALREADY_IN_USE,
+        ErrorHandler.addListener(ErrorPacket.ErrorType.EMAIL_ALREADY_IN_USE,
                 () -> SwingUtilities.invokeLater(() -> {
                     registerBtn.setEnabled(true);
                     new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
+        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
+        PacketHandler.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
     }
 
     private void put(JComponent component) {

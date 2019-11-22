@@ -42,7 +42,7 @@ public class MainPanel extends JPanel {
         treeTabbedPane.addTab("Categories", itemTreeScrollPane);
         treeTabbedPane.setPreferredSize(new Dimension(180, 0));
 
-        ItemManager.INSTANCE.addChangeListener(() -> {
+        ItemManager.addChangeListener(() -> {
             table.updateFolderModel();
             table.updateItemModels();
             folderTree.updateModel();
@@ -54,9 +54,9 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.addListener(SuccessfulSaveDataPacket.class,
+        PacketHandler.addListener(SuccessfulSaveDataPacket.class,
                 ignored -> new ToastDialog("Data was successfully saved.", Color.GREEN, 2, this));
-        ErrorHandler.INSTANCE.addListener(ErrorType.SAVE_DATA_ERROR,
+        ErrorHandler.addListener(ErrorType.SAVE_DATA_ERROR,
                 () -> new ToastDialog("Error saving data.", Color.RED, 2, this));
 
         expandAll(folderTree);

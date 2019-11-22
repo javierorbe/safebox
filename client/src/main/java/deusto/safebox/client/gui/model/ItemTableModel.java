@@ -59,7 +59,7 @@ public class ItemTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return ItemManager.INSTANCE.getItems(itemType).size();
+        return ItemManager.getItems(itemType).size();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ItemTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        LeafItem item = ItemManager.INSTANCE.getItems(itemType).get(rowIndex);
+        LeafItem item = ItemManager.getItems(itemType).get(rowIndex);
         return item.getProperty(ITEM_PROPERTY_INDICES.get(item.getType()).get(columnIndex)).toString();
     }
 }

@@ -16,7 +16,7 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
-    private boolean running = false;
+    private volatile boolean running = false;
     private ObjectOutputStream out;
 
     private Runnable connectionEstablished;
@@ -39,6 +39,10 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
             () -> logger.info("Socket connection established."),
             packet -> logger.info("Packet received ({}).", packet)
         );
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 
     /**

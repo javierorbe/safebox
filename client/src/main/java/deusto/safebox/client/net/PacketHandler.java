@@ -17,20 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * Handles the received packets.
- * Singleton.
- */
-// TODO: change this to an static-method class
-public enum PacketHandler {
-    INSTANCE;
+/** Handles the received packets. */
+public class PacketHandler {
 
-    private final Map<Class<? extends Packet>, IEventHandler<? extends Packet>> eventHandlerMap = new HashMap<>();
+    private static final Map<Class<? extends Packet>, IEventHandler<? extends Packet>> EVENT_HANDLER_MAP
+            = new HashMap<>();
 
-    PacketHandler() {
-        addListener(ErrorPacket.class, this::onError);
-        addListener(RetrieveDataPacket.class, this::onReceiveData);
-        addListener(SuccessfulRegisterPacket.class, this::onSuccessfulRegister);
+    static {
+        addListener(ErrorPacket.class, PacketHandler::onError);
+        addListener(RetrieveDataPacket.class, PacketHandler::onReceiveData);
+        addListener(SuccessfulRegisterPacket.class, PacketHandler::onSuccessfulRegister);
         // TODO: add the remaining listeners
     }
 
@@ -41,11 +37,11 @@ public enum PacketHandler {
      * @param consumer the event callback.
      * @param <T> the class type of the packet.
      */
-    public <T extends Packet> void addListener(Class<T> classType, Consumer<T> consumer) {
+    public static <T extends Packet> void addListener(Class<T> classType, Consumer<T> consumer) {
         // Type safe.
         @SuppressWarnings("unchecked")
-        EventHandler<T> eventHandler = (EventHandler<T>) eventHandlerMap
-                .computeIfAbsent(classType, type -> new EventHandler<T>());
+        EventHandler<T> eventHandler
+                = (EventHandler<T>) EVENT_HANDLER_MAP.computeIfAbsent(classType, type -> new EventHandler<T>());
         eventHandler.addListener(consumer);
     }
 
@@ -55,23 +51,23 @@ public enum PacketHandler {
      * @param object the packet.
      * @param <T> the packet type.
      */
-    public <T extends Packet> void fire(T object) {
+    public static <T extends Packet> void fire(T object) {
         // Type safe because the key (the class type) always matches the event handler type.
         @SuppressWarnings("unchecked")
-        EventHandler<T> eventHandler = (EventHandler<T>) eventHandlerMap.get(object.getClass());
+        EventHandler<T> eventHandler = (EventHandler<T>) EVENT_HANDLER_MAP.get(object.getClass());
         eventHandler.fire(object);
     }
 
-    private void onError(ErrorPacket packet) {
-        ErrorHandler.INSTANCE.fire(packet.getErrorType());
+    private static void onError(ErrorPacket packet) {
+        ErrorHandler.fire(packet.getErrorType());
     }
 
-    private void onReceiveData(RetrieveDataPacket packet) {
+    private static void onReceiveData(RetrieveDataPacket packet) {
         Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
-        ItemManager.INSTANCE.set(decryptPair.getLeft(), decryptPair.getRight());
+        ItemManager.set(decryptPair.getLeft(), decryptPair.getRight());
     }
 
-    private void onSuccessfulRegister(SuccessfulRegisterPacket packet) {
+    private static void onSuccessfulRegister(SuccessfulRegisterPacket packet) {
         // TODO: show successful register dialog
     }
 }

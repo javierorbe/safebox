@@ -7,15 +7,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Event handler for specified error types.
- * Singleton.
- */
-// TODO: change this to an static-method class
-public enum ErrorHandler {
-    INSTANCE;
+/** Event handler for specified error types. */
+public class ErrorHandler {
 
-    private final Map<ErrorPacket.ErrorType, Collection<Runnable>> listeners
+    private static final Map<ErrorPacket.ErrorType, Collection<Runnable>> LISTENERS
             = new EnumMap<>(ErrorPacket.ErrorType.class);
 
     /**
@@ -24,8 +19,8 @@ public enum ErrorHandler {
      * @param type the error type.
      * @param action the listener action.
      */
-    public void addListener(ErrorPacket.ErrorType type, Runnable action) {
-        listeners.computeIfAbsent(type, e -> new HashSet<>()).add(action);
+    public static void addListener(ErrorPacket.ErrorType type, Runnable action) {
+        LISTENERS.computeIfAbsent(type, e -> new HashSet<>()).add(action);
     }
 
     /**
@@ -33,8 +28,8 @@ public enum ErrorHandler {
      *
      * @param type the error type.
      */
-    void fire(ErrorPacket.ErrorType type) {
-        Optional.ofNullable(listeners.get(type))
+    static void fire(ErrorPacket.ErrorType type) {
+        Optional.ofNullable(LISTENERS.get(type))
                 .ifPresent(listeners -> listeners.forEach(Runnable::run));
     }
 }

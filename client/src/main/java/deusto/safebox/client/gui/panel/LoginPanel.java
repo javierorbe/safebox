@@ -82,9 +82,9 @@ class LoginPanel extends JPanel {
         put(loginBtn);
 
         Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableLoginBtn.run());
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
-        ErrorHandler.INSTANCE.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
+        PacketHandler.addListener(RetrieveDataPacket.class, ignored -> enableLoginBtn.run());
+        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
+        ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
             loginBtn.setEnabled(true);
             new ToastDialog("Invalid login details.", Color.RED, 2, this);
         }));

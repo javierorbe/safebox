@@ -67,10 +67,10 @@ public class FolderTree extends JTree {
                     Random random = ThreadLocalRandom.current();
                     Folder folder = new Folder("Folder" + random.nextInt(100));
                     if (selectedFolder == null) {
-                        ItemManager.INSTANCE.addRootFolder(folder);
+                        ItemManager.addRootFolder(folder);
                     } else {
                         selectedFolder.addSubFolder(folder);
-                        ItemManager.INSTANCE.fireChange();
+                        ItemManager.fireChange();
                     }
                 },
                 () -> {},

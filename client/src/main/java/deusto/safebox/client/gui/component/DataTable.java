@@ -43,7 +43,7 @@ public class DataTable extends JTable {
                         item = ((FolderTableModel) model).getItems().get(row);
                     } else { // DataTableModel.ITEM_MODEL
                         model = itemTableModels.get(currentItemType);
-                        item = ItemManager.INSTANCE.getItems(currentItemType).get(row);
+                        item = ItemManager.getItems(currentItemType).get(row);
                     }
 
                     if (event.getClickCount() == 2) {
