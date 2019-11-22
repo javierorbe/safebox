@@ -75,6 +75,6 @@ public class ItemTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         LeafItem item = ItemManager.INSTANCE.getItems(itemType).get(rowIndex);
-        return item.getProperty(ITEM_PROPERTY_INDICES.get(item.getType()).get(columnIndex)).get();
+        return item.getProperty(ITEM_PROPERTY_INDICES.get(item.getType()).get(columnIndex)).toString();
     }
 }

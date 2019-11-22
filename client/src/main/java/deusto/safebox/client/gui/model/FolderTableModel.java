@@ -45,7 +45,6 @@ public class FolderTableModel extends AbstractTableModel {
         if (column >= COLUMNS.size()) {
             throw new IllegalArgumentException("Invalid column (" + column + ")");
         }
-
         return COLUMNS.get(column).getLeft();
     }
 

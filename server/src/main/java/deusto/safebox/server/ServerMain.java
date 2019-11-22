@@ -66,9 +66,9 @@ public class ServerMain {
             case "mysql": {
                 String host = config.getString("mysql.host");
                 int port = config.getInt("mysql.port");
-                String database = config.getString("mysql.host");
-                String username = config.getString("username");
-                String password = config.getString("password");
+                String database = config.getString("mysql.database");
+                String username = config.getString("mysql.username");
+                String password = config.getString("mysql.password");
                 return SqlDaoManager.ofMysql(host + ":" + port, database, username, password);
             }
 

@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -11,6 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 class ToastDialog extends JDialog {
+
+    private ScheduledFuture<?> opacityReducer;
+    private float opacity = 1;
 
     /**
      * Constructs a toast message dialog.
@@ -47,17 +53,15 @@ class ToastDialog extends JDialog {
 
         setVisible(true);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(time * 1000);
-                for (double d = 1; d > 0.2; d -= 0.15) {
-                    Thread.sleep(100);
-                    setOpacity((float) d);
-                }
-                dispose();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        opacityReducer = Executors.newSingleThreadScheduledExecutor()
+                .scheduleWithFixedDelay(() -> {
+                    if (opacity < 0.2) {
+                        opacityReducer.cancel(false);
+                        dispose();
+                    } else {
+                        opacity -= 0.15;
+                        setOpacity(opacity);
+                    }
+                }, time * 1000, 100, TimeUnit.MILLISECONDS);
     }
 }
