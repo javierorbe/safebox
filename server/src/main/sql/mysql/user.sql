@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS user(
+CREATE TABLE IF NOT EXISTS sb_user(
     id              VARCHAR(36)     NOT NULL,
     name            VARCHAR(50)         NULL,
     email           VARCHAR(50)     NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS user(
     CONSTRAINT pk_user PRIMARY KEY (id)
 );
 
-CREATE UNIQUE INDEX ix_user_email ON user (email);
+CREATE UNIQUE INDEX ix_user_email ON sb_user (email);

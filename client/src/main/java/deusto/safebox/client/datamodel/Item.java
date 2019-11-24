@@ -12,9 +12,9 @@ import java.util.UUID;
 abstract class Item extends AbstractItem {
 
     private Folder folder;
-    StringProperty title;
-    DateTimeProperty created;
-    DateTimeProperty lastModified;
+    final StringProperty title;
+    final DateTimeProperty created;
+    final DateTimeProperty lastModified;
 
     /**
      * Creates an abstract item representation.

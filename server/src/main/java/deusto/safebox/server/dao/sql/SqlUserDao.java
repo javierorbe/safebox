@@ -139,12 +139,12 @@ class SqlUserDao implements UserDao {
     }
 
     private enum UserStatement implements SqlStatement {
-        INSERT("INSERT INTO user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?)"),
-        UPDATE("UPDATE user SET name=?, email=?, password=? WHERE id=?"),
-        DELETE("DELETE FROM user WHERE id=?"),
-        GET_ONE("SELECT id, name, email, password, creation FROM user WHERE id=?"),
-        GET_ALL("SELECT id, name, email, password, creation FROM user"),
-        GET_ONE_EMAIL("SELECT id, name, email, password, creation FROM user WHERE email=?")
+        INSERT("INSERT INTO sb_user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?)"),
+        UPDATE("UPDATE sb_user SET name=?, email=?, password=? WHERE id=?"),
+        DELETE("DELETE FROM sb_user WHERE id=?"),
+        GET_ONE("SELECT id, name, email, password, creation FROM sb_user WHERE id=?"),
+        GET_ALL("SELECT id, name, email, password, creation FROM sb_user"),
+        GET_ONE_EMAIL("SELECT id, name, email, password, creation FROM sb_user WHERE email=?")
         ;
 
         private final String sqliteStmt;
@@ -163,10 +163,9 @@ class SqlUserDao implements UserDao {
         public String get(SqlDatabase database) {
             if (database == SqlDatabase.SQLITE) {
                 return sqliteStmt;
-            } else if (database == SqlDatabase.MYSQL) {
+            } else {
                 return mysqlStmt;
             }
-            throw new IllegalArgumentException("Unknown database (" + database + ")");
         }
     }
 }

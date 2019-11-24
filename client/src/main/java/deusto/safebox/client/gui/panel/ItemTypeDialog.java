@@ -32,13 +32,9 @@ public class ItemTypeDialog extends JDialog {
         setPreferredSize(new Dimension(480, 240));
         setLayout(new GridBagLayout());
 
-        // TODO: change this when all the item types are completely implemented
-        /*
         Vector<ItemType> types = Arrays.stream(ItemType.values())
                 .collect(toCollection(Vector::new));
         types.remove(ItemType.FOLDER);
-        */
-        Vector<ItemType> types = new Vector<>(List.of(ItemType.LOGIN, ItemType.NOTE));
 
         JComboBox<ItemType> itemTypeSelector = new JComboBox<>(types);
 

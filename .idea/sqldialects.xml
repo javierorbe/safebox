@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/server/src/main/sql/mysql/item.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/server/src/main/sql/mysql/user.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/server/src/main/sql/postgresql/item.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/server/src/main/sql/postgresql/user.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="MySQL" />
   </component>
 </project>

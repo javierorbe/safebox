@@ -35,7 +35,7 @@ public class JsonConfig implements ConfigFile {
     private final Path file;
     private JsonObject root;
 
-    public JsonConfig(Path file) throws IOException {
+    JsonConfig(Path file) throws IOException {
         this.file = file;
         root = Constants.GSON.fromJson(Files.newBufferedReader(file, StandardCharsets.UTF_8), JsonObject.class);
     }

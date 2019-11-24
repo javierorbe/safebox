@@ -29,6 +29,8 @@ public class EditItemDialog extends JDialog {
     private final LeafItem item;
     private final Map<MutableItemProperty, JComponent> components = new HashMap<>();
 
+    // TODO: validate user input
+
     public EditItemDialog(JFrame owner, LeafItem item) {
         super(owner, "Entry", true);
         this.item = item;

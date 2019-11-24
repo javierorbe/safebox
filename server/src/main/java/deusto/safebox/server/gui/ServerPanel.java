@@ -7,8 +7,6 @@ import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.net.Server;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.sql.SQLException;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
@@ -16,32 +14,16 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ServerPanel extends JPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerFrame.class);
-
-    private final SqlDaoManager daoManager;
     private final GridBagBuilder gbb = new GridBagBuilder();
-
-    // TODO:
 
     ServerPanel(Server server, SqlDaoManager daoManager) {
         super(new GridBagLayout());
-        this.daoManager = daoManager;
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // TODO: add socket list
-
         JLabel serverState = new JLabel("Off");
-        JLabel socketServerPort = new JLabel(String.valueOf(server.getPort()));
-        String sqlServerUrl = getSqlServerUrl().orElse("Unknown");
-        JLabel sqlServer = new JLabel(sqlServerUrl);
-        JLabel clientCount = new JLabel("0");
-        JLabel authClientCount = new JLabel("0");
-
         SimpleButton startBtn = new SimpleButton("Start server");
         SimpleButton stopBtn = new SimpleButton("Stop server");
         stopBtn.setEnabled(false);
@@ -64,13 +46,16 @@ class ServerPanel extends JPanel {
             }
         });
 
+        JLabel clientCount = new JLabel("0");
+        JLabel authClientCount = new JLabel("0");
+
         gbb.setInsets(4, 4, 4, 4)
                 .setFillAndAnchor(GridBagBuilder.Fill.HORIZONTAL, GridBagBuilder.Anchor.WEST);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
 
         addInfo("Server state:", serverState);
-        addInfo("Socket server port:", socketServerPort);
-        addInfo("SQL server:", sqlServer);
+        addInfo("Socket server port:", new JLabel(String.valueOf(server.getPort())));
+        addInfo("SQL server:", new JLabel(daoManager.getJdbcUrl()));
         addInfo("Clients:", clientCount);
         addInfo("Authenticated clients:", authClientCount);
 
@@ -97,14 +82,5 @@ class ServerPanel extends JPanel {
         put(new RightAlignedLabel(labelName));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
         put(info);
-    }
-
-    private Optional<String> getSqlServerUrl() {
-        try {
-            return Optional.of(daoManager.getDatabaseMetadata().getURL());
-        } catch (SQLException e) {
-            logger.warn("Could not get the database URL.", e);
-            return Optional.empty();
-        }
     }
 }

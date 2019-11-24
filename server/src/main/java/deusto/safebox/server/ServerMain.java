@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServerMain {
+class ServerMain {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
 
@@ -56,7 +56,7 @@ public class ServerMain {
     }
 
     private static SqlDaoManager getSqlDaoManager() {
-        String rdbms = config.getString("rdbms");
+        String rdbms = config.getString("dbms");
         switch (rdbms.toLowerCase()) {
             case "sqlite": {
                 String sqliteFilepath = config.getString("sqlite.filepath");
@@ -72,8 +72,17 @@ public class ServerMain {
                 return SqlDaoManager.ofMysql(host + ":" + port, database, username, password);
             }
 
+            case "postgresql": {
+                String host = config.getString("postgresql.host");
+                int port = config.getInt("postgresql.port");
+                String database = config.getString("postgresql.database");
+                String username = config.getString("postgresql.username");
+                String password = config.getString("postgresql.password");
+                return SqlDaoManager.ofPostgreSql(host + ":" + port, database, username, password);
+            }
+
             default: {
-                throw new IllegalArgumentException("Invalid RDBMS in config: " + rdbms);
+                throw new IllegalArgumentException("Invalid DBMS in config: " + rdbms);
             }
         }
     }

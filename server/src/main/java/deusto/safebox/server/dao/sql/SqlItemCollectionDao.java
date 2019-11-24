@@ -132,13 +132,13 @@ class SqlItemCollectionDao implements ItemCollectionDao {
         // TODO: if we finally decide that we are deleting all the
         //  items before inserting new ones, remove the update part of the statement.
         INSERT_ONE_ITEM(
-            "INSERT INTO item (id, user_id, type, data, creation, last_modified) "
+            "INSERT INTO sb_item (id, user_id, type, data, creation, last_modified) "
                     + "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
-            "INSERT INTO item (id, user_id, type, data, creation, last_modified) "
+            "INSERT INTO sb_item (id, user_id, type, data, creation, last_modified) "
                     + "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
         ),
-        DELETE("DELETE FROM item WHERE user_id=?"),
-        GET_ONE("SELECT id, type, data, creation, last_modified FROM item WHERE user_id=?"),
+        DELETE("DELETE FROM sb_item WHERE user_id=?"),
+        GET_ONE("SELECT id, type, data, creation, last_modified FROM sb_item WHERE user_id=?"),
         ;
 
         private final String sqliteStmt;
@@ -157,10 +157,9 @@ class SqlItemCollectionDao implements ItemCollectionDao {
         public String get(SqlDatabase database) {
             if (database == SqlDatabase.SQLITE) {
                 return sqliteStmt;
-            } else if (database == SqlDatabase.MYSQL) {
+            } else {
                 return mysqlStmt;
             }
-            throw new IllegalArgumentException("Unknown database (" + database + ")");
         }
     }
 }

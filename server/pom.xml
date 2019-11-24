@@ -111,6 +111,12 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.28.0</version>
         </dependency>
+        <!-- PostgreSQL JDBC Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.8</version>
+        </dependency>
         <!-- HikariCP (JDBC connection pool) -->
         <dependency>
             <groupId>com.zaxxer</groupId>
