@@ -2,8 +2,8 @@ package deusto.safebox.server.dao.sql;
 
 /** Database managing system. */
 enum SqlDatabase {
-    MYSQL("jdbc:sqlite:%s"),
-    SQLITE("jdbc:mysql://%s/%s"),
+    SQLITE("jdbc:sqlite:%s"),
+    MYSQL("jdbc:mysql://%s/%s"),
     POSTGRESQL("jdbc:postgresql://%s/%s")
     ;
 
