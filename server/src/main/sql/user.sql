@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sb_user(
+CREATE TABLE IF NOT EXISTS sb_user (
     id              VARCHAR(36)     NOT NULL,
     name            VARCHAR(50)         NULL,
     email           VARCHAR(50)     NOT NULL,
