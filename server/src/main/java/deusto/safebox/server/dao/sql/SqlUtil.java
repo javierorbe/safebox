@@ -29,6 +29,7 @@ class SqlUtil {
             connection.commit();
             return true;
         } catch (SQLException e) {
+            logger.error("Error in transaction.", e);
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {

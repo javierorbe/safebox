@@ -147,25 +147,15 @@ class SqlUserDao implements UserDao {
         GET_ONE_EMAIL("SELECT id, name, email, password, creation FROM sb_user WHERE email=?")
         ;
 
-        private final String sqliteStmt;
-        private final String mysqlStmt;
+        private final String statement;
 
-        UserStatement(String sqliteStmt, String mysqlStmt) {
-            this.sqliteStmt = sqliteStmt;
-            this.mysqlStmt = mysqlStmt;
-        }
-
-        UserStatement(String genericStmt) {
-            this(genericStmt, genericStmt);
+        UserStatement(String statement) {
+            this.statement = statement;
         }
 
         @Override
         public String get(SqlDatabase database) {
-            if (database == SqlDatabase.SQLITE) {
-                return sqliteStmt;
-            } else {
-                return mysqlStmt;
-            }
+            return statement;
         }
     }
 }

@@ -55,6 +55,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
             transactionResult = transaction(connection, () -> {
                 try (PreparedStatement statement = connection.prepareStatement(delete)) {
                     statement.setString(1, collection.getUserId().toString());
+                    statement.executeUpdate();
                 }
 
                 try (PreparedStatement statement = connection.prepareStatement(insertOneItem)) {
@@ -65,8 +66,6 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                         statement.setString(4, item.getEncryptedData());
                         statement.setTimestamp(5, Timestamp.valueOf(item.getCreated()));
                         statement.setTimestamp(6, Timestamp.valueOf(item.getLastModified()));
-                        statement.setString(7, item.getEncryptedData());
-                        statement.setTimestamp(8, Timestamp.valueOf(item.getLastModified()));
                         statement.addBatch();
                     }
                     int[] results = statement.executeBatch();
@@ -129,37 +128,21 @@ class SqlItemCollectionDao implements ItemCollectionDao {
     }
 
     private enum ItemCollectionStatement implements SqlStatement {
-        // TODO: if we finally decide that we are deleting all the
-        //  items before inserting new ones, remove the update part of the statement.
         INSERT_ONE_ITEM(
-            "INSERT INTO sb_item (id, user_id, type, data, creation, last_modified) "
-                    + "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET data=?, last_modified=?",
-            "INSERT INTO sb_item (id, user_id, type, data, creation, last_modified) "
-                    + "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE data=?, last_modified=?"
-        ),
+                "INSERT INTO sb_item (id, user_id, type, data, creation, last_modified) VALUES (?, ?, ?, ?, ?, ?)"),
         DELETE("DELETE FROM sb_item WHERE user_id=?"),
         GET_ONE("SELECT id, type, data, creation, last_modified FROM sb_item WHERE user_id=?"),
         ;
 
-        private final String sqliteStmt;
-        private final String mysqlStmt;
+        private final String statement;
 
-        ItemCollectionStatement(String sqliteStmt, String mysqlStmt) {
-            this.sqliteStmt = sqliteStmt;
-            this.mysqlStmt = mysqlStmt;
-        }
-
-        ItemCollectionStatement(String genericStmt) {
-            this(genericStmt, genericStmt);
+        ItemCollectionStatement(String statement) {
+            this.statement = statement;
         }
 
         @Override
         public String get(SqlDatabase database) {
-            if (database == SqlDatabase.SQLITE) {
-                return sqliteStmt;
-            } else {
-                return mysqlStmt;
-            }
+            return statement;
         }
     }
 }
