@@ -54,8 +54,8 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        PacketHandler.addListener(SuccessfulSaveDataPacket.class,
-                ignored -> new ToastDialog("Data was successfully saved.", Color.GREEN, 2, this));
+        PacketHandler.INSTANCE.addListener(SuccessfulSaveDataPacket.class,
+                ignored -> new ToastDialog("Data was successfully saved.", Color.GREEN, 2, MainPanel.this));
         ErrorHandler.addListener(ErrorType.SAVE_DATA_ERROR,
                 () -> new ToastDialog("Error saving data.", Color.RED, 2, this));
 
@@ -68,23 +68,19 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Expand all nodes in a tree
-     * @param tree An JTree
+     * Expand all rows in a {@link JTree}.
+     *
+     * @param tree the tree.
      */
     private static void expandAll(JTree tree) {
-        int i = 0;
-        if (tree != null) {
-            expandRecursively(tree, i);
-        }
+        expandRecursively(tree, 0);
     }
 
     /**
-     * Expand nodes in a tree recursively
-     * If index > 0 expandRecursively will expand all nodes since of index until the final node
-     * else if index = 0 expandRecursively will expand all tree's nodes
-     * @param tree An JTree
-     * @param index Index of the first node that is going to be expanded
-     *              until the final node
+     * Expand the rows in a {@link JTree}, starting from the {@code index} row to the last row.
+     *
+     * @param tree the tree.
+     * @param index the index of the first row to expand.
      */
     private static void expandRecursively(JTree tree, int index) {
         if (index < tree.getRowCount()) {
@@ -94,11 +90,12 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Collapse all nodes in a tree
-     * @param tree An JTree
+     * Collapse all rows in a {@link JTree}.
+     *
+     * @param tree the tree.
      */
     private static void collapseAll(JTree tree) {
-        for (int i = 0; i < tree.getRowCount(); i++){
+        for (int i = 0; i < tree.getRowCount(); i++) {
             tree.collapseRow(i);
         }
     }

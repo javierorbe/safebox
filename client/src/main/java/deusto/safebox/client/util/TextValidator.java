@@ -21,12 +21,12 @@ public enum TextValidator {
     }
 
     /**
-     * Returns true if the specified string matches the pattern.
+     * Returns true if the specified string doesn't match the pattern.
      *
      * @param string the string to test.
-     * @return true if the string matches the pattern, otherwise false.
+     * @return true if the string doesn't match the pattern, otherwise false.
      */
-    public boolean isValid(String string) {
-        return pattern.matcher(string).matches();
+    public boolean isNotValid(String string) {
+        return !pattern.matcher(string).matches();
     }
 }

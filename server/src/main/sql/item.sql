@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS sb_item (
     id              VARCHAR(36)     NOT NULL,
     user_id         VARCHAR(36)     NOT NULL,
-    type            SMALLINT         NOT NULL,
+    type            SMALLINT        NOT NULL,
     data            TEXT            NOT NULL,
     creation        TIMESTAMP       NOT NULL,
     last_modified   TIMESTAMP       NOT NULL,

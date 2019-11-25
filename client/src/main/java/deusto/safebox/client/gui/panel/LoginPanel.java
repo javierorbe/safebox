@@ -82,7 +82,7 @@ class LoginPanel extends JPanel {
         put(loginBtn);
 
         Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        PacketHandler.addListener(RetrieveDataPacket.class, ignored -> enableLoginBtn.run());
+        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableLoginBtn.run());
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
         ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
             loginBtn.setEnabled(true);
@@ -98,7 +98,7 @@ class LoginPanel extends JPanel {
         loginBtn.setEnabled(false);
 
         String email = emailField.getText();
-        if (!TextValidator.EMAIL.isValid(email)) {
+        if (TextValidator.EMAIL.isNotValid(email)) {
             loginBtn.setEnabled(true);
             new ToastDialog("Invalid email address.", Color.RED, 2, this);
             return;

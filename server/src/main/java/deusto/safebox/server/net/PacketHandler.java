@@ -185,8 +185,7 @@ class PacketHandler {
         methods.addAll(Arrays.asList(privateMethods));
 
         for (Method method : methods) {
-            EventListener eh = method.getAnnotation(EventListener.class);
-            if (eh == null) {
+            if (!method.isAnnotationPresent(EventListener.class)) {
                 continue;
             }
 
@@ -194,7 +193,7 @@ class PacketHandler {
             if (method.getParameterTypes().length != 2
                     || !Packet.class.isAssignableFrom(checkClass = method.getParameterTypes()[1])
                     || !ClientHandler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                logger.error("Attempted to register an invalid EventHandler method signature.");
+                logger.error("Attempted to register an invalid EventListener method signature.");
                 continue;
             }
             method.setAccessible(true);

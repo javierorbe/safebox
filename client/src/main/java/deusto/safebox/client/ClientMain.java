@@ -39,7 +39,7 @@ class ClientMain {
         Client client = new Client(hostname, port);
         client.setPacketReceived(packet -> {
             logger.trace("Received a packet: {}", packet);
-            PacketHandler.fire(packet);
+            PacketHandler.INSTANCE.fire(packet);
         });
 
         String lang = config.getString("lang");

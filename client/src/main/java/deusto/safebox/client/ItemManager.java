@@ -115,4 +115,8 @@ public class ItemManager {
         addItem(item);
         new EditItemDialog(owner, item);
     }
+
+    private ItemManager() {
+        throw new AssertionError();
+    }
 }

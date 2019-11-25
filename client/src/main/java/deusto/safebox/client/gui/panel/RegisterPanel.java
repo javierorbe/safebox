@@ -100,7 +100,7 @@ class RegisterPanel extends JPanel {
                     new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
     }
 
     private void put(JComponent component) {
@@ -111,7 +111,7 @@ class RegisterPanel extends JPanel {
         registerBtn.setEnabled(false);
 
         String email = emailField.getText();
-        if (!TextValidator.EMAIL.isValid(email)) {
+        if (TextValidator.EMAIL.isNotValid(email)) {
             registerBtn.setEnabled(true);
             new ToastDialog("Invalid email address.", Color.RED, 2, this);
             return;
