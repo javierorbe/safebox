@@ -13,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JButton;

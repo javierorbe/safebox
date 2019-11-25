@@ -6,17 +6,17 @@ import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 import deusto.safebox.client.gui.component.ChangingToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
-import deusto.safebox.common.gui.RightAlignedLabel;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.security.ClientSecurity;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.client.util.TextValidator;
 import deusto.safebox.common.gui.GridBagBuilder;
+import deusto.safebox.common.gui.RightAlignedLabel;
 import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
-import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -100,7 +100,7 @@ class RegisterPanel extends JPanel {
                     new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.registerListener((RetrieveDataPacket ignored) -> enableRegisterBtn.run());
     }
 
     private void put(JComponent component) {

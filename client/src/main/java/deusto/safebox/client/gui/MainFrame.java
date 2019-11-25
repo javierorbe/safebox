@@ -74,7 +74,7 @@ public class MainFrame extends JFrame {
         currentPanel = PanelType.AUTH;
         getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.addListener(RetrieveDataPacket.class, ignored -> setCurrentPanel(PanelType.MAIN));
+        PacketHandler.INSTANCE.registerListener((RetrieveDataPacket packet) -> setCurrentPanel(PanelType.MAIN));
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));
