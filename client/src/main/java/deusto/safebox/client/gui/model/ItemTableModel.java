@@ -1,10 +1,14 @@
 package deusto.safebox.client.gui.model;
 
 import deusto.safebox.client.ItemManager;
+import deusto.safebox.client.datamodel.BankAccount;
+import deusto.safebox.client.datamodel.CreditCard;
 import deusto.safebox.client.datamodel.Folder;
+import deusto.safebox.client.datamodel.Identity;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
 import deusto.safebox.client.datamodel.Note;
+import deusto.safebox.client.datamodel.WirelessRouter;
 import deusto.safebox.client.datamodel.property.ItemProperty;
 import deusto.safebox.client.datamodel.property.LongStringProperty;
 import deusto.safebox.client.datamodel.property.PasswordProperty;
@@ -37,6 +41,10 @@ public class ItemTableModel extends AbstractTableModel {
         Map<ItemType, Function<Folder, LeafItem>> itemConstructors = new EnumMap<>(ItemType.class);
         itemConstructors.put(ItemType.LOGIN, Login::new);
         itemConstructors.put(ItemType.NOTE, Note::new);
+        itemConstructors.put(ItemType.BANK_ACCOUNT, BankAccount::new);
+        itemConstructors.put(ItemType.CREDIT_CARD, CreditCard::new);
+        itemConstructors.put(ItemType.IDENTITY, Identity::new);
+        itemConstructors.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
         // TODO: add the remaining constructors
 
         itemConstructors.forEach((type, constructor) -> {
