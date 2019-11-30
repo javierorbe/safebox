@@ -22,7 +22,7 @@ public class GuiUtil {
         );
     }
 
-    /** Set the system default look and feel. */
+    /** Sets the look and feel to the system default. */
     public static void setDefaultLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

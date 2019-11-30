@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import net.jodah.typetools.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,20 +79,13 @@ public class EventHandler<E> {
     /**
      * Registers a listener for the specified event type.
      *
-     * <p>Because there is an inconsistency in the use of lambdas and anonymous classes in the compiler,
-     * the parameter type of the {@link Consumer} cannot be resolved using reflection,
-     * so {@link TypeResolver} uses a workaround to get the argument type
-     * (see <a href="https://stackoverflow.com/questions/23863716/java-how-to-resolve-generic-type-of-lambda-parameter">Resolve generic types of lambda parameter</a>).
-     *
+     * @param eventClass the event type class.
      * @param consumer the listener action.
      * @param <X> the event type.
      */
-    public <X extends E> void registerListener(Consumer<X> consumer) {
-        Class<?> typeArg = TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        @SuppressWarnings("unchecked")
-        Class<X> eventTypeClass = (Class<X>) typeArg;
+    public <X extends E> void registerListener(Class<X> eventClass, Consumer<X> consumer) {
         Collection<Consumer<? extends E>> collection
-                = listenerMap.computeIfAbsent(eventTypeClass, c -> new HashSet<>());
+                = listenerMap.computeIfAbsent(eventClass, c -> new HashSet<>());
         collection.add(consumer);
     }
 

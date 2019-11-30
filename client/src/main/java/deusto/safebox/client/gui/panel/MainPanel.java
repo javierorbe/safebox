@@ -54,7 +54,7 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.registerListener((SuccessfulSaveDataPacket ignored) ->
+        PacketHandler.INSTANCE.registerListener(SuccessfulSaveDataPacket.class, e ->
                 new ToastDialog("Data was successfully saved.", Color.GREEN, 2, MainPanel.this));
         ErrorHandler.addListener(ErrorType.SAVE_DATA_ERROR,
                 () -> new ToastDialog("Error saving data.", Color.RED, 2, this));

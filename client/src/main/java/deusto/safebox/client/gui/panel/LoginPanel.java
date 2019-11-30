@@ -82,7 +82,7 @@ class LoginPanel extends JPanel {
         put(loginBtn);
 
         Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        PacketHandler.INSTANCE.registerListener((RetrieveDataPacket ignored) -> enableLoginBtn.run());
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> enableLoginBtn.run());
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
         ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
             loginBtn.setEnabled(true);

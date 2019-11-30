@@ -101,9 +101,7 @@ public class ItemManager {
         return items;
     }
 
-    /**
-     * Returns a collection of all the folders (root folders and sub-folders).
-     */
+    /** Returns a collection of all the folders (root folders and sub-folders). */
     private static Collection<Folder> getAllFolders() {
         Collection<Folder> folders = new HashSet<>(rootFolders);
         rootFolders.forEach(rootFolder -> folders.addAll(rootFolder.getAllSubFolders()));
@@ -112,8 +110,8 @@ public class ItemManager {
 
     public static void openNewItemDialog(JFrame owner, ItemType type, Folder folder) {
         LeafItem item = ITEM_CONSTRUCTORS.get(type).apply(folder);
-        addItem(item);
         new EditItemDialog(owner, item);
+        addItem(item);
     }
 
     private ItemManager() {

@@ -21,18 +21,25 @@ public class Argon2Hashing {
     }
 
     /**
-     * Hashes a password with Argon2.
+     * Hashes a password.
      *
      * @param password the password.
-     * @param iterations Argon2 algorithm iteration count.
-     * @return the hashed string.
+     * @param iterations Argon2 iteration count.
+     * @return the hashed password.
      */
     public static String hash(String password, int iterations) {
-        return ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password);
+        return ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password.toCharArray());
     }
 
+    /**
+     * Verifies a password against a hash.
+     *
+     * @param hash the hash.
+     * @param password the password.
+     * @return true if the password matches the hash, false otherwise.
+     */
     public static boolean verify(String hash, String password) {
-        return ARGON2.verify(hash, password);
+        return ARGON2.verify(hash, password.toCharArray());
     }
 
     private Argon2Hashing() {

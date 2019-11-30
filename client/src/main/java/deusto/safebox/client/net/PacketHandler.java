@@ -16,7 +16,10 @@ import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import java.util.List;
 import java.util.Map;
 
-/** Handles the received packets. */
+/**
+ * Handles the received packets.
+ * Singleton.
+ */
 public class PacketHandler extends EventHandler<Packet> implements Listener {
 
     public static final PacketHandler INSTANCE = new PacketHandler();
@@ -31,7 +34,7 @@ public class PacketHandler extends EventHandler<Packet> implements Listener {
     }
 
     @EventListener
-    private static void onReceiveData(RetrieveDataPacket packet) {
+    private static void onRetrieveData(RetrieveDataPacket packet) {
         Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
         ItemManager.set(decryptPair.getLeft(), decryptPair.getRight());
     }

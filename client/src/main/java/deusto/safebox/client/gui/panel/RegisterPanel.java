@@ -100,7 +100,7 @@ class RegisterPanel extends JPanel {
                     new ToastDialog("Email already in use.", Color.RED, 2, this);
                 }));
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.INSTANCE.registerListener((RetrieveDataPacket ignored) -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> enableRegisterBtn.run());
     }
 
     private void put(JComponent component) {
