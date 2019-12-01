@@ -27,6 +27,7 @@ public class EditItemDialog extends JDialog {
     private final GridBagBuilder gbb = new GridBagBuilder();
 
     private final LeafItem item;
+    @SuppressWarnings("rawtypes")
     private final Map<MutableItemProperty, JComponent> components = new HashMap<>();
 
     // TODO: validate user input
@@ -71,7 +72,7 @@ public class EditItemDialog extends JDialog {
                 return;
             }
 
-            MutableItemProperty property = (MutableItemProperty) prop;
+            MutableItemProperty<?, ?> property = (MutableItemProperty<?, ?>) prop;
             JComponent component = property.newComponent();
             components.put(property, component);
 

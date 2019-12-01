@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public abstract class LeafItem extends Item {
 
-    private final List<ItemProperty> properties = new ArrayList<>();
+    private final List<ItemProperty<?>> properties = new ArrayList<>();
 
     /**
      * Creates a {@link LeafItem}.
@@ -30,7 +30,7 @@ public abstract class LeafItem extends Item {
         properties.add(this.title);
     }
 
-    public List<ItemProperty> getProperties() {
+    public List<ItemProperty<?>> getProperties() {
         return properties;
     }
 
@@ -40,11 +40,11 @@ public abstract class LeafItem extends Item {
      * @param index the index of the property.
      * @return the property at the specified index.
      */
-    public ItemProperty getProperty(int index) {
+    public ItemProperty<?> getProperty(int index) {
         return properties.get(index);
     }
 
-    void addProperties(List<ItemProperty> properties) {
+    void addProperties(List<ItemProperty<?>> properties) {
         this.properties.addAll(properties);
         this.properties.add(this.created);
         this.properties.add(this.lastModified);

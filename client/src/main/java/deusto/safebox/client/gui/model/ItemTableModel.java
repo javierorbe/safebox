@@ -34,7 +34,7 @@ public class ItemTableModel extends AbstractTableModel {
             ITEM_PROPERTY_INDICES.put(type, new ArrayList<>());
         }
 
-        Collection<Class<? extends ItemProperty>> ignoredProperties = new HashSet<>();
+        Collection<Class<? extends ItemProperty<?>>> ignoredProperties = new HashSet<>();
         ignoredProperties.add(PasswordProperty.class);
         ignoredProperties.add(LongStringProperty.class);
 
@@ -45,12 +45,11 @@ public class ItemTableModel extends AbstractTableModel {
         itemConstructors.put(ItemType.CREDIT_CARD, CreditCard::new);
         itemConstructors.put(ItemType.IDENTITY, Identity::new);
         itemConstructors.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
-        // TODO: add the remaining constructors
 
         itemConstructors.forEach((type, constructor) -> {
             LeafItem item = constructor.apply(null);
             for (int i = 0; i < item.getProperties().size(); i++) {
-                ItemProperty prop = item.getProperty(i);
+                ItemProperty<?> prop = item.getProperty(i);
                 if (!ignoredProperties.contains(prop.getClass())) {
                     ITEM_PROPERTY_NAMES.get(type).add(prop.getDisplayName());
                     ITEM_PROPERTY_INDICES.get(type).add(i);

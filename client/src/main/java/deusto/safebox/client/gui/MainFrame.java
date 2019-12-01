@@ -35,7 +35,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         GuiUtil.setDefaultLookAndFeel();
         setPreferredSize(new Dimension(1280, 720));
-        setIconImage(IconType.APP.getAsImage());
+        setIconImage(IconType.SAFEBOX.getAsImage());
         setLayout(new BorderLayout());
 
         addWindowListener(new WindowAdapter() {
@@ -54,6 +54,8 @@ public class MainFrame extends JFrame {
             }
         };
 
+        // Create menus
+        getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);
         setJMenuBar(new MenuBar(
                 () -> new Thread(() -> {
                     Collection<ItemData> items = ItemParser.toItemData(ItemManager.getAll());
@@ -64,8 +66,6 @@ public class MainFrame extends JFrame {
                 logOut
         ));
 
-        getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);
-
         // Load all panels
         panels.put(PanelType.MAIN, new MainPanel(this));
         panels.put(PanelType.AUTH, new AuthPanel(client::sendPacket, client::sendPacket));
@@ -75,6 +75,10 @@ public class MainFrame extends JFrame {
         getContentPane().add(panels.get(PanelType.AUTH), BorderLayout.CENTER);
 
         PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> setCurrentPanel(PanelType.MAIN));
+        TrayIconHandler.init(this, () -> {
+            client.sendPacket(new DisconnectPacket());
+            dispose();
+        });
 
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));

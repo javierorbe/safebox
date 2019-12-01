@@ -25,6 +25,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class ItemParser {
 
@@ -58,24 +63,13 @@ public class ItemParser {
      */
     public static Pair<List<Folder>, Map<ItemType, List<LeafItem>>>
     fromItemData(Collection<ItemData> itemDataCollection) {
-        Collection<ItemData> folderData = new HashSet<>();
-        Collection<ItemData> leafItemData = new HashSet<>();
-
-        // Separate the items into folders and the rest.
-        for (ItemData itemData : itemDataCollection) {
-            if (itemData.getType() == ItemType.FOLDER) {
-                folderData.add(itemData);
-            } else {
-                leafItemData.add(itemData);
-            }
-        }
-
         // <folder, parent folder id>
         Map<Folder, UUID> parentFolderMap = new HashMap<>();
 
         // Collect all the folders into a map where the key is the folder id and the value is the folder instance.
         // <folder id, folder>
-        Map<UUID, Folder> folderMap = folderData.parallelStream()
+        Map<UUID, Folder> folderMap = itemDataCollection.parallelStream()
+                .filter(item -> item.getType() == ItemType.FOLDER)
                 .collect(toMap(ItemData::getId, itemData -> {
                     String decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData());
                     JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
@@ -102,7 +96,7 @@ public class ItemParser {
 
         List<Folder> rootFolders = new ArrayList<>();
 
-        // Build the the list of root folders and set the relations in the folder instances.
+        // Build the list of root folders and set the subfolder references.
         parentFolderMap.forEach((folder, parentFolderId) -> {
             if (parentFolderId == null) {
                 rootFolders.add(folder);
@@ -113,23 +107,25 @@ public class ItemParser {
             }
         });
 
-        // Build the list of leaf items grouped by type.
-        Map<ItemType, List<LeafItem>> leafItems = leafItemData.parallelStream()
+        // Build the map of leaf items grouped by type.
+        Map<ItemType, List<LeafItem>> leafItems = itemDataCollection.parallelStream()
+                .filter(item -> item.getType() != ItemType.FOLDER)
                 .map(itemData -> {
                     String decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData());
                     JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
                     UUID folderId = UUID.fromString(data.get("folder").getAsString());
+
                     Folder folder = folderMap.get(folderId);
-                    return ITEM_BUILDERS.get(itemData.getType()).apply(itemData, folder, data);
+                    LeafItem item = ITEM_BUILDERS.get(itemData.getType()).apply(itemData, folder, data);
+                    folder.addItem(item);
+
+                    return item;
                 })
                 .collect(groupingBy(
                         LeafItem::getType,
                         () -> new EnumMap<>(ItemType.class),
                         toList()
                 ));
-
-        // Add the items to their corresponding folder.
-        leafItems.values().forEach(items -> items.forEach(item -> item.getFolder().addItem(item)));
 
         return new Pair<>(rootFolders, leafItems);
     }

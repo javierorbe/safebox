@@ -21,7 +21,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-params:5.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.28" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.28" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: com.github.lgooddatepicker:LGoodDatePicker:10.3.1" level="project" />
   </component>
 </module>

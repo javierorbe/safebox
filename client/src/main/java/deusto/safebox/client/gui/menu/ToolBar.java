@@ -1,5 +1,6 @@
 package deusto.safebox.client.gui.menu;
 
+import deusto.safebox.client.gui.TrayIconHandler;
 import deusto.safebox.client.gui.component.SearchBox;
 import deusto.safebox.client.gui.panel.SettingsDialog;
 import deusto.safebox.client.gui.panel.pwdgen.PassGenDialog;
@@ -8,7 +9,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 public class ToolBar extends JToolBar {
@@ -17,53 +17,25 @@ public class ToolBar extends JToolBar {
         setFloatable(false);
         setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
-        JButton newEntryBtn = new ToolBarButton(
-            "Add a new entry",
-            IconType.NEW_FILE_20,
-            () -> { /* TODO */ }
-        );
-
-        final JButton lockBtn = new ToolBarButton("Lock database", IconType.LOCK, lockAction);
-
-        final JButton pwdGenBtn = new ToolBarButton(
-            "Password generator",
-            IconType.PASSWORD_FIELD,
-            () -> new PassGenDialog(mainFrame)
-        );
-
-        final JButton settingsBtn = new ToolBarButton(
-            "Settings",
-            IconType.GEAR,
-            () -> new SettingsDialog(mainFrame)
-        );
-
-        final SearchBox searchBox = new SearchBox();
-
-        add(newEntryBtn);
+        add(new ToolBarButton("New item", IconType.NEW_FILE_20, () -> { /* TODO */ }));
         addSeparator();
-        add(pwdGenBtn);
-        add(lockBtn);
+        add(new ToolBarButton("Lock database", IconType.LOCK, lockAction));
+        // TODO: change the icon
+        add(new ToolBarButton("Minimize", IconType.MINIMIZE, () -> {
+            mainFrame.setVisible(false);
+            TrayIconHandler.showTrayIcon();
+        }));
         addSeparator();
-        add(settingsBtn);
+        add(new ToolBarButton("Password generator", IconType.PASSWORD_FIELD, () -> new PassGenDialog(mainFrame)));
+        add(new ToolBarButton("Settings", IconType.GEAR, () -> new SettingsDialog(mainFrame)));
         addSeparator();
         add(Box.createHorizontalGlue());
-        add(searchBox);
+        add(new SearchBox());
     }
 
     private static class ToolBarButton extends JButton {
 
         ToolBarButton(String toolTipText, IconType iconType, Runnable action) {
-            super(iconType.getAsIcon());
-            setFocusPainted(false);
-            setRequestFocusEnabled(false);
-            setToolTipText(toolTipText);
-            addActionListener(e -> action.run());
-        }
-    }
-
-    private static class ToolBarToggleButton extends JToggleButton {
-
-        ToolBarToggleButton(String toolTipText, IconType iconType, Runnable action) {
             super(iconType.getAsIcon());
             setFocusPainted(false);
             setRequestFocusEnabled(false);
