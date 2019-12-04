@@ -38,9 +38,4 @@ public class PacketHandler extends EventHandler<Packet> implements Listener {
         Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
         ItemManager.set(decryptPair.getLeft(), decryptPair.getRight());
     }
-
-    @EventListener
-    private static void onSuccessfulRegister(SuccessfulRegisterPacket packet) {
-        // TODO: show successful register dialog
-    }
 }

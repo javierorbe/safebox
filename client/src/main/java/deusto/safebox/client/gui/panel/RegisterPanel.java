@@ -17,6 +17,7 @@ import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
+import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -101,6 +102,8 @@ class RegisterPanel extends JPanel {
                 }));
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
         PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.registerListener(SuccessfulRegisterPacket.class, e ->
+                new ToastDialog("Successfully registered.", Color.GREEN, 3, this));
     }
 
     private void put(JComponent component) {

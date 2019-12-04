@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Super class for items contained in a folder.
- * All items (except for folders) should inherit this class.
+ * All items (except folders) should inherit this class.
  */
 public abstract class LeafItem extends Item {
 
