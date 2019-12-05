@@ -1,10 +1,13 @@
 package deusto.safebox.client.gui;
 
+import static deusto.safebox.common.util.GuiUtil.runSwing;
+
 import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.ItemParser;
 import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
+import deusto.safebox.client.gui.panel.IndeterminateProgressDialog;
 import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.net.Client;
 import deusto.safebox.client.net.PacketHandler;
@@ -22,16 +25,23 @@ import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
 
+    private final Client client;
     private final Map<PanelType, JPanel> panels = new EnumMap<>(PanelType.class);
     private PanelType currentPanel;
 
     public MainFrame(Client client) {
         super("SafeBox");
+        this.client = client;
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         GuiUtil.setDefaultLookAndFeel();
         setPreferredSize(new Dimension(1280, 720));
@@ -49,22 +59,14 @@ public class MainFrame extends JFrame {
 
         Runnable logOut = () -> {
             if (currentPanel == PanelType.MAIN) {
-                setCurrentPanel(PanelType.AUTH);
-                client.sendPacket(new LogOutPacket());
+                runSwing(() -> setCurrentPanel(PanelType.AUTH));
+                Executors.newSingleThreadExecutor().submit(() -> client.sendPacket(new LogOutPacket()));
             }
         };
 
         // Create menus
         getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);
-        setJMenuBar(new MenuBar(
-                () -> new Thread(() -> {
-                    Collection<ItemData> items = ItemParser.toItemData(ItemManager.getAll());
-                    // TODO: display an indeterminate progress bar while saving
-                    client.sendPacket(new SaveDataPacket(items));
-                }).start(),
-                () -> { /* TODO */ },
-                logOut
-        ));
+        setJMenuBar(new MenuBar(this::saveData, logOut));
 
         // Load all panels
         panels.put(PanelType.MAIN, new MainPanel(this));
@@ -93,8 +95,23 @@ public class MainFrame extends JFrame {
         currentPanel = panel;
     }
 
+    private void saveData() {
+        if (currentPanel != PanelType.MAIN) {
+            return;
+        }
+
+        JDialog dialog = new IndeterminateProgressDialog(this, "Saving data...");
+        runSwing(() -> dialog.setVisible(true));
+        Executors.newSingleThreadExecutor().submit(() -> {
+            Collection<ItemData> items = ItemParser.toItemData(ItemManager.getAll());
+            client.sendPacket(new SaveDataPacket(items));
+            runSwing(dialog::dispose);
+        });
+    }
+
     /** Content panel types. */
     private enum PanelType {
-        MAIN, AUTH
+        AUTH, // Authentication
+        MAIN,
     }
 }

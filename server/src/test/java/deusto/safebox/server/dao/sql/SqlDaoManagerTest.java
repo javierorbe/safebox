@@ -2,6 +2,8 @@ package deusto.safebox.server.dao.sql;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import deusto.safebox.server.ItemCollection;
+import deusto.safebox.server.dao.ItemCollectionDao;
 import deusto.safebox.server.dao.UserDao;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +32,12 @@ class SqlDaoManagerTest {
     void getUserDaoTest() {
         UserDao userDao = daoManager.getUserDao();
         assertTrue(userDao instanceof SqlUserDao);
+    }
+
+    @Test
+    void getItemCollectionDaoTest() {
+        ItemCollectionDao itemCollectionDao = daoManager.getItemCollectionDao();
+        assertTrue(itemCollectionDao instanceof SqlItemCollectionDao);
     }
 
     @AfterAll

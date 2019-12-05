@@ -118,7 +118,7 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
      *
      * @param packet the packet to send.
      */
-    public void sendPacket(Packet packet) {
+    public synchronized void sendPacket(Packet packet) {
         try {
             out.writeObject(packet);
             logger.trace("Packet sent: {}", packet);

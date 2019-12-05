@@ -7,12 +7,11 @@ import javax.swing.JMenuItem;
 
 public class MenuBar extends JMenuBar {
 
-    public MenuBar(Runnable saveAction, Runnable profileAction, Runnable logOutAction) {
+    public MenuBar(Runnable saveAction, Runnable logOutAction) {
         JMenu accountMenu = new JMenu("Account");
         add(accountMenu);
 
         accountMenu.add(new MenuBarItem("Save data", saveAction));
-        accountMenu.add(new MenuBarItem("Profile", profileAction));
         accountMenu.add(new MenuBarItem("Log out", logOutAction));
 
         JMenu helpMenu = new JMenu("Help");

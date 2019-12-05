@@ -7,6 +7,10 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -51,20 +55,29 @@ public class Client extends SocketHandler {
         this.port = port;
     }
 
+    @Override
+    protected Socket getSocket() {
+        return socket;
+    }
+
     /** Connect to the server. */
     @Override
     public void run() {
         logger.info("Connecting to {}:{}", hostname, port);
 
+        SSLSocketFactory socketFactory;
         try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, TRUST_ALL_CERTS, new SecureRandom());
-            SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+            socketFactory = createSocketFactory();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            logger.error("Error creating socket factory.", e);
+            return;
+        }
 
+        try {
             socket = (SSLSocket) socketFactory.createSocket(hostname, port);
             socket.addHandshakeCompletedListener(e -> logger.trace("Handshake completed."));
             socket.startHandshake();
-        } catch (IOException | NoSuchAlgorithmException | KeyManagementException e) {
+        } catch (IOException e) {
             logger.error("Could not create a socket.", e);
             return;
         }
@@ -72,8 +85,9 @@ public class Client extends SocketHandler {
         listen();
     }
 
-    @Override
-    protected Socket getSocket() {
-        return socket;
+    private static SSLSocketFactory createSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, TRUST_ALL_CERTS, new SecureRandom());
+        return sslContext.getSocketFactory();
     }
 }

@@ -20,7 +20,6 @@ public class ToolBar extends JToolBar {
         add(new ToolBarButton("New item", IconType.NEW_FILE_20, () -> { /* TODO */ }));
         addSeparator();
         add(new ToolBarButton("Lock database", IconType.LOCK, lockAction));
-        // TODO: change the icon
         add(new ToolBarButton("Minimize", IconType.MINIMIZE, () -> {
             mainFrame.setVisible(false);
             TrayIconHandler.showTrayIcon();
