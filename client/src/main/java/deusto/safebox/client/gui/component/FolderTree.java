@@ -11,9 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.swing.JFrame;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -63,9 +61,9 @@ public class FolderTree extends JTree {
                 () -> {},
                 () -> {},
                 () -> {
-                    // TEMP
-                    Random random = ThreadLocalRandom.current();
-                    Folder folder = new Folder("Folder" + random.nextInt(100));
+                    String name = generateName();
+                    Folder folder = new Folder(name);
+
                     if (selectedFolder == null) {
                         ItemManager.addRootFolder(folder);
                     } else {
@@ -81,5 +79,15 @@ public class FolderTree extends JTree {
     public void updateModel() {
         // TODO: do this correctly and updateModel the model
         setModel(new FolderTreeModel());
+    }
+
+    public String generateName() {
+        Random random = ThreadLocalRandom.current();
+        String name = JOptionPane.showInputDialog(null, "Folder's name",
+                "Naming", JOptionPane.QUESTION_MESSAGE);
+        if (!name.isEmpty()) {
+            name = "Folder "  + random.nextInt(100);
+        }
+        return name;
     }
 }
