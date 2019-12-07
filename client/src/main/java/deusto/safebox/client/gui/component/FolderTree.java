@@ -54,13 +54,13 @@ public class FolderTree extends JTree {
         });
 
         setComponentPopupMenu(new ItemPopupMenu(
-                () -> {
+                () -> { // CREAR ITEM
                     new ItemTypeDialog(owner, Objects.requireNonNull(selectedFolder));
                     table.updateFolderModel();
                 },
                 () -> {},
                 () -> {},
-                () -> {
+                () -> { // CREAR FOLDER
                     String name = generateName();
                     Folder folder = new Folder(name);
 
@@ -71,7 +71,13 @@ public class FolderTree extends JTree {
                         ItemManager.fireChange();
                     }
                 },
-                () -> {},
+                () -> { // EDITAR FOLDER
+                    if (selectedFolder != null) {
+                        String name = generateName();
+                        selectedFolder.setTitle(name);
+                        ItemManager.fireChange();
+                    }
+                },
                 () -> {}
         ));
     }
@@ -85,7 +91,7 @@ public class FolderTree extends JTree {
         Random random = ThreadLocalRandom.current();
         String name = JOptionPane.showInputDialog(null, "Folder's name",
                 "Naming", JOptionPane.QUESTION_MESSAGE);
-        if (!name.isEmpty()) {
+        if (name.isEmpty()) {
             name = "Folder "  + random.nextInt(100);
         }
         return name;

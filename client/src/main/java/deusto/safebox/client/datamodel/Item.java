@@ -34,6 +34,10 @@ abstract class Item extends AbstractItem {
         this.lastModified = new DateTimeProperty("Last Modified", lastModified);
     }
 
+    public void setTitle(String title) {
+        this.title.set(title);
+    }
+
     public String getTitle() {
         return title.get();
     }
