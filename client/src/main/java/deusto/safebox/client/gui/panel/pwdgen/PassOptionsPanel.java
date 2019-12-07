@@ -4,6 +4,7 @@ import deusto.safebox.common.gui.GridBagBuilder;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.GridBagLayout;
 
 class PassOptionsPanel extends JPanel {
@@ -11,14 +12,12 @@ class PassOptionsPanel extends JPanel {
     private final GridBagBuilder gbb = new GridBagBuilder();
 
     final JButton close = new JButton("Close");
+    final JButton regenerate = new JButton("Regenerate");
+    final JButton copy = new JButton("Copy");
 
     PassOptionsPanel() {
 
         super(new GridBagLayout());
-
-        final JButton regenerate = new JButton("Regenerate");
-        final JButton copy = new JButton("Copy");
-
 
         //TODO: Adds listeners of JButtons
 

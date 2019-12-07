@@ -11,13 +11,14 @@ class BotPassGenPanel extends JPanel{
 
     private final GridBagBuilder gbb = new GridBagBuilder();
     final PassOptionsPanel optionsPanel = new PassOptionsPanel();
+    final PassPanel passPanel = new PassPanel();
 
     BotPassGenPanel() {
 
         super(new GridBagLayout());
 
         final JTabbedPane tabbedPane = new JTabbedPane();
-        final PassPanel passPanel = new PassPanel();
+
         final PassphrasePanel passphrasePanel = new PassphrasePanel();
 
 

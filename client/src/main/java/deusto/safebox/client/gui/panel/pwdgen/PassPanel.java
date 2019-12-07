@@ -12,13 +12,13 @@ class PassPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
+    final JSlider sPassLength = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
+    final JLabel pLength = new JLabel(String.valueOf(sPassLength.getValue()));
+    final CharacterTypesPanel charTypesPan = new CharacterTypesPanel();
+
     PassPanel() {
 
         super(new GridBagLayout());
-
-        final JSlider sPassLength = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
-        final JLabel pLength = new JLabel(String.valueOf(sPassLength.getValue()));
-        final CharacterTypesPanel charTypesPan = new CharacterTypesPanel();
 
         sPassLength.addChangeListener(e -> pLength.setText(String.valueOf(sPassLength.getValue())));
         sPassLength.setPaintTicks(true);

@@ -21,12 +21,12 @@ import java.awt.event.KeyEvent;
 class TopPassGenPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
+    final PasswordField passwordField = new PasswordField(100, false);
 
     TopPassGenPanel() {
 
         super(new GridBagLayout());
 
-        final PasswordField passwordField = new PasswordField(100, false);
         final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
