@@ -41,10 +41,10 @@ public class ItemManager {
         // Register the item constructors.
         ITEM_CONSTRUCTORS.put(ItemType.LOGIN, Login::new);
         ITEM_CONSTRUCTORS.put(ItemType.NOTE, Note::new);
-        ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
-        ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
-        ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
-        ITEM_CONSTRUCTORS.put(ItemType.BANK_ACCOUNT, BankAccount::new);
+        // ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
+        // ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
+        // ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
+        // ITEM_CONSTRUCTORS.put(ItemType.BANK_ACCOUNT, BankAccount::new);
     }
 
     public static List<Folder> getRootFolders() {

@@ -3,18 +3,23 @@ package deusto.safebox.client.gui.component;
 import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.gui.menu.ItemPopupMenu;
-import deusto.safebox.client.gui.model.FolderTreeModel;
 import deusto.safebox.client.gui.panel.ItemTypeDialog;
-import deusto.safebox.client.gui.renderer.FolderTreeCellRenderer;
+import deusto.safebox.client.util.IconType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.EventObject;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import javax.swing.Icon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellEditor;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -22,81 +27,147 @@ public class FolderTree extends JTree {
 
     private static final Random RANDOM = ThreadLocalRandom.current();
 
-    private Folder selectedFolder;
+    private final DefaultTreeModel model;
+    private final DefaultMutableTreeNode root;
 
     public FolderTree(JFrame owner, DataTable table) {
-        super(new FolderTreeModel());
+        this.root = new DefaultMutableTreeNode();
+        this.model = new FolderTreeModel(root);
 
+        setModel(model);
         setRootVisible(false);
         setShowsRootHandles(true);
-        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        setCellRenderer(new FolderTreeCellRenderer());
+        setEditable(true);
 
-        addTreeSelectionListener((e) -> {
+        FolderTreeCellRenderer renderer = new FolderTreeCellRenderer();
+        setCellRenderer(renderer);
+        setCellEditor(new FolderCellEditor(this, renderer));
+
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+        addTreeSelectionListener(e -> {
             if (table.getTableModel() != DataTable.DataTableModel.FOLDER_MODEL) {
                 table.selectFolderModel();
             }
 
-            Folder folder = (Folder) e.getPath().getLastPathComponent();
-            table.getFolderTableModel().setFolder(folder);
-            selectedFolder = folder;
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                Folder selectedFolder = (Folder) selectedNode.getUserObject();
+                table.getFolderTableModel().setFolder(selectedFolder);
+            }
         });
-
-        // TODO: fix folder selection
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
+                // Clear selection if clicked outside a node
+                if (getRowForLocation(event.getX(), event.getY()) == -1) {
+                    clearSelection();
+                }
+
                 if (SwingUtilities.isRightMouseButton(event)) {
-                    int row = getRowForLocation(event.getX(), event.getY());
-                    TreePath selectionPath = getPathForLocation(event.getX(), event.getY());
-                    if (row != -1 && selectionPath != null) {
-                        selectedFolder = (Folder) selectionPath.getLastPathComponent();
-                        getComponentPopupMenu().show(event.getComponent(), event.getX(), event.getY());
-                    }
+                    getComponentPopupMenu().show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         });
 
         setComponentPopupMenu(new ItemPopupMenu(
                 () -> { // New item
-                    new ItemTypeDialog(owner, Objects.requireNonNull(selectedFolder));
-                    table.updateFolderModel();
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                    if (node != null) {
+                        Folder folder = (Folder) node.getUserObject();
+                        new ItemTypeDialog(owner, Objects.requireNonNull(folder));
+                        table.updateFolderModel();
+                    }
                 },
-                () -> {}, // Edit item
-                () -> {}, // Delete item
                 () -> { // New folder
-                    String name = generateName();
-                    Folder folder = new Folder(name);
+                    Folder folder = new Folder("Folder (" + (root.getChildCount() + 1) + ")");
+                    DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(folder);
+                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 
-                    if (selectedFolder == null) {
+                    if (selectedNode == null) {
+                        root.add(folderNode);
                         ItemManager.addRootFolder(folder);
                     } else {
-                        selectedFolder.addSubFolder(folder);
+                        selectedNode.add(folderNode);
+                        Folder parent = (Folder) selectedNode.getUserObject();
+                        parent.addSubFolder(folder);
                         ItemManager.fireChange();
                     }
+                    model.reload();
                 },
-                () -> { // Edit folder
-                    if (selectedFolder != null) {
-                        String name = generateName();
-                        selectedFolder.setTitle(name);
-                        ItemManager.fireChange();
-                    }
-                },
-                () -> {} // Delete folder
+                () -> { // Delete folder
+                    // TODO
+                }
         ));
     }
 
-    public void updateModel() {
-        // TODO: do this correctly and updateModel the model
-        setModel(new FolderTreeModel());
+    public void build(List<Folder> rootFolders) {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+        for (Folder rootFolder : rootFolders) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootFolder);
+            root.add(node);
+        }
+        buildSubFolders(root);
+        model.reload();
     }
 
-    public String generateName() {
-        String name = JOptionPane.showInputDialog(null, "Name", "New folder", JOptionPane.QUESTION_MESSAGE);
-        if (name == null || name.isEmpty()) {
-            name = "Folder " + RANDOM.nextInt(100);
+    private void buildSubFolders(DefaultMutableTreeNode parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
+            Folder folder = (Folder) child.getUserObject();
+            for (Folder subFolder : folder.getSubFolders()) {
+                DefaultMutableTreeNode subFolderNode = new DefaultMutableTreeNode(subFolder);
+                child.add(subFolderNode);
+                if (!subFolder.isLeafFolder()) {
+                    buildSubFolders(subFolderNode);
+                }
+            }
         }
-        return name;
+    }
+
+    @SuppressWarnings("serial")
+    private static class FolderTreeModel extends DefaultTreeModel {
+
+        public FolderTreeModel(DefaultMutableTreeNode root) {
+            super(root);
+        }
+
+        @Override
+        public void valueForPathChanged(TreePath path, Object newValue) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            if (node.getUserObject() instanceof Folder && newValue instanceof String) {
+                Folder folder = (Folder) node.getUserObject();
+                folder.setTitle((String) newValue);
+            }
+            nodeChanged(node);
+        }
+    }
+
+    public static class FolderTreeCellRenderer extends DefaultTreeCellRenderer {
+
+        public FolderTreeCellRenderer() {
+            Icon icon = IconType.FOLDER.getAsIcon();
+            setIcon(icon);
+            setOpenIcon(icon);
+            setDisabledIcon(icon);
+            setLeafIcon(icon);
+            setClosedIcon(icon);
+        }
+    }
+
+    private static class FolderCellEditor extends DefaultTreeCellEditor {
+
+        public FolderCellEditor(JTree tree, DefaultTreeCellRenderer renderer) {
+            super(tree, renderer);
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject event) {
+            if (event instanceof MouseEvent) {
+                return ((MouseEvent) event).getClickCount() >= 2;
+            }
+            return super.isCellEditable(event);
+        }
     }
 }

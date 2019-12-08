@@ -3,12 +3,14 @@ package deusto.safebox.client.gui.panel;
 import static deusto.safebox.common.net.packet.ErrorPacket.ErrorType;
 
 import deusto.safebox.client.ItemManager;
+import deusto.safebox.client.ItemParser;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
+import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulSaveDataPacket;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,7 +47,6 @@ public class MainPanel extends JPanel {
         ItemManager.addChangeListener(() -> {
             table.updateFolderModel();
             table.updateItemModels();
-            folderTree.updateModel();
             itemTree.updateModel();
         });
 
@@ -54,13 +55,19 @@ public class MainPanel extends JPanel {
 
         add(mainSplitPane, BorderLayout.CENTER);
 
-        PacketHandler.INSTANCE.registerListener(SuccessfulSaveDataPacket.class, e ->
-                new ToastDialog("Data was successfully saved.", Color.GREEN, 2, MainPanel.this));
         ErrorHandler.addListener(ErrorType.SAVE_DATA_ERROR,
                 () -> new ToastDialog("Error saving data.", Color.RED, 2, this));
-
-        expandAll(folderTree);
-        expandAll(itemTree);
+        PacketHandler.INSTANCE.registerListener(SuccessfulSaveDataPacket.class, e ->
+                new ToastDialog("Data was successfully saved.", Color.GREEN, 2, MainPanel.this));
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, packet ->
+                ItemParser.fromItemData(packet.getItems())
+                        .thenAccept(pair -> ItemManager.set(pair.getLeft(), pair.getRight()))
+                        .thenRun(() -> {
+                            folderTree.build(ItemManager.getRootFolders());
+                            expandAll(folderTree);
+                            expandAll(itemTree);
+                        })
+        );
     }
 
     private void updateItemInfo(LeafItem item) {

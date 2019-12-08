@@ -56,8 +56,8 @@ public class ItemParser {
     public static CompletableFuture<Collection<ItemData>> toItemData(Collection<AbstractItem> items) {
         return CompletableFuture.supplyAsync(() ->
             items.parallelStream()
-            .map(ItemData::new)
-            .collect(toSet()
+                    .map(ItemData::new)
+                    .collect(toSet()
         ), EXECUTOR_SERVICE);
     }
 
