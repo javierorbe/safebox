@@ -15,7 +15,18 @@ import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -23,7 +34,10 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -160,7 +174,7 @@ class PassGenPanel extends JPanel {
 
         static class PassphrasePanel extends JPanel {
 
-            static JSlider sWordCount = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
+            static JSlider sWordCount = new JSlider(JSlider.HORIZONTAL, 8, 100, 15);
 
             PassphrasePanel() {
 
@@ -226,7 +240,7 @@ class PassGenPanel extends JPanel {
 
         static class PassPanel extends JPanel {
 
-            static final JSlider sPassLength = new JSlider(JSlider.HORIZONTAL, 8, 30, 15);
+            static final JSlider sPassLength = new JSlider(JSlider.HORIZONTAL, 8, 100, 15);
             static final JLabel pLength = new JLabel(String.valueOf(sPassLength.getValue()));
             static final CharacterTypesPanel charTypesPan = new CharacterTypesPanel();
 
