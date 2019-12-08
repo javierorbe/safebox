@@ -6,7 +6,13 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.HashSet;
 import javax.net.ssl.KeyManagerFactory;
@@ -63,7 +69,7 @@ public class Server extends Thread implements AutoCloseable {
         try {
             SSLServerSocketFactory ssf = createServerSocketFactory();
             serverSocket = (SSLServerSocket) ssf.createServerSocket(port);
-        } catch (Exception e) {
+        } catch (IOException | GeneralSecurityException e) {
             logger.error("Could not create a server socket.", e);
             return;
         }
@@ -132,7 +138,7 @@ public class Server extends Thread implements AutoCloseable {
         return packetHandler.getAuthenticatedClientCount();
     }
 
-    private SSLServerSocketFactory createServerSocketFactory() throws Exception {
+    private SSLServerSocketFactory createServerSocketFactory() throws IOException, GeneralSecurityException {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(Files.newInputStream(keyPath), keyPassword.toCharArray());
 

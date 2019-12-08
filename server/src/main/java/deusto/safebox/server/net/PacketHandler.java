@@ -15,10 +15,8 @@ import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SaveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import deusto.safebox.common.net.packet.SuccessfulSaveDataPacket;
-import deusto.safebox.common.net.packet.TestPacket;
 import deusto.safebox.server.ItemCollection;
 import deusto.safebox.server.User;
-import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.DaoManager;
 import deusto.safebox.server.security.Argon2Hashing;
 import java.lang.annotation.ElementType;
@@ -83,11 +81,6 @@ class PacketHandler {
     }
 
     @EventListener
-    private void onTest(ClientHandler client, TestPacket packet) {
-        System.out.println("Test packet action.");
-    }
-
-    @EventListener
     private void onDisconnect(ClientHandler client, DisconnectPacket packet) {
         authenticatedUsers.remove(client);
         server.removeClient(client);
@@ -95,59 +88,78 @@ class PacketHandler {
 
     @EventListener
     private void onRequestLogin(ClientHandler client, RequestLoginPacket packet) {
-        Optional<User> optionalUser;
-        try {
-            optionalUser = daoManager.getUserDao().getByEmail(packet.getEmail());
-        } catch (DaoException e) {
-            logger.error("Error getting user by email", e);
-            return;
-        }
-        optionalUser.ifPresentOrElse(user -> {
-            boolean auth = Argon2Hashing.verify(user.getPassword(), packet.getPassword());
-            if (!auth) {
-                client.sendPacket(INVALID_LOGIN.get());
-                logger.debug("Invalid login for " + user.getEmail());
-                return;
-            }
-            try {
-                daoManager.getItemCollectionDao().get(user.getId()).ifPresentOrElse(
-                        itemCollection -> {
-                            client.sendPacket(new RetrieveDataPacket(itemCollection.getItems()));
-                            authenticatedUsers.put(client, user.getId());
-                        },
-                        () -> client.sendPacket(UNKNOWN_ERROR.get()));
-            } catch (DaoException e) {
-                logger.error("Error getting item collection from " + user.getId(), e);
-            }
-        }, () -> client.sendPacket(INVALID_LOGIN.get()));
+        daoManager.getUserDao().getByEmail(packet.getEmail())
+            .thenAccept(optionalUser -> optionalUser.ifPresentOrElse(
+                user -> Argon2Hashing.verify(user.getPassword(), packet.getPassword())
+                        .thenAccept(result -> {
+                            if (result) {
+                                sendDataToUser(client, user);
+                            } else {
+                                client.sendPacket(INVALID_LOGIN.get());
+                                logger.debug("Invalid login for " + user.getEmail());
+                            }
+                        }),
+                () -> { // no user found with that email address
+                    logger.debug("Invalid login by {}.", packet.getEmail());
+                    client.sendPacket(INVALID_LOGIN.get());
+                }
+            ))
+            .exceptionally(e -> {
+                logger.error("Error getting a user by their email.", e);
+                client.sendPacket(UNKNOWN_ERROR.get());
+                return null;
+            });
+    }
+
+    private void sendDataToUser(ClientHandler client, User user) {
+        daoManager.getItemCollectionDao().get(user.getId())
+            .thenAccept(optional -> optional.ifPresentOrElse(
+                itemCollection -> {
+                    authenticatedUsers.put(client, user.getId());
+                    client.sendPacket(new RetrieveDataPacket(itemCollection.getItems()));
+                },
+                () -> {
+                    logger.error("No item collection found for {}.", user.getId());
+                    client.sendPacket(UNKNOWN_ERROR.get());
+                }
+            ))
+            .exceptionally(e -> {
+                logger.error("Error getting the item collection for {}.", user.getId());
+                client.sendPacket(UNKNOWN_ERROR.get());
+                return null;
+            });
     }
 
     @EventListener
     private void onRequestRegister(ClientHandler client, RequestRegisterPacket packet) {
-        try {
-            if (daoManager.getUserDao().getByEmail(packet.getEmail()).isPresent()) {
-                client.sendPacket(EMAIL_ALREADY_IN_USE.get());
-                return;
-            }
-        } catch (DaoException e) {
-            logger.error("Error getting user by email", e);
-            client.sendPacket(UNKNOWN_ERROR.get());
-            return;
-        }
+        daoManager.getUserDao().getByEmail(packet.getEmail())
+            .thenAccept(optional -> optional.ifPresentOrElse(
+                ignored -> {
+                    client.sendPacket(EMAIL_ALREADY_IN_USE.get());
+                }, () -> {
+                    performRegister(client, packet);
+                })
+            )
+            .exceptionally(e -> {
+                logger.error("Error getting user by email", e);
+                client.sendPacket(UNKNOWN_ERROR.get());
+                return null;
+            });
+    }
 
-        String passHashed = Argon2Hashing.hash(packet.getPassword(), ARGON2_SERVER_ITERATIONS);
-        User user = new User(UUID.randomUUID(), packet.getName(), packet.getEmail(), passHashed, LocalDate.now());
-
-        try {
-            if (daoManager.getUserDao().insert(user)) {
-                client.sendPacket(new SuccessfulRegisterPacket());
-            } else {
-                client.sendPacket(REGISTER_ERROR.get());
-            }
-        } catch (DaoException e) {
-            logger.error("Error inserting user", e);
-            client.sendPacket(REGISTER_ERROR.get());
-        }
+    private void performRegister(ClientHandler client, RequestRegisterPacket packet) {
+        Argon2Hashing.hash(packet.getPassword(), ARGON2_SERVER_ITERATIONS)
+                .thenApply(hash ->
+                        new User(UUID.randomUUID(), packet.getName(), packet.getEmail(), hash, LocalDate.now()))
+                .thenCompose(user -> daoManager.getUserDao().insert(user))
+                .thenAccept(result -> {
+                    if (result) {
+                        client.sendPacket(new SuccessfulRegisterPacket());
+                    } else {
+                        logger.error("Error registering a user.");
+                        client.sendPacket(REGISTER_ERROR.get());
+                    }
+                });
     }
 
     @EventListener
@@ -157,19 +169,16 @@ class PacketHandler {
             return;
         }
         UUID userId = authenticatedUsers.get(client);
-        try {
-            boolean insertResult = daoManager.getItemCollectionDao()
-                    .insert(new ItemCollection(userId, packet.getItems()));
-            if (insertResult) {
-                client.sendPacket(new SuccessfulSaveDataPacket());
-            } else {
-                client.sendPacket(SAVE_DATA_ERROR.get());
-                logger.error("Unknown error inserting items from user " + userId);
-            }
-        } catch (DaoException e) {
-            logger.error("Error inserting items from user " + userId, e);
-            client.sendPacket(SAVE_DATA_ERROR.get());
-        }
+
+        daoManager.getItemCollectionDao().insert(new ItemCollection(userId, packet.getItems()))
+                .thenAccept(result -> {
+                    if (result) {
+                        client.sendPacket(new SuccessfulSaveDataPacket());
+                    } else {
+                        client.sendPacket(SAVE_DATA_ERROR.get());
+                        logger.error("Unknown error inserting items from user " + userId);
+                    }
+                });
     }
 
     @EventListener

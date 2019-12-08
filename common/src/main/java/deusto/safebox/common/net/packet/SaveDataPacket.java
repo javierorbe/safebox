@@ -1,10 +1,10 @@
 package deusto.safebox.common.net.packet;
 
 import deusto.safebox.common.ItemData;
-import java.io.Serializable;
 import java.util.Collection;
 
-public class SaveDataPacket extends Packet implements Serializable {
+/** Packet sent by a client to store their items on the app server. */
+public class SaveDataPacket extends Packet {
 
     private static final long serialVersionUID = 6465366035399352082L;
 

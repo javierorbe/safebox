@@ -2,6 +2,9 @@ package deusto.safebox.server.security;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,8 @@ public class Argon2Hashing {
         logger.info("Argon2 thread count: {}", ARGON2_THREAD_COUNT);
     }
 
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
+
     /**
      * Hashes a password.
      *
@@ -27,8 +32,13 @@ public class Argon2Hashing {
      * @param iterations Argon2 iteration count.
      * @return the hashed password.
      */
-    public static String hash(String password, int iterations) {
-        return ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password.toCharArray());
+    public static CompletableFuture<String> hash(String password, int iterations) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        EXECUTOR_SERVICE.submit(() -> {
+            String hash = ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password.toCharArray());
+            future.complete(hash);
+        });
+        return future;
     }
 
     /**
@@ -38,8 +48,13 @@ public class Argon2Hashing {
      * @param password the password.
      * @return true if the password matches the hash, false otherwise.
      */
-    public static boolean verify(String hash, String password) {
-        return ARGON2.verify(hash, password.toCharArray());
+    public static CompletableFuture<Boolean> verify(String hash, String password) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        EXECUTOR_SERVICE.submit(() -> {
+            boolean result = ARGON2.verify(hash, password.toCharArray());
+            future.complete(result);
+        });
+        return future;
     }
 
     private Argon2Hashing() {

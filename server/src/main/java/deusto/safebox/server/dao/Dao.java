@@ -2,6 +2,7 @@ package deusto.safebox.server.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Data access object (DAO).
@@ -18,27 +19,24 @@ public interface Dao<E, K> {
      *
      * @param e the object.
      * @return true if the insertion is successful, otherwise false.
-     * @throws DaoException if there is an error on the insertion.
      */
-    boolean insert(E e) throws DaoException;
+    CompletableFuture<Boolean> insert(E e);
 
     /**
      * Updates an object on the storage system.
      *
      * @param e the object.
      * @return true if the update is successful, otherwise false.
-     * @throws DaoException if there is an error on the update.
      */
-    boolean update(E e) throws DaoException;
+    CompletableFuture<Boolean> update(E e);
 
     /**
      * Deletes an object from the storage system.
      *
      * @param e the object.
      * @return true if the deletion is successful, otherwise false.
-     * @throws DaoException if there is an error on the deletion.
      */
-    boolean delete(E e) throws DaoException;
+    CompletableFuture<Boolean> delete(E e);
 
     /**
      * Returns an {@link Optional} with the object associated to the specified key
@@ -47,15 +45,13 @@ public interface Dao<E, K> {
      * @param key the key whose associated object is to be returned.
      * @return an {@code Optional} with the object associated to the specified key
      *         or an empty {@code Optional} if there is no object associated to the key.
-     * @throws DaoException if there is an error getting the object.
      */
-    Optional<E> get(K key) throws DaoException;
+    CompletableFuture<Optional<E>> get(K key);
 
     /**
      * Returns a list with all the stored objects.
      *
      * @return a list with all the stored objects.
-     * @throws DaoException if there is an error getting the list.
      */
-    List<E> getAll() throws DaoException;
+    CompletableFuture<List<E>> getAll();
 }

@@ -1,8 +1,7 @@
 package deusto.safebox.common.net.packet;
 
-import java.io.Serializable;
-
-public class RequestRegisterPacket extends Packet implements Serializable {
+/** Packet containing the information to register in the app. */
+public class RequestRegisterPacket extends Packet {
 
     private static final long serialVersionUID = -7581124302981646793L;
 

@@ -1,8 +1,7 @@
 package deusto.safebox.common.net.packet;
 
-import java.io.Serializable;
-
-public class LogOutPacket extends Packet implements Serializable {
+/** Packet sent by a client to log out of the app. */
+public class LogOutPacket extends Packet {
 
     private static final long serialVersionUID = -8051892128950471034L;
 }

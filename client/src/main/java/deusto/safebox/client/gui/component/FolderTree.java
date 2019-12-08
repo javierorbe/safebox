@@ -11,11 +11,16 @@ import java.awt.event.MouseEvent;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 public class FolderTree extends JTree {
+
+    private static final Random RANDOM = ThreadLocalRandom.current();
 
     private Folder selectedFolder;
 
@@ -54,13 +59,13 @@ public class FolderTree extends JTree {
         });
 
         setComponentPopupMenu(new ItemPopupMenu(
-                () -> { // CREAR ITEM
+                () -> { // New item
                     new ItemTypeDialog(owner, Objects.requireNonNull(selectedFolder));
                     table.updateFolderModel();
                 },
-                () -> {},
-                () -> {},
-                () -> { // CREAR FOLDER
+                () -> {}, // Edit item
+                () -> {}, // Delete item
+                () -> { // New folder
                     String name = generateName();
                     Folder folder = new Folder(name);
 
@@ -71,14 +76,14 @@ public class FolderTree extends JTree {
                         ItemManager.fireChange();
                     }
                 },
-                () -> { // EDITAR FOLDER
+                () -> { // Edit folder
                     if (selectedFolder != null) {
                         String name = generateName();
                         selectedFolder.setTitle(name);
                         ItemManager.fireChange();
                     }
                 },
-                () -> {}
+                () -> {} // Delete folder
         ));
     }
 
@@ -88,11 +93,9 @@ public class FolderTree extends JTree {
     }
 
     public String generateName() {
-        Random random = ThreadLocalRandom.current();
-        String name = JOptionPane.showInputDialog(null, "Folder's name",
-                "Naming", JOptionPane.QUESTION_MESSAGE);
-        if (name.isEmpty()) {
-            name = "Folder "  + random.nextInt(100);
+        String name = JOptionPane.showInputDialog(null, "Name", "New folder", JOptionPane.QUESTION_MESSAGE);
+        if (name == null || name.isEmpty()) {
+            name = "Folder " + RANDOM.nextInt(100);
         }
         return name;
     }

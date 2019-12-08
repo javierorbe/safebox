@@ -1,8 +1,7 @@
 package deusto.safebox.common.net.packet;
 
-import java.io.Serializable;
-
-public class DisconnectPacket extends Packet implements Serializable {
+/** Packet sent by a client to notify its disconnection. */
+public class DisconnectPacket extends Packet {
 
     private static final long serialVersionUID = -1320778634686900238L;
 }

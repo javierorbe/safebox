@@ -12,11 +12,10 @@ public class ItemPopupMenu extends JPopupMenu {
         add(new PopupMenuItem("New item", IconType.NEW_FILE_12, newItemAction));
         add(new PopupMenuItem("Edit item", IconType.NEW_FILE_12, editItemAction));
         add(new PopupMenuItem("Delete item", IconType.NEW_FILE_12, deleteItemAction));
-
+        addSeparator();
         add(new PopupMenuItem("New folder", IconType.NEW_FILE_12, newFolderAction));
         add(new PopupMenuItem("Edit folder", IconType.NEW_FILE_12, editFolderAction));
         add(new PopupMenuItem("Delete folder", IconType.NEW_FILE_12, deleteFolderAction));
-
     }
 
     private static class PopupMenuItem extends JMenuItem {

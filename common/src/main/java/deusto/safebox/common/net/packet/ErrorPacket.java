@@ -1,8 +1,7 @@
 package deusto.safebox.common.net.packet;
 
-import java.io.Serializable;
-
-public class ErrorPacket extends Packet implements Serializable {
+/** Packet sent to notify that some type of error has occurred. */
+public class ErrorPacket extends Packet {
 
     private static final long serialVersionUID = 2244582856053708269L;
 
