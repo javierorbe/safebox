@@ -46,8 +46,7 @@ class SqlUserDao implements UserDao {
 
     @Override
     public CompletableFuture<Boolean> insert(User user) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        executorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
                  PreparedStatement statement = connection.prepareStatement(insert)) {
                 statement.setString(1, user.getId().toString());
@@ -55,48 +54,43 @@ class SqlUserDao implements UserDao {
                 statement.setString(3, user.getEmail());
                 statement.setString(4, user.getPassword());
                 statement.setDate(5, Date.valueOf(user.getCreation()));
-                future.complete(statement.executeUpdate() > 0);
+                return statement.executeUpdate() > 0;
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.complete(false);
+                return false;
             }
-        });
-        return future;
+        }, executorService);
     }
 
     @Override
     public CompletableFuture<Boolean> update(User user) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        executorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
                  PreparedStatement statement = connection.prepareStatement(update)) {
                 statement.setString(1, user.getName());
                 statement.setString(2, user.getEmail());
                 statement.setString(3, user.getPassword());
                 statement.setString(4, user.getId().toString());
-                future.complete(statement.executeUpdate() > 0);
+                return statement.executeUpdate() > 0;
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.complete(false);
+                return false;
             }
-        });
-        return future;
+        }, executorService);
     }
 
     @Override
     public CompletableFuture<Boolean> delete(User user) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        executorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
                  PreparedStatement statement = connection.prepareStatement(delete)) {
                 statement.setString(1, user.getId().toString());
-                future.complete(statement.executeUpdate() > 0);
+                return statement.executeUpdate() > 0;
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.complete(false);
+                return false;
             }
-        });
-        return future;
+        }, executorService);
     }
 
     @Override

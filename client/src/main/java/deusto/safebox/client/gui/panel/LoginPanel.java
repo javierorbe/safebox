@@ -28,8 +28,12 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class LoginPanel extends JPanel {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginPanel.class);
 
     // TODO: once logged in, clean the password field
 
@@ -104,15 +108,16 @@ class LoginPanel extends JPanel {
             return;
         }
 
-        new Thread(() -> {
-            if (rememberEmail.isSelected()) {
-                // TODO
-            }
+        if (rememberEmail.isSelected()) {
+            // TODO
+        }
 
-            String password = new String(passwordField.getPassword());
-            String passwordHash = ClientSecurity.getAuthHash(email, password);
-
-            sendLoginRequest.accept(new RequestLoginPacket(email, passwordHash));
-        }).start();
+        String password = new String(passwordField.getPassword());
+        ClientSecurity.getAuthHash(email, password)
+                .thenAccept(hash -> sendLoginRequest.accept(new RequestLoginPacket(email, hash)))
+                .exceptionally(e -> {
+                    logger.error("Error generating auth hash.", e);
+                    return null;
+                });
     }
 }

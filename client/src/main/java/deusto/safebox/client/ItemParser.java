@@ -25,9 +25,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
@@ -39,7 +42,10 @@ public class ItemParser {
     static {
         ITEM_BUILDERS.put(ItemType.LOGIN, Login::of);
         ITEM_BUILDERS.put(ItemType.NOTE, Note::of);
+        // TODO: add remaining item builders
     }
+
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     /**
      * Transforms a collection of {@link AbstractItem} into a collection of {@link ItemData}.
@@ -47,11 +53,12 @@ public class ItemParser {
      * @param items the {@link AbstractItem} collection.
      * @return the {@link ItemData} collection.
      */
-    public static Collection<ItemData> toItemData(Collection<AbstractItem> items) {
-        return items
-                .parallelStream()
-                .map(ItemData::new)
-                .collect(toSet());
+    public static CompletableFuture<Collection<ItemData>> toItemData(Collection<AbstractItem> items) {
+        return CompletableFuture.supplyAsync(() ->
+            items.parallelStream()
+            .map(ItemData::new)
+            .collect(toSet()
+        ), EXECUTOR_SERVICE);
     }
 
     /**
@@ -61,73 +68,104 @@ public class ItemParser {
      * @param itemDataCollection the {@link ItemData} collection.
      * @return a {@link Pair} containing the root folder list and the item map.
      */
-    public static Pair<List<Folder>, Map<ItemType, List<LeafItem>>>
+    public static CompletableFuture<Pair<List<Folder>, Map<ItemType, List<LeafItem>>>>
     fromItemData(Collection<ItemData> itemDataCollection) {
-        // <folder, parent folder id>
-        Map<Folder, UUID> parentFolderMap = new HashMap<>();
-
-        // Collect all the folders into a map where the key is the folder id and the value is the folder instance.
-        // <folder id, folder>
-        Map<UUID, Folder> folderMap = itemDataCollection.parallelStream()
-                .filter(item -> item.getType() == ItemType.FOLDER)
-                .collect(toMap(ItemData::getId, itemData -> {
-                    String decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData());
-                    JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
-
-                    // Get the parent folder id
-                    String parentFolderIdString = data.get("folder").getAsString();
-                    UUID parentFolderId;
-                    if (!parentFolderIdString.equals(Folder.NO_PARENT_FOLDER_ID)) {
-                        parentFolderId = UUID.fromString(parentFolderIdString);
-                    } else {
-                        parentFolderId = null;
-                    }
-
-                    Folder folder = new Folder(
-                            itemData.getId(),
-                            data.get("title").getAsString(),
-                            itemData.getCreated(),
-                            itemData.getLastModified()
-                    );
-
-                    parentFolderMap.put(folder, parentFolderId);
-                    return folder;
-                }));
-
-        List<Folder> rootFolders = new ArrayList<>();
-
-        // Build the list of root folders and set the subfolder references.
-        parentFolderMap.forEach((folder, parentFolderId) -> {
-            if (parentFolderId == null) {
-                rootFolders.add(folder);
-            } else {
-                Folder parentFolder = folderMap.get(parentFolderId);
-                folder.setFolder(parentFolder);
-                parentFolder.addSubFolder(folder);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Pair<Map<Folder, UUID>, Map<UUID, Folder>> pair = buildFolderMaps(itemDataCollection).get();
+                CompletableFuture<List<Folder>> f1 = getRootFolders(pair.getRight(), pair.getLeft());
+                CompletableFuture<Map<ItemType, List<LeafItem>>> f2
+                        = getLeafItemMap(itemDataCollection, pair.getRight());
+                CompletableFuture.allOf(f1, f2).get();
+                return new Pair<>(f1.get(), f2.get());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException("Error parsing items.", e);
             }
-        });
+        }, EXECUTOR_SERVICE);
+    }
 
-        // Build the map of leaf items grouped by type.
-        Map<ItemType, List<LeafItem>> leafItems = itemDataCollection.parallelStream()
-                .filter(item -> item.getType() != ItemType.FOLDER)
-                .map(itemData -> {
-                    String decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData());
-                    JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
-                    UUID folderId = UUID.fromString(data.get("folder").getAsString());
+    private static CompletableFuture<Pair<Map<Folder, UUID>, Map<UUID, Folder>>>
+    buildFolderMaps(Collection<ItemData> collection) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<Folder, UUID> parentFolderMap = new HashMap<>();
+            Map<UUID, Folder> folderMap = collection.parallelStream()
+                    .filter(item -> item.getType() == ItemType.FOLDER)
+                    .collect(toMap(ItemData::getId, itemData -> {
+                        String decryptedJson;
+                        try {
+                            decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData()).get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            throw new RuntimeException("Error decrypting items.", e);
+                        }
+                        JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
 
-                    Folder folder = folderMap.get(folderId);
-                    LeafItem item = ITEM_BUILDERS.get(itemData.getType()).apply(itemData, folder, data);
-                    folder.addItem(item);
+                        // Get the parent folder id
+                        String parentFolderIdString = data.get("folder").getAsString();
+                        UUID parentFolderId;
+                        if (!parentFolderIdString.equals(Folder.NO_PARENT_FOLDER_ID)) {
+                            parentFolderId = UUID.fromString(parentFolderIdString);
+                        } else {
+                            parentFolderId = null;
+                        }
 
-                    return item;
-                })
-                .collect(groupingBy(
-                        LeafItem::getType,
-                        () -> new EnumMap<>(ItemType.class),
-                        toList()
-                ));
+                        Folder folder = new Folder(
+                                itemData.getId(),
+                                data.get("title").getAsString(),
+                                itemData.getCreated(),
+                                itemData.getLastModified()
+                        );
 
-        return new Pair<>(rootFolders, leafItems);
+                        parentFolderMap.put(folder, parentFolderId);
+                        return folder;
+                    }));
+            return new Pair<>(parentFolderMap, folderMap);
+        }, EXECUTOR_SERVICE);
+    }
+
+    private static CompletableFuture<List<Folder>>
+    getRootFolders(Map<UUID, Folder> folderMap, Map<Folder, UUID> parentFolderMap) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<Folder> rootFolders = new ArrayList<>();
+
+            // Build the list of root folders and set the subfolder references.
+            parentFolderMap.forEach((folder, parentFolderId) -> {
+                if (parentFolderId == null) {
+                    rootFolders.add(folder);
+                } else {
+                    Folder parentFolder = folderMap.get(parentFolderId);
+                    folder.setFolder(parentFolder);
+                    parentFolder.addSubFolder(folder);
+                }
+            });
+
+            return rootFolders;
+        }, EXECUTOR_SERVICE);
+    }
+
+    private static CompletableFuture<Map<ItemType, List<LeafItem>>>
+    getLeafItemMap(Collection<ItemData> itemDataCollection, Map<UUID, Folder> folderMap) {
+        return CompletableFuture.supplyAsync(() ->
+            itemDataCollection.parallelStream()
+            .filter(item -> item.getType() != ItemType.FOLDER)
+            .map(itemData -> {
+                String decryptedJson;
+                try {
+                    decryptedJson = ClientSecurity.decrypt(itemData.getEncryptedData()).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException("Error decrypting item data.", e);
+                }
+
+                JsonObject data = Constants.GSON.fromJson(decryptedJson, JsonObject.class);
+                UUID folderId = UUID.fromString(data.get("folder").getAsString());
+
+                Folder folder = folderMap.get(folderId);
+                LeafItem item = ITEM_BUILDERS.get(itemData.getType()).apply(itemData, folder, data);
+                folder.addItem(item);
+
+                return item;
+            })
+            .collect(groupingBy(LeafItem::getType, () -> new EnumMap<>(ItemType.class), toList())
+        ), EXECUTOR_SERVICE);
     }
 
     private ItemParser() {

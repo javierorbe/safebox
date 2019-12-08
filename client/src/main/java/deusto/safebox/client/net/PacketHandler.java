@@ -35,7 +35,7 @@ public class PacketHandler extends EventHandler<Packet> implements Listener {
 
     @EventListener
     private static void onRetrieveData(RetrieveDataPacket packet) {
-        Pair<List<Folder>, Map<ItemType, List<LeafItem>>> decryptPair = ItemParser.fromItemData(packet.getItems());
-        ItemManager.set(decryptPair.getLeft(), decryptPair.getRight());
+        ItemParser.fromItemData(packet.getItems())
+                .thenAccept(pair -> ItemManager.set(pair.getLeft(), pair.getRight()));
     }
 }

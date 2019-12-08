@@ -102,11 +102,12 @@ public class MainFrame extends JFrame {
 
         JDialog dialog = new IndeterminateProgressDialog(this, "Saving data...");
         runSwing(() -> dialog.setVisible(true));
-        Executors.newSingleThreadExecutor().submit(() -> {
-            Collection<ItemData> items = ItemParser.toItemData(ItemManager.getAll());
-            client.sendPacket(new SaveDataPacket(items));
-            runSwing(dialog::dispose);
-        });
+
+        ItemParser.toItemData(ItemManager.getAll())
+                .thenAccept(items -> {
+                    client.sendPacket(new SaveDataPacket(items));
+                    runSwing(dialog::dispose);
+                });
     }
 
     /** Content panel types. */

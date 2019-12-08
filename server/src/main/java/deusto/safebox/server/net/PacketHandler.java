@@ -149,17 +149,17 @@ class PacketHandler {
 
     private void performRegister(ClientHandler client, RequestRegisterPacket packet) {
         Argon2Hashing.hash(packet.getPassword(), ARGON2_SERVER_ITERATIONS)
-                .thenApply(hash ->
-                        new User(UUID.randomUUID(), packet.getName(), packet.getEmail(), hash, LocalDate.now()))
-                .thenCompose(user -> daoManager.getUserDao().insert(user))
-                .thenAccept(result -> {
-                    if (result) {
-                        client.sendPacket(new SuccessfulRegisterPacket());
-                    } else {
-                        logger.error("Error registering a user.");
-                        client.sendPacket(REGISTER_ERROR.get());
-                    }
-                });
+            .thenApply(hash ->
+                    new User(UUID.randomUUID(), packet.getName(), packet.getEmail(), hash, LocalDate.now()))
+            .thenCompose(user -> daoManager.getUserDao().insert(user))
+            .thenAccept(result -> {
+                if (result) {
+                    client.sendPacket(new SuccessfulRegisterPacket());
+                } else {
+                    logger.error("Error registering a user.");
+                    client.sendPacket(REGISTER_ERROR.get());
+                }
+            });
     }
 
     @EventListener
@@ -171,14 +171,14 @@ class PacketHandler {
         UUID userId = authenticatedUsers.get(client);
 
         daoManager.getItemCollectionDao().insert(new ItemCollection(userId, packet.getItems()))
-                .thenAccept(result -> {
-                    if (result) {
-                        client.sendPacket(new SuccessfulSaveDataPacket());
-                    } else {
-                        client.sendPacket(SAVE_DATA_ERROR.get());
-                        logger.error("Unknown error inserting items from user " + userId);
-                    }
-                });
+            .thenAccept(result -> {
+                if (result) {
+                    client.sendPacket(new SuccessfulSaveDataPacket());
+                } else {
+                    client.sendPacket(SAVE_DATA_ERROR.get());
+                    logger.error("Unknown error inserting items from user " + userId);
+                }
+            });
     }
 
     @EventListener

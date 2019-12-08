@@ -8,6 +8,7 @@ import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 abstract class Item extends AbstractItem {
 
@@ -79,6 +80,10 @@ abstract class Item extends AbstractItem {
         root.addProperty("title", title.get());
         String folderId = folder == null ? Folder.NO_PARENT_FOLDER_ID : folder.getId().toString();
         root.addProperty("folder", folderId);
-        return ClientSecurity.encrypt(root.toString());
+        try {
+            return ClientSecurity.encrypt(root.toString()).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Item encryption execution error.", e);
+        }
     }
 }

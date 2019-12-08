@@ -52,9 +52,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
      */
     @Override
     public CompletableFuture<Boolean> insert(ItemCollection collection) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-
-        executorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             AtomicBoolean insertResult = new AtomicBoolean(false);
             boolean transactionResult = false;
             try (Connection connection = connectionSupplier.get()) {
@@ -81,10 +79,8 @@ class SqlItemCollectionDao implements ItemCollectionDao {
             } catch (SQLException e) {
                 logger.error("Error getting a connection.", e);
             }
-            future.complete(insertResult.get() && transactionResult);
-        });
-
-        return future;
+            return insertResult.get() && transactionResult;
+        }, executorService);
     }
 
     @Override
@@ -95,18 +91,16 @@ class SqlItemCollectionDao implements ItemCollectionDao {
 
     @Override
     public CompletableFuture<Boolean> delete(ItemCollection collection) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        executorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
                  PreparedStatement statement = connection.prepareStatement(delete)) {
                 statement.setString(1, collection.getUserId().toString());
-                future.complete(statement.executeUpdate() > 0);
+                return statement.executeUpdate() > 0;
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.complete(false);
+                return false;
             }
-        });
-        return future;
+        }, executorService);
     }
 
     @Override

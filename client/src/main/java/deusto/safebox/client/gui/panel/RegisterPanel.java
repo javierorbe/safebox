@@ -28,8 +28,12 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class RegisterPanel extends JPanel {
+
+    private static final Logger logger = LoggerFactory.getLogger(RegisterPanel.class);
 
     // TODO: clean the fields once the user has successfully registered
 
@@ -131,9 +135,11 @@ class RegisterPanel extends JPanel {
 
         String name = nameField.getText();
 
-        new Thread(() -> {
-            String passwordHash = ClientSecurity.getAuthHash(email, password);
-            sendRegisterRequest.accept(new RequestRegisterPacket(name, email, passwordHash));
-        }).start();
+        ClientSecurity.getAuthHash(email, password)
+                .thenAccept(hash -> sendRegisterRequest.accept(new RequestRegisterPacket(name, email, hash)))
+                .exceptionally(e -> {
+                    logger.error("Error generating auth hash.", e);
+                    return null;
+                });
     }
 }

@@ -33,12 +33,9 @@ public class Argon2Hashing {
      * @return the hashed password.
      */
     public static CompletableFuture<String> hash(String password, int iterations) {
-        CompletableFuture<String> future = new CompletableFuture<>();
-        EXECUTOR_SERVICE.submit(() -> {
-            String hash = ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password.toCharArray());
-            future.complete(hash);
-        });
-        return future;
+        return CompletableFuture.supplyAsync(() ->
+                ARGON2.hash(iterations, ARGON2_MEMORY_USAGE, ARGON2_THREAD_COUNT, password.toCharArray()),
+            EXECUTOR_SERVICE);
     }
 
     /**
@@ -49,12 +46,9 @@ public class Argon2Hashing {
      * @return true if the password matches the hash, false otherwise.
      */
     public static CompletableFuture<Boolean> verify(String hash, String password) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        EXECUTOR_SERVICE.submit(() -> {
-            boolean result = ARGON2.verify(hash, password.toCharArray());
-            future.complete(result);
-        });
-        return future;
+        return CompletableFuture.supplyAsync(() ->
+                ARGON2.verify(hash, password.toCharArray()),
+            EXECUTOR_SERVICE);
     }
 
     private Argon2Hashing() {
