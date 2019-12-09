@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import deusto.safebox.common.util.gson.LocalDateSerializer;
 import deusto.safebox.common.util.gson.LocalDateTimeSerializer;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Constants {
@@ -16,7 +17,7 @@ public class Constants {
     static {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, LocalDateSerializer.INSTANCE);
-        gsonBuilder.registerTypeAdapter(LocalDate.class, LocalDateTimeSerializer.INSTANCE);
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
         gsonBuilder.setPrettyPrinting();
         GSON = gsonBuilder.create();
     }
