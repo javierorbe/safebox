@@ -1,6 +1,14 @@
 package deusto.safebox.server.dao.sql;
 
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.DELETE;
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.GET_ALL;
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.GET_ONE;
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.GET_ONE_EMAIL;
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.INSERT;
+import static deusto.safebox.server.dao.sql.SqlUserDao.UserStatement.UPDATE;
+
 import deusto.safebox.server.User;
+import deusto.safebox.server.dao.DaoException;
 import deusto.safebox.server.dao.UserDao;
 import deusto.safebox.server.util.CheckedSupplier;
 import java.sql.Connection;
@@ -23,32 +31,20 @@ class SqlUserDao implements UserDao {
 
     private static final Logger logger = LoggerFactory.getLogger(SqlUserDao.class);
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final CheckedSupplier<Connection, SQLException> connectionSupplier;
-
-    private final String insert;
-    private final String update;
-    private final String delete;
-    private final String getOne;
-    private final String getAll;
-    private final String getOneEmail;
+    private final SqlDatabase database;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     SqlUserDao(SqlDatabase database, CheckedSupplier<Connection, SQLException> connectionSupplier) {
         this.connectionSupplier = connectionSupplier;
-
-        insert = UserStatement.INSERT.get(database);
-        update = UserStatement.UPDATE.get(database);
-        delete = UserStatement.DELETE.get(database);
-        getOne = UserStatement.GET_ONE.get(database);
-        getAll = UserStatement.GET_ALL.get(database);
-        getOneEmail = UserStatement.GET_ONE_EMAIL.get(database);
+        this.database = database;
     }
 
     @Override
     public CompletableFuture<Boolean> insert(User user) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(insert)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(INSERT))) {
                 statement.setString(1, user.getId().toString());
                 statement.setString(2, user.getName());
                 statement.setString(3, user.getEmail());
@@ -66,7 +62,7 @@ class SqlUserDao implements UserDao {
     public CompletableFuture<Boolean> update(User user) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(update)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(UPDATE))) {
                 statement.setString(1, user.getName());
                 statement.setString(2, user.getEmail());
                 statement.setString(3, user.getPassword());
@@ -83,7 +79,7 @@ class SqlUserDao implements UserDao {
     public CompletableFuture<Boolean> delete(User user) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(delete)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(DELETE))) {
                 statement.setString(1, user.getId().toString());
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
@@ -98,7 +94,7 @@ class SqlUserDao implements UserDao {
         CompletableFuture<Optional<User>> future = new CompletableFuture<>();
         executorService.submit(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(getOne)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(GET_ONE))) {
                 statement.setString(1, userId.toString());
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
@@ -110,7 +106,7 @@ class SqlUserDao implements UserDao {
                 }
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.completeExceptionally(e);
+                future.completeExceptionally(new DaoException(e));
             }
         });
         return future;
@@ -121,7 +117,7 @@ class SqlUserDao implements UserDao {
         CompletableFuture<List<User>> future = new CompletableFuture<>();
         executorService.submit(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(getAll)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(GET_ALL))) {
                 List<User> users = new ArrayList<>();
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
@@ -131,7 +127,7 @@ class SqlUserDao implements UserDao {
                 future.complete(users);
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.completeExceptionally(e);
+                future.completeExceptionally(new DaoException(e));
             }
         });
         return future;
@@ -143,7 +139,7 @@ class SqlUserDao implements UserDao {
 
         executorService.submit(() -> {
             try (Connection connection = connectionSupplier.get();
-                 PreparedStatement statement = connection.prepareStatement(getOneEmail)) {
+                 PreparedStatement statement = connection.prepareStatement(getStmt(GET_ONE_EMAIL))) {
                 statement.setString(1, email);
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
@@ -155,11 +151,15 @@ class SqlUserDao implements UserDao {
                 }
             } catch (SQLException e) {
                 logger.error("SQL error.", e);
-                future.completeExceptionally(e);
+                future.completeExceptionally(new DaoException(e));
             }
         });
 
         return future;
+    }
+
+    private String getStmt(UserStatement statement) {
+        return statement.get(database);
     }
 
     private static User convert(ResultSet set) throws SQLException {
@@ -171,7 +171,7 @@ class SqlUserDao implements UserDao {
         return new User(id, name, email, password, creation);
     }
 
-    private enum UserStatement implements SqlStatement {
+    enum UserStatement implements SqlStatement {
         INSERT("INSERT INTO sb_user (id, name, email, password, creation) VALUES (?, ?, ?, ?, ?)"),
         UPDATE("UPDATE sb_user SET name=?, email=?, password=? WHERE id=?"),
         DELETE("DELETE FROM sb_user WHERE id=?"),
