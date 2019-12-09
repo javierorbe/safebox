@@ -39,17 +39,15 @@ public class Folder extends Item {
         items.remove(item);
     }
 
+    /** Returns a list of the direct subfolders of this folder. */
     public List<Folder> getSubFolders() {
         return subFolders;
     }
 
+    /** Returns a list of all the folders under this folder. */
     public List<Folder> getAllSubFolders() {
         List<Folder> folders = new ArrayList<>(getSubFolders());
-        getSubFolders().forEach(subFolder -> {
-            if (!subFolder.isLeafFolder()) {
-                folders.addAll(subFolder.getSubFolders());
-            }
-        });
+        getSubFolders().forEach(subFolder -> folders.addAll(subFolder.getSubFolders()));
         return folders;
     }
 
@@ -62,8 +60,9 @@ public class Folder extends Item {
         subFolders.remove(folder);
     }
 
-    public boolean isLeafFolder() {
-        return subFolders.size() == 0;
+    /** Returns true if this folder has at least one subfolder. */
+    public boolean hasSubFolders() {
+        return subFolders.size() != 0;
     }
 
     private boolean isRootFolder() {

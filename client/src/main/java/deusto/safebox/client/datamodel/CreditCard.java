@@ -46,7 +46,7 @@ public class CreditCard extends LeafItem {
         throw new UnsupportedOperationException();
     }
 
-    public static CreditCard of(ItemData itemData, Folder folder, JsonObject data) {
+    static CreditCard build(ItemData itemData, Folder folder, JsonObject data) {
         // TODO
         throw new UnsupportedOperationException();
     }

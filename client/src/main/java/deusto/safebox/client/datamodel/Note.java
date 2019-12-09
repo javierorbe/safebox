@@ -31,7 +31,7 @@ public class Note extends LeafItem {
         return root;
     }
 
-    public static Note of(ItemData itemData, Folder folder, JsonObject data) {
+    static Note build(ItemData itemData, Folder folder, JsonObject data) {
         return new Note(
                 itemData.getId(),
                 data.get("title").getAsString(),

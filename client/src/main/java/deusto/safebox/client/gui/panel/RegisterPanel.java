@@ -3,7 +3,7 @@ package deusto.safebox.client.gui.panel;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
-import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.net.ErrorHandler;
@@ -53,14 +53,14 @@ class RegisterPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 
         registerBtn = new SimpleButton("Register", this::registerAction);
-        ChangingToggleButton showPwdBtn = new ChangingToggleButton(
+        ToggleButton showPwdBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
                 false,
                 pwdField::showPassword,
                 pwdField::hidePassword
         );
-        ChangingToggleButton showConfirmPwdBtn = new ChangingToggleButton(
+        ToggleButton showConfirmPwdBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
                 false,

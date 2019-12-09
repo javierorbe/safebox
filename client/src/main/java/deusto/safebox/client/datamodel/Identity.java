@@ -48,7 +48,7 @@ public class Identity extends LeafItem {
         throw new UnsupportedOperationException();
     }
 
-    public static Identity of(ItemData itemData, Folder folder, JsonObject data) {
+    static Identity build(ItemData itemData, Folder folder, JsonObject data) {
         // TODO
         throw new UnsupportedOperationException();
     }

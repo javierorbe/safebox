@@ -1,10 +1,12 @@
 package deusto.safebox.client.gui.panel;
 
 import static deusto.safebox.common.net.packet.ErrorPacket.ErrorType;
+import static deusto.safebox.common.util.GuiUtil.runSwing;
 
 import deusto.safebox.client.ItemManager;
-import deusto.safebox.client.ItemParser;
+import deusto.safebox.client.datamodel.ItemParser;
 import deusto.safebox.client.datamodel.LeafItem;
+import deusto.safebox.client.gui.MainFrame;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
@@ -15,7 +17,6 @@ import deusto.safebox.common.net.packet.SuccessfulSaveDataPacket;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -26,7 +27,7 @@ public class MainPanel extends JPanel {
 
     private final JScrollPane itemInfoPane = new JScrollPane();
 
-    public MainPanel(JFrame owner) {
+    public MainPanel(MainFrame owner) {
         super(new BorderLayout());
 
         DataTable table = new DataTable(owner, this::updateItemInfo);
@@ -64,8 +65,11 @@ public class MainPanel extends JPanel {
                         .thenAccept(pair -> ItemManager.set(pair.getLeft(), pair.getRight()))
                         .thenRun(() -> {
                             folderTree.build(ItemManager.getRootFolders());
-                            expandAll(folderTree);
-                            expandAll(itemTree);
+                            runSwing(() -> {
+                                expandAll(folderTree);
+                                expandAll(itemTree);
+                                owner.setCurrentPanel(MainFrame.PanelType.MAIN);
+                            });
                         })
         );
     }

@@ -38,7 +38,7 @@ public class BankAccount extends LeafItem {
         throw new UnsupportedOperationException();
     }
 
-    public static BankAccount of(ItemData itemData, Folder folder, JsonObject data) {
+    static BankAccount build(ItemData itemData, Folder folder, JsonObject data) {
         // TODO
         throw new UnsupportedOperationException();
     }

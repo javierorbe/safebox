@@ -3,7 +3,7 @@ package deusto.safebox.client.gui;
 import static deusto.safebox.common.util.GuiUtil.runSwing;
 
 import deusto.safebox.client.ItemManager;
-import deusto.safebox.client.ItemParser;
+import deusto.safebox.client.datamodel.ItemParser;
 import deusto.safebox.client.gui.menu.MenuBar;
 import deusto.safebox.client.gui.menu.ToolBar;
 import deusto.safebox.client.gui.panel.AuthPanel;
@@ -12,7 +12,6 @@ import deusto.safebox.client.gui.panel.MainPanel;
 import deusto.safebox.client.net.Client;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.util.IconType;
-import deusto.safebox.common.ItemData;
 import deusto.safebox.common.net.packet.DisconnectPacket;
 import deusto.safebox.common.net.packet.LogOutPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
@@ -22,15 +21,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
 
@@ -87,7 +83,7 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    private void setCurrentPanel(PanelType panel) {
+    public void setCurrentPanel(PanelType panel) {
         getContentPane().remove(panels.get(currentPanel));
         getContentPane().add(panels.get(panel), BorderLayout.CENTER);
         getContentPane().revalidate();
@@ -111,7 +107,7 @@ public class MainFrame extends JFrame {
     }
 
     /** Content panel types. */
-    private enum PanelType {
+    public enum PanelType {
         AUTH, // Authentication
         MAIN,
     }

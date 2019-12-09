@@ -39,7 +39,7 @@ public class WirelessRouter extends LeafItem {
         throw new UnsupportedOperationException();
     }
 
-    public static WirelessRouter of(ItemData itemData, Folder folder, JsonObject data) {
+    static WirelessRouter build(ItemData itemData, Folder folder, JsonObject data) {
         // TODO
         throw new UnsupportedOperationException();
     }

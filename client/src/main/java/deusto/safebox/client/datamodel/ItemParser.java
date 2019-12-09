@@ -1,4 +1,4 @@
-package deusto.safebox.client;
+package deusto.safebox.client.datamodel;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -6,10 +6,6 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import com.google.gson.JsonObject;
-import deusto.safebox.client.datamodel.Folder;
-import deusto.safebox.client.datamodel.LeafItem;
-import deusto.safebox.client.datamodel.Login;
-import deusto.safebox.client.datamodel.Note;
 import deusto.safebox.client.security.ClientSecurity;
 import deusto.safebox.client.util.Pair;
 import deusto.safebox.client.util.TriFunction;
@@ -21,18 +17,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 public class ItemParser {
 
@@ -40,9 +31,13 @@ public class ItemParser {
             = new EnumMap<>(ItemType.class);
 
     static {
-        ITEM_BUILDERS.put(ItemType.LOGIN, Login::of);
-        ITEM_BUILDERS.put(ItemType.NOTE, Note::of);
-        // TODO: add remaining item builders
+        ITEM_BUILDERS.put(ItemType.LOGIN, Login::build);
+        ITEM_BUILDERS.put(ItemType.NOTE, Note::build);
+        // TODO: uncomment when implemented
+        // ITEM_BUILDERS.put(ItemType.IDENTITY, Identity::build);
+        // ITEM_BUILDERS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::build);
+        // ITEM_BUILDERS.put(ItemType.CREDIT_CARD, CreditCard::build);
+        // ITEM_BUILDERS.put(ItemType.BANK_ACCOUNT, BankAccount::build);
     }
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
@@ -54,11 +49,12 @@ public class ItemParser {
      * @return the {@link ItemData} collection.
      */
     public static CompletableFuture<Collection<ItemData>> toItemData(Collection<AbstractItem> items) {
-        return CompletableFuture.supplyAsync(() ->
-            items.parallelStream()
-                    .map(ItemData::new)
-                    .collect(toSet()
-        ), EXECUTOR_SERVICE);
+        return CompletableFuture.supplyAsync(
+                () -> items.parallelStream()
+                        .map(ItemData::new)
+                        .collect(toSet()),
+                EXECUTOR_SERVICE
+        );
     }
 
     /**

@@ -10,7 +10,7 @@ import static deusto.safebox.client.gui.panel.pwdgen.PassGenPanel.BotPassGenPane
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 
-import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
@@ -87,7 +87,7 @@ class PassGenPanel extends JPanel {
         TopPassGenPanel() {
             super(new GridBagLayout());
 
-            final ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+            final ToggleButton showPasswordBtn = new ToggleButton(
                     IconType.EYE,
                     IconType.EYE_CLOSED,
                     false,

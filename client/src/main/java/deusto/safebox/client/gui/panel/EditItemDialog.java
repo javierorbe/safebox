@@ -5,7 +5,7 @@ import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.property.MutableItemProperty;
-import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
@@ -82,7 +82,7 @@ public class EditItemDialog extends JDialog {
             if (component instanceof PasswordField) {
                 // Add the button to show or hide password.
                 PasswordField passwordField = (PasswordField) component;
-                ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+                ToggleButton showPasswordBtn = new ToggleButton(
                         IconType.EYE,
                         IconType.EYE_CLOSED,
                         false,

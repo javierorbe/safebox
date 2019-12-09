@@ -18,14 +18,14 @@ abstract class Item extends AbstractItem {
     final DateTimeProperty lastModified;
 
     /**
-     * Creates an abstract item representation.
+     * Constructs an {@code Item} with the specified properties.
      *
-     * @param id the item id.
-     * @param type the item type.
-     * @param title the title of the item.
-     * @param folder item's parent folder.
-     * @param created the item creation timestamp.
-     * @param lastModified the timestamp when item was last modified.
+     * @param id the item id
+     * @param type the item type
+     * @param title the title of the item
+     * @param folder the parent folder of the item
+     * @param created the item creation timestamp
+     * @param lastModified the timestamp when item was last modified
      */
     Item(UUID id, ItemType type, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type);
@@ -35,12 +35,12 @@ abstract class Item extends AbstractItem {
         this.lastModified = new DateTimeProperty("Last Modified", lastModified);
     }
 
-    public void setTitle(String title) {
-        this.title.set(title);
-    }
-
     public String getTitle() {
         return title.get();
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
     }
 
     /** Returns the parent folder of this item. */
@@ -68,9 +68,9 @@ abstract class Item extends AbstractItem {
     }
 
     /**
-     * Returns a {@link JsonObject} containing the properties that are specific to the item type.
+     * Returns a {@link JsonObject} containing the properties that are specific to an item type.
      *
-     * @return a {@link JsonObject} with the data.
+     * @return a {@link JsonObject} with the data
      */
     abstract JsonObject getCustomData();
 

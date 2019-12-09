@@ -1,9 +1,9 @@
 package deusto.safebox.client.datamodel.property;
 
 /**
- * An item property of type {@link T}.
+ * An item property with a value of type {@link T}.
  *
- * @param <T> the type of the property.
+ * @param <T> the type of the property value
  */
 public abstract class ItemProperty<T> {
 
@@ -11,9 +11,10 @@ public abstract class ItemProperty<T> {
     private T value;
 
     /**
-     * Creates an item property.
+     * Constructs an item property with the specified display name and initial value.
      *
-     * @param displayName the property name.
+     * @param displayName the property name
+     * @param initialValue the initial value of the property
      */
     ItemProperty(String displayName, T initialValue) {
         this.displayName = displayName;

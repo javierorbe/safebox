@@ -51,7 +51,7 @@ public class Login extends LeafItem {
         return root;
     }
 
-    public static Login of(ItemData itemData, Folder folder, JsonObject data) {
+    static Login build(ItemData itemData, Folder folder, JsonObject data) {
         return new Login(
                 itemData.getId(),
                 data.get("title").getAsString(),

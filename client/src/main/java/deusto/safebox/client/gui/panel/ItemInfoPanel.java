@@ -3,7 +3,7 @@ package deusto.safebox.client.gui.panel;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.property.LongStringProperty;
 import deusto.safebox.client.datamodel.property.PasswordProperty;
-import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.gui.component.ScrollTextArea;
 import deusto.safebox.client.util.IconType;
@@ -44,7 +44,7 @@ class ItemInfoPanel extends JPanel {
                 PasswordField passwordField = new PasswordField(property.toString(), false);
                 passwordField.setEditable(false);
                 passwordField.setBorder(BorderFactory.createEmptyBorder());
-                ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+                ToggleButton showPasswordBtn = new ToggleButton(
                         IconType.EYE,
                         IconType.EYE_CLOSED,
                         false,

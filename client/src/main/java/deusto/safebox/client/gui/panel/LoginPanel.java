@@ -3,7 +3,7 @@ package deusto.safebox.client.gui.panel;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
-import deusto.safebox.client.gui.component.ChangingToggleButton;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.net.ErrorHandler;
@@ -53,7 +53,7 @@ class LoginPanel extends JPanel {
 
         rememberEmail.setFocusPainted(false);
         loginBtn = new SimpleButton("Login", this::loginAction);
-        ChangingToggleButton showPasswordBtn = new ChangingToggleButton(
+        ToggleButton showPasswordBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
                 false,
