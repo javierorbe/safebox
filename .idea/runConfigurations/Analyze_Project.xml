@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Analyze Project" type="CompoundRunConfigurationType">
-    <toRun name="Analyze [client]" type="MavenRunConfiguration" />
-    <toRun name="Analyze [common]" type="MavenRunConfiguration" />
-    <toRun name="Analyze [server]" type="MavenRunConfiguration" />
-    <method v="2" />
-  </configuration>
-</component>
