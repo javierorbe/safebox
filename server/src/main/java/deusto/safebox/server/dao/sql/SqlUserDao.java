@@ -27,9 +27,12 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of {@link UserDao} for SQL databases.
+ */
 class SqlUserDao implements UserDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlUserDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlUserDao.class);
 
     private final CheckedSupplier<Connection, SQLException> connectionSupplier;
     private final SqlDatabase database;
@@ -52,7 +55,7 @@ class SqlUserDao implements UserDao {
                 statement.setDate(5, Date.valueOf(user.getCreation()));
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 return false;
             }
         }, executorService);
@@ -69,7 +72,7 @@ class SqlUserDao implements UserDao {
                 statement.setString(4, user.getId().toString());
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 return false;
             }
         }, executorService);
@@ -83,7 +86,7 @@ class SqlUserDao implements UserDao {
                 statement.setString(1, user.getId().toString());
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 return false;
             }
         }, executorService);
@@ -105,7 +108,7 @@ class SqlUserDao implements UserDao {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 future.completeExceptionally(new DaoException(e));
             }
         });
@@ -126,7 +129,7 @@ class SqlUserDao implements UserDao {
                 }
                 future.complete(users);
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 future.completeExceptionally(new DaoException(e));
             }
         });
@@ -150,7 +153,7 @@ class SqlUserDao implements UserDao {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 future.completeExceptionally(new DaoException(e));
             }
         });

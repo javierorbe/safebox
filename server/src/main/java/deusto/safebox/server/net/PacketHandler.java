@@ -39,10 +39,10 @@ import java.util.function.BiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Received packet handler. */
+/** Handles the packets received by the server. */
 class PacketHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(PacketHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketHandler.class);
 
     /** Iteration count used to hash the passwords. */
     private static final int ARGON2_SERVER_ITERATIONS = 4;
@@ -50,8 +50,13 @@ class PacketHandler {
     private final Server server;
     private final DaoManager daoManager;
 
-    // Both wildcards must be of the same type.
-    private final Map<Class<?>, BiConsumer<ClientHandler, ?>> packetMap = new HashMap<>();
+    /**
+     * Packet listener map.
+     * The map has a the class of the packet as a key and the listening method as a value.
+     *
+     * <p>Both wildcards must be of the same type, a {@link Packet} subtype.
+     */
+    private final Map<Class<?>, BiConsumer<ClientHandler, ?>> listeners = new HashMap<>();
 
     /** Map containing the clients that are currently logged in. */
     private final Map<ClientHandler, UUID> authenticatedUsers = Collections.synchronizedMap(new HashMap<>());
@@ -70,11 +75,11 @@ class PacketHandler {
     <T extends Packet> void fire(ClientHandler client, T packet) {
         // Type safe because there is a type relationship between keys and values.
         @SuppressWarnings("unchecked")
-        BiConsumer<ClientHandler, T> consumer = (BiConsumer<ClientHandler, T>) packetMap.get(packet.getClass());
+        BiConsumer<ClientHandler, T> consumer = (BiConsumer<ClientHandler, T>) listeners.get(packet.getClass());
         Optional.ofNullable(consumer)
                 .ifPresentOrElse(
                         c -> c.accept(client, packet),
-                        () -> logger.error(
+                        () -> LOGGER.error(
                                 "There is no action defined for the received packet ({}).",
                                 packet.getClass().getName())
                 );
@@ -96,16 +101,16 @@ class PacketHandler {
                                 sendDataToUser(client, user);
                             } else {
                                 client.sendPacket(INVALID_LOGIN.get());
-                                logger.debug("Invalid login for " + user.getEmail());
+                                LOGGER.debug("Invalid login for " + user.getEmail());
                             }
                         }),
                 () -> { // no user found with that email address
-                    logger.debug("Invalid login by {}.", packet.getEmail());
+                    LOGGER.debug("Invalid login by {}.", packet.getEmail());
                     client.sendPacket(INVALID_LOGIN.get());
                 }
             ))
             .exceptionally(e -> {
-                logger.error("Error getting a user by their email.", e);
+                LOGGER.error("Error getting a user by their email.", e);
                 client.sendPacket(UNKNOWN_ERROR.get());
                 return null;
             });
@@ -119,12 +124,12 @@ class PacketHandler {
                     client.sendPacket(new RetrieveDataPacket(itemCollection.getItems()));
                 },
                 () -> {
-                    logger.error("No item collection found for {}.", user.getId());
+                    LOGGER.error("No item collection found for {}.", user.getId());
                     client.sendPacket(UNKNOWN_ERROR.get());
                 }
             ))
             .exceptionally(e -> {
-                logger.error("Error getting the item collection for {}.", user.getId());
+                LOGGER.error("Error getting the item collection for {}.", user.getId());
                 client.sendPacket(UNKNOWN_ERROR.get());
                 return null;
             });
@@ -141,7 +146,7 @@ class PacketHandler {
                 })
             )
             .exceptionally(e -> {
-                logger.error("Error getting user by email", e);
+                LOGGER.error("Error getting user by email", e);
                 client.sendPacket(UNKNOWN_ERROR.get());
                 return null;
             });
@@ -156,7 +161,7 @@ class PacketHandler {
                 if (result) {
                     client.sendPacket(new SuccessfulRegisterPacket());
                 } else {
-                    logger.error("Error registering a user.");
+                    LOGGER.error("Error registering a user.");
                     client.sendPacket(REGISTER_ERROR.get());
                 }
             });
@@ -176,7 +181,7 @@ class PacketHandler {
                     client.sendPacket(new SuccessfulSaveDataPacket());
                 } else {
                     client.sendPacket(SAVE_DATA_ERROR.get());
-                    logger.error("Unknown error inserting items from user " + userId);
+                    LOGGER.error("Unknown error inserting items from user " + userId);
                 }
             });
     }
@@ -186,6 +191,9 @@ class PacketHandler {
         authenticatedUsers.remove(client);
     }
 
+    /**
+     * Registers all the methods marked with {@link EventListener} as listeners.
+     */
     private void registerListeners() {
         Method[] publicMethods = getClass().getMethods();
         Method[] privateMethods = getClass().getDeclaredMethods();
@@ -202,7 +210,7 @@ class PacketHandler {
             if (method.getParameterTypes().length != 2
                     || !Packet.class.isAssignableFrom(checkClass = method.getParameterTypes()[1])
                     || !ClientHandler.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                logger.error("Attempted to register an invalid EventListener method signature.");
+                LOGGER.error("Attempted to register an invalid EventListener method signature.");
                 continue;
             }
             method.setAccessible(true);
@@ -215,10 +223,17 @@ class PacketHandler {
                 }
             };
 
-            packetMap.put(Objects.requireNonNull(checkClass), consumer);
+            listeners.put(Objects.requireNonNull(checkClass), consumer);
         }
     }
 
+    /**
+     * Marks a method as a packet listener.
+     *
+     * <p>For a method being a valid listener, it must have exactly two parameters.
+     * The first parameter must be a {@link ClientHandler} and the second one
+     * a {@link Packet} that the method is listening to.
+     */
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     private @interface EventListener {}

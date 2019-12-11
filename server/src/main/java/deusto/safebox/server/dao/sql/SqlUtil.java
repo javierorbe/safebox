@@ -8,20 +8,20 @@ import org.slf4j.LoggerFactory;
 
 class SqlUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlUtil.class);
 
     /**
      * Performs a transaction.
      *
-     * @param connection the connection where the transaction is performed.
-     * @param operation the transaction operation.
-     * @return true if the transaction succeeds, otherwise false.
+     * @param connection the connection where the transaction is performed
+     * @param operation the transaction operation
+     * @return {@code true} if the transaction succeeds, otherwise false
      */
     static boolean transaction(Connection connection, CheckedRunnable<SQLException> operation) {
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
-            logger.error("Error disabling auto commit.", e);
+            LOGGER.error("Error disabling auto commit.", e);
             return false;
         }
         try {
@@ -29,18 +29,18 @@ class SqlUtil {
             connection.commit();
             return true;
         } catch (SQLException e) {
-            logger.error("Error in transaction.", e);
+            LOGGER.error("Error in transaction.", e);
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
-                logger.error("Error in transaction rollback.", rollbackEx);
+                LOGGER.error("Error in transaction rollback.", rollbackEx);
             }
             return false;
         } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                logger.error("Error enabling auto commit.");
+                LOGGER.error("Error enabling auto commit.");
             }
         }
     }

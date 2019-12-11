@@ -11,10 +11,12 @@ import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Represents an endpoint of the socket connection. */
+/**
+ * Handles a socket that communicates through {@link Packet} objects.
+ */
 public abstract class SocketHandler extends Thread implements AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SocketHandler.class);
 
     private volatile boolean running = false;
     private ObjectOutputStream out;
@@ -22,23 +24,10 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
     private Runnable connectionEstablished;
     private Consumer<Packet> packetReceived;
 
-    /**
-     * Creates a socket handler with the specified behavior.
-     *
-     * @param connectionEstablished called when the connection is ready to send and receive data.
-     * @param packetReceived accepted when a packet is received from the other endpoint of the socket.
-     */
-    private SocketHandler(Runnable connectionEstablished, Consumer<Packet> packetReceived) {
-        this.connectionEstablished = connectionEstablished;
-        this.packetReceived = packetReceived;
-    }
-
     /** Creates a socket handler with the default behavior. */
     protected SocketHandler() {
-        this(
-            () -> logger.info("Socket connection established."),
-            packet -> logger.info("Packet received ({}).", packet)
-        );
+        this.connectionEstablished = () -> LOGGER.info("Socket connection established.");
+        this.packetReceived = packet -> LOGGER.info("Packet received ({}).", packet);
     }
 
     public boolean isRunning() {
@@ -70,7 +59,7 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
         try {
             out = new ObjectOutputStream(getSocket().getOutputStream());
         } catch (IOException e) {
-            logger.error("Could not initialize the output stream.", e);
+            LOGGER.error("Could not initialize the output stream.", e);
             return;
         }
 
@@ -83,10 +72,10 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
                     if (data instanceof Packet) {
                         packetReceived.accept((Packet) data);
                     } else {
-                        logger.warn("Received an invalid object type ({})", data.getClass().getName());
+                        LOGGER.warn("Received an invalid object type ({})", data.getClass().getName());
                     }
                 } catch (ClassNotFoundException e) {
-                    logger.error("Could not deserialize the received object.", e);
+                    LOGGER.error("Could not deserialize the received object.", e);
                 }
             }
         } catch (EOFException | SSLException e) { // This exception is thrown when the input stream is closed.
@@ -94,26 +83,31 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
                 close();
             }
         } catch (IOException e) {
-            logger.error("Error while listening to the socket.", e);
+            LOGGER.error("Error while listening to the socket.", e);
         }
     }
 
-    /** Close the socket. */
+    /** Closes the socket. */
     @Override
     public synchronized void close() {
         running = false;
         try {
             getSocket().close();
-            logger.debug("Socket closed.");
+            LOGGER.debug("Socket closed.");
         } catch (IOException e) {
-            logger.error("Error closing the socket.", e);
+            LOGGER.error("Error closing the socket.", e);
         }
     }
 
+    /**
+     * Supplies the socket that is handled by this class.
+     *
+     * @return the socket handled by this class.
+     */
     protected abstract Socket getSocket();
 
     /**
-     * Send a packet to the other endpoint of the socket.
+     * Send a packet to the other endpoint of the socket connection.
      * This method shouldn't be used without receiving the {@link #connectionEstablished} callback.
      *
      * @param packet the packet to send.
@@ -121,9 +115,9 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
     public synchronized void sendPacket(Packet packet) {
         try {
             out.writeObject(packet);
-            logger.trace("Packet sent: {}", packet);
+            LOGGER.trace("Packet sent: {}", packet);
         } catch (IOException e) {
-            logger.error("Error sending packet.", e);
+            LOGGER.error("Error sending packet.", e);
         }
     }
 }

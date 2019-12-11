@@ -1,6 +1,5 @@
 {
   "socketPort": 6819,
-  "keyPath": "",
   "keyPassword": "LYXeAqB4VfjyfVGbrc4J",
   "dbms": "sqlite",
   "sqlite": {

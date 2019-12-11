@@ -30,9 +30,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of {@link ItemCollectionDao} for SQL databases.
+ */
 class SqlItemCollectionDao implements ItemCollectionDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(SqlItemCollectionDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlItemCollectionDao.class);
 
     private final CheckedSupplier<Connection, SQLException> connectionSupplier;
     private final SqlDatabase database;
@@ -74,7 +77,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                     }
                 });
             } catch (SQLException e) {
-                logger.error("Error getting a connection.", e);
+                LOGGER.error("Error getting a connection.", e);
             }
             return insertResult.get() && transactionResult;
         }, executorService);
@@ -94,7 +97,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                 statement.setString(1, collection.getUserId().toString());
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 return false;
             }
         }, executorService);
@@ -116,7 +119,7 @@ class SqlItemCollectionDao implements ItemCollectionDao {
                 }
                 future.complete(Optional.of(new ItemCollection(userId, items)));
             } catch (SQLException e) {
-                logger.error("SQL error.", e);
+                LOGGER.error("SQL error.", e);
                 future.completeExceptionally(new DaoException(e));
             }
         });

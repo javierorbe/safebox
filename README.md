@@ -13,7 +13,14 @@ Caja fuerte virtual para guardar tu información de forma segura.
 
 ### Configuración del servidor
 
-Al iniciar el servidor por primera vez, se crea un fichero de configuración en la misma ruta desde la que se ejecuta la aplicación.
+Al iniciar el servidor por primera vez,
+se crea un fichero de configuración en la misma ruta desde la que se ejecuta la aplicación.
+
+La base de datos debe crearse con los scripts SQL que se proveen
+en [/server/src/main/sql](https://github.com/javierorbe/safebox/tree/master/server/src/main/sql).
+
+Para seleccionar que SGBD se está utilizando, hay que indicarlo en el campo _dbms_ de la configuración
+(el campo puede tomar los valores _sqlite_, _mysql_ o _postgresql_).
 
 ## Uso del cliente
 

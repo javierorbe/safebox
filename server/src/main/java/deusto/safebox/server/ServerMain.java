@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 class ServerMain {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerMain.class);
 
     /** Resource name of the config file. */
     private static final String CONFIG_RESOURCE = "config.json";
@@ -29,7 +29,7 @@ class ServerMain {
         try {
             config = JsonConfig.ofResource(CONFIG_RESOURCE, CONFIG_FILE);
         } catch (IOException e) {
-            logger.error("Could not load the config file.", e);
+            LOGGER.error("Could not load the config file.", e);
             return;
         }
 
@@ -56,8 +56,8 @@ class ServerMain {
     }
 
     private static SqlDaoManager getSqlDaoManager() {
-        String rdbms = config.getString("dbms");
-        switch (rdbms.toLowerCase()) {
+        String dbms = config.getString("dbms");
+        switch (dbms.toLowerCase()) {
             case "sqlite": {
                 String sqliteFilepath = config.getString("sqlite.filepath");
                 return SqlDaoManager.ofSqlite(Path.of(sqliteFilepath));
@@ -82,7 +82,7 @@ class ServerMain {
             }
 
             default: {
-                throw new IllegalArgumentException("Invalid DBMS in config: " + rdbms);
+                throw new IllegalArgumentException("Invalid DBMS in config: " + dbms);
             }
         }
     }

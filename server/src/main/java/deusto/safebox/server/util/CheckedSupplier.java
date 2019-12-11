@@ -1,13 +1,13 @@
 package deusto.safebox.server.util;
 
 /**
- * A supplier that might throw a {@link X}.
+ * A supplier that can throw a checked exception.
  *
- * @param <T> the type of the supplied object.
- * @param <X> the type of the throwable.
+ * @param <T> the type of the supplied object
+ * @param <X> the type of the exception
  */
 @FunctionalInterface
-public interface CheckedSupplier<T, X extends Throwable> {
+public interface CheckedSupplier<T, X extends Exception> {
 
     T get() throws X;
 }

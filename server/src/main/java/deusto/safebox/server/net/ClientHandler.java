@@ -7,10 +7,10 @@ import javax.net.ssl.SSLSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Handles the connection of a single client. */
+/** Handles the connection of a client. */
 class ClientHandler extends SocketHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(Server.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     private final SSLSocket socket;
 
@@ -23,14 +23,14 @@ class ClientHandler extends SocketHandler {
         try {
             socket.startHandshake();
         } catch (IOException e) {
-            logger.error("Could not complete handshake.", e);
+            LOGGER.error("Could not complete handshake.", e);
             return;
         }
         listen();
     }
 
     @Override
-    public Socket getSocket() {
+    protected SSLSocket getSocket() {
         return socket;
     }
 }

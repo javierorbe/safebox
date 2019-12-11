@@ -7,12 +7,7 @@ import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.HashSet;
 import javax.net.ssl.KeyManagerFactory;
@@ -27,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class Server extends Thread implements AutoCloseable {
 
-    private static final Logger logger = LoggerFactory.getLogger(Server.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     private final int port;
     private final Path keyPath;
@@ -42,11 +37,11 @@ public class Server extends Thread implements AutoCloseable {
     /**
      * Creates a {@link Server} with the specified port.
      *
-     * @param port server socket port number.
-     * @param keyPath JKS file path.
-     * @param keyPassword JKS file password.
+     * @param port server socket port number
+     * @param keyPath JKS file path
+     * @param keyPassword JKS file password
      * @param daoManager the {@link DaoManager} that is being used.
-     *                   It is used for dependency injection on {@link PacketHandler}.
+     *                   It is used for dependency injection on {@link PacketHandler}
      */
     public Server(int port, Path keyPath, String keyPassword, DaoManager daoManager) {
         this.port = port;
@@ -70,11 +65,11 @@ public class Server extends Thread implements AutoCloseable {
             SSLServerSocketFactory ssf = createServerSocketFactory();
             serverSocket = (SSLServerSocket) ssf.createServerSocket(port);
         } catch (IOException | GeneralSecurityException e) {
-            logger.error("Could not create a server socket.", e);
+            LOGGER.error("Could not create a server socket.", e);
             return;
         }
 
-        logger.info("Server started listening on port {}.", port);
+        LOGGER.info("Server started listening on port {}.", port);
         listen();
     }
 
@@ -92,9 +87,9 @@ public class Server extends Thread implements AutoCloseable {
                 addClient(socket);
             }
         } catch (SocketException e) {
-            logger.debug("Socket closing exception.");
+            LOGGER.debug("Socket closing exception.");
         } catch (IOException e) {
-            logger.error("Error while server socket was listening.", e);
+            LOGGER.error("Error while server socket was listening.", e);
         } finally {
             if (!serverSocket.isClosed()) {
                 close();
@@ -109,16 +104,16 @@ public class Server extends Thread implements AutoCloseable {
         clients.forEach(SocketHandler::close);
         try {
             serverSocket.close();
-            logger.debug("Server socket closed.");
+            LOGGER.debug("Server socket closed.");
         } catch (IOException e) {
-            logger.error("Error closing server socket.", e);
+            LOGGER.error("Error closing server socket.", e);
         }
     }
 
     private void addClient(SSLSocket socket) {
         ClientHandler client = new ClientHandler(socket);
         client.setPacketReceived(packet -> {
-            logger.trace("Received a packet: {}", packet);
+            LOGGER.trace("Received a packet: {}", packet);
             packetHandler.fire(client, packet);
         });
         clients.add(client);
