@@ -1,6 +1,5 @@
 package deusto.safebox.client.gui.panel.pwdgen;
 
-import static deusto.safebox.client.gui.panel.pwdgen.PassGenPanel.BotPassGenPanel.PassOptionsPanel.close;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.util.GuiUtil;
 import javax.swing.JDialog;
@@ -18,7 +17,7 @@ public class PassGenDialog extends JDialog {
 
         PassGenPanel passGenerator = new PassGenPanel();
 
-        close.addActionListener(a -> dispose());
+        PassOptionsPanel.close.addActionListener(a -> dispose());
 
         GridBagBuilder gbb = new GridBagBuilder();
         gbb.setFillAndAnchor(GridBagBuilder.Fill.BOTH, GridBagBuilder.Anchor.CENTER);
