@@ -15,50 +15,59 @@ import org.slf4j.LoggerFactory;
 
 public class TrayIconHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrayIconHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrayIconHandler.class);
 
     private static JFrame mainFrame;
     private static Runnable closeCallback;
 
     private static TrayIcon trayIcon = null;
 
+    /**
+     * Initializes the handler.
+     *
+     * @param theMainFrame the main {@link JFrame}.
+     *                     This is the {@code JFrame} that is minimized when the tray icon is shown.
+     * @param theCloseCallback callback when the user requests to close the app.
+     */
     public static void init(JFrame theMainFrame, Runnable theCloseCallback) {
         mainFrame = theMainFrame;
         closeCallback = theCloseCallback;
     }
 
+    /** Shows the tray icon and hides the main frame. */
     public static void showTrayIcon() {
         if (!SystemTray.isSupported()) {
-            logger.info("System tray is not supported.");
+            LOGGER.info("System tray is not supported.");
             return;
         }
+        buildTrayIcon();
+        mainFrame.setVisible(false);
+        try {
+            SystemTray.getSystemTray().add(trayIcon);
+        } catch (AWTException e) {
+            LOGGER.error("Error adding the tray icon.", e);
+        }
+    }
 
-        PopupMenu menu = new TrayPopupMenu();
-        Image icon = IconType.SAFEBOX.getAsImage();
+    /** Hides the tray icon and shows the main frame. */
+    public static void hideTrayIcon() {
+        if (trayIcon != null) {
+            SystemTray.getSystemTray().remove(trayIcon);
+            mainFrame.setVisible(true);
+        }
+    }
 
-        trayIcon = new TrayIcon(icon, "SafeBox", menu);
+    private static void buildTrayIcon() {
+        trayIcon = new TrayIcon(IconType.SAFEBOX.getAsImage(), "SafeBox", new TrayPopupMenu());
         trayIcon.setImageAutoSize(true);
         trayIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() >= 2) {
                     hideTrayIcon();
-                    mainFrame.setVisible(true);
                 }
             }
         });
-
-        try {
-            SystemTray.getSystemTray().add(trayIcon);
-        } catch (AWTException e) {
-            logger.error("Error adding the tray icon.", e);
-        }
-    }
-
-    public static void hideTrayIcon() {
-        if (SystemTray.isSupported() && trayIcon != null) {
-            SystemTray.getSystemTray().remove(trayIcon);
-        }
     }
 
     @SuppressWarnings("serial")

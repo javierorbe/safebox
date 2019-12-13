@@ -26,10 +26,6 @@ public abstract class AbstractItem {
 
     public abstract LocalDateTime getLastModified();
 
-    /**
-     * Returns an encrypted JSON string with the data specific for the item type.
-     *
-     * @return an encrypted string of data.
-     */
+    /** Returns an encrypted string containing the sensitive data of the item. */
     protected abstract String getEncryptedData();
 }

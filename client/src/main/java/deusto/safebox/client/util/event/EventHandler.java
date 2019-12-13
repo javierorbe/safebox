@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
  *
  * <p>The event listeners are {@link Consumer}s that take a subtype of the base event.
  *
- * @param <E> the supertype of the handled events, the base event type.
+ * @param <E> the supertype of the handled events, the base event type
  */
 public class EventHandler<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventHandler.class);
 
     // Both wildcards must be of the same type.
     private final Map<Class<? extends E>, Collection<Consumer<? extends E>>> listenerMap = new HashMap<>();
@@ -31,7 +31,7 @@ public class EventHandler<E> {
      * Registers the methods of a {@link Listener} marked with {@link EventListener}
      * as listeners of the event type of their parameter.
      *
-     * @param listener the listener that contains the methods to register.
+     * @param listener the listener that contains the methods to register
      */
     public void registerListeners(Listener listener) {
         Method[] publicMethods = getClass().getMethods();
@@ -58,7 +58,7 @@ public class EventHandler<E> {
                 Class<? extends E> actualClass = (Class<? extends E>) method.getParameterTypes()[0];
                 methodParamClass = actualClass;
             } else {
-                logger.error("Attempted to register an invalid EventListener method signature.");
+                LOGGER.error("Attempted to register an invalid EventListener method signature.");
                 continue;
             }
 
@@ -79,9 +79,9 @@ public class EventHandler<E> {
     /**
      * Registers a listener for the specified event type.
      *
-     * @param eventClass the event type class.
-     * @param consumer the listener action.
-     * @param <X> the event type.
+     * @param eventClass the event type class
+     * @param consumer the listener action
+     * @param <X> the event type
      */
     public <X extends E> void registerListener(Class<X> eventClass, Consumer<X> consumer) {
         Collection<Consumer<? extends E>> collection
@@ -92,8 +92,8 @@ public class EventHandler<E> {
     /**
      * Fires an event type with the specified event object.
      *
-     * @param object the event object.
-     * @param <X> the event type.
+     * @param object the event object
+     * @param <X> the event type
      */
     public <X extends E> void fire(X object) {
         Optional.ofNullable(listenerMap.get(object.getClass()))
@@ -101,7 +101,7 @@ public class EventHandler<E> {
                     @SuppressWarnings("unchecked")
                     Consumer<X> castedConsumer = (Consumer<X>) consumer;
                     castedConsumer.accept(object);
-                }), () -> logger.error(
+                }), () -> LOGGER.error(
                         "There is no action defined for the received object ({}).",
                         object.getClass().getName())
                 );

@@ -3,9 +3,9 @@ package deusto.safebox.client.gui.panel;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
-import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.security.ClientSecurity;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 class LoginPanel extends JPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginPanel.class);
 
     // TODO: once logged in, clean the password field
 
@@ -46,6 +46,11 @@ class LoginPanel extends JPanel {
 
     private final Consumer<RequestLoginPacket> sendLoginRequest;
 
+    /**
+     * Constructs a login panel.
+     *
+     * @param sendLoginRequest callback to request a login.
+     */
     LoginPanel(Consumer<RequestLoginPacket> sendLoginRequest) {
         super(new GridBagLayout());
         this.sendLoginRequest = sendLoginRequest;
@@ -116,7 +121,7 @@ class LoginPanel extends JPanel {
         ClientSecurity.getAuthHash(email, password)
                 .thenAccept(hash -> sendLoginRequest.accept(new RequestLoginPacket(email, hash)))
                 .exceptionally(e -> {
-                    logger.error("Error generating auth hash.", e);
+                    LOGGER.error("Error generating auth hash.", e);
                     return null;
                 });
     }

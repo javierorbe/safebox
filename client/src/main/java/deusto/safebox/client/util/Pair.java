@@ -3,8 +3,8 @@ package deusto.safebox.client.util;
 /**
  * Pair of values.
  *
- * @param <L> the type of the first value.
- * @param <R> the type of the second value.
+ * @param <L> the type of the first value
+ * @param <R> the type of the second value
  */
 public class Pair<L, R> {
 

@@ -20,10 +20,7 @@ public class ToolBar extends JToolBar {
         add(new ToolBarButton("New item", IconType.NEW_FILE_20, () -> { /* TODO */ }));
         addSeparator();
         add(new ToolBarButton("Lock database", IconType.LOCK, lockAction));
-        add(new ToolBarButton("Minimize", IconType.MINIMIZE, () -> {
-            mainFrame.setVisible(false);
-            TrayIconHandler.showTrayIcon();
-        }));
+        add(new ToolBarButton("Minimize", IconType.MINIMIZE, TrayIconHandler::showTrayIcon));
         addSeparator();
         add(new ToolBarButton("Password generator", IconType.PASSWORD_FIELD, () -> new PassGenDialog(mainFrame)));
         add(new ToolBarButton("Settings", IconType.GEAR, () -> new SettingsDialog(mainFrame)));
