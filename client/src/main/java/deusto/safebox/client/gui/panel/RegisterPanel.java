@@ -3,9 +3,9 @@ package deusto.safebox.client.gui.panel;
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
-import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.security.ClientSecurity;
@@ -33,12 +33,11 @@ import org.slf4j.LoggerFactory;
 
 class RegisterPanel extends JPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegisterPanel.class);
-
-    // TODO: clean the fields once the user has successfully registered
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterPanel.class);
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
+    // TODO: clean the fields once the user has successfully registered
     private final JTextField nameField = new LimitedTextField(50, true);
     private final JTextField emailField = new LimitedTextField(50, true);
     private final PasswordField pwdField = new PasswordField(100, false);
@@ -47,6 +46,11 @@ class RegisterPanel extends JPanel {
 
     private final Consumer<RequestRegisterPacket> sendRegisterRequest;
 
+    /**
+     * Constructs a register panel.
+     *
+     * @param sendRegisterRequest callback to request a registration.
+     */
     RegisterPanel(Consumer<RequestRegisterPacket> sendRegisterRequest) {
         super(new GridBagLayout());
         this.sendRegisterRequest = sendRegisterRequest;
@@ -138,7 +142,7 @@ class RegisterPanel extends JPanel {
         ClientSecurity.getAuthHash(email, password)
                 .thenAccept(hash -> sendRegisterRequest.accept(new RequestRegisterPacket(name, email, hash)))
                 .exceptionally(e -> {
-                    logger.error("Error generating auth hash.", e);
+                    LOGGER.error("Error generating auth hash.", e);
                     return null;
                 });
     }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-/** Serializable form of an item. */
+/** Immutable and serializable form of an item. */
 public class ItemData implements Serializable {
 
     private static final long serialVersionUID = 4554854569406609630L;

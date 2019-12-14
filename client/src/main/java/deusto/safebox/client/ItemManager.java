@@ -1,13 +1,9 @@
 package deusto.safebox.client;
 
-import deusto.safebox.client.datamodel.BankAccount;
-import deusto.safebox.client.datamodel.CreditCard;
 import deusto.safebox.client.datamodel.Folder;
-import deusto.safebox.client.datamodel.Identity;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
 import deusto.safebox.client.datamodel.Note;
-import deusto.safebox.client.datamodel.WirelessRouter;
 import deusto.safebox.client.gui.panel.EditItemDialog;
 import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
@@ -31,6 +27,7 @@ public class ItemManager {
 
     /** Folders at the top of the hierarchy. */
     private static List<Folder> rootFolders = new ArrayList<>();
+    /** Map of items grouped by their type. */
     private static Map<ItemType, List<LeafItem>> itemMap = new EnumMap<>(ItemType.class);
 
     static {

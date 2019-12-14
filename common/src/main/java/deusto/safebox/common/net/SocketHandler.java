@@ -30,23 +30,28 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
         this.packetReceived = packet -> LOGGER.info("Packet received ({}).", packet);
     }
 
+    /**
+     * Returns {@code true} if the socket is ready to send and receive data.
+     *
+     * @return {@code true} if the socket is ready to send and receive data.
+     */
     public boolean isRunning() {
         return running;
     }
 
     /**
-     * Set the connection established callback.
+     * Sets the connection establishment callback.
      *
-     * @param connectionEstablished the callback.
+     * @param connectionEstablished the callback
      */
     public void setConnectionEstablished(Runnable connectionEstablished) {
         this.connectionEstablished = connectionEstablished;
     }
 
     /**
-     * Set the packet received callback.
+     * Sets the packet receipt callback.
      *
-     * @param packetReceived the callback.
+     * @param packetReceived the callback
      */
     public void setPacketReceived(Consumer<Packet> packetReceived) {
         this.packetReceived = packetReceived;
@@ -102,15 +107,17 @@ public abstract class SocketHandler extends Thread implements AutoCloseable {
     /**
      * Supplies the socket that is handled by this class.
      *
-     * @return the socket handled by this class.
+     * @return the socket handled by this class
      */
     protected abstract Socket getSocket();
 
     /**
-     * Send a packet to the other endpoint of the socket connection.
-     * This method shouldn't be used without receiving the {@link #connectionEstablished} callback.
+     * Send a {@link Packet} to through the socket.
      *
-     * @param packet the packet to send.
+     * <p>This method shouldn't be used without receiving the {@link #connectionEstablished} callback,
+     * because the output stream may not have been initialized.
+     *
+     * @param packet the packet to send
      */
     public synchronized void sendPacket(Packet packet) {
         try {

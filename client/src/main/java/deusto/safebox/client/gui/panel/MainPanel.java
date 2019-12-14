@@ -74,24 +74,25 @@ public class MainPanel extends JPanel {
         );
     }
 
+    /** Updates the item info panel with the properties of the provided item. */
     private void updateItemInfo(LeafItem item) {
         itemInfoPane.setViewportView(new ItemInfoPanel(item));
     }
 
     /**
-     * Expand all rows in a {@link JTree}.
+     * Expands all rows in a {@link JTree}.
      *
-     * @param tree the tree.
+     * @param tree the tree
      */
     private static void expandAll(JTree tree) {
         expandRecursively(tree, 0);
     }
 
     /**
-     * Expand the rows in a {@link JTree}, starting from the {@code index} row to the last row.
+     * Expands the rows in a {@link JTree}, starting from the {@code index} row to the last row.
      *
-     * @param tree the tree.
-     * @param index the index of the first row to expand.
+     * @param tree the tree
+     * @param index the index of the first row to expand
      */
     private static void expandRecursively(JTree tree, int index) {
         if (index < tree.getRowCount()) {
@@ -101,9 +102,9 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Collapse all rows in a {@link JTree}.
+     * Collapses all rows in a {@link JTree}.
      *
-     * @param tree the tree.
+     * @param tree the tree
      */
     private static void collapseAll(JTree tree) {
         for (int i = 0; i < tree.getRowCount(); i++) {

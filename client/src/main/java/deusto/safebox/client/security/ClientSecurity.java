@@ -14,12 +14,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClientSecurity {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClientSecurity.class);
 
     private static final int PBKDF2_VAULT_ITERATIONS = 100_000;
     private static final int PBKDF2_AUTH_ITERATIONS = 5_000;
@@ -35,9 +31,9 @@ public class ClientSecurity {
      * the master password, using the email as the salt.
      * Finally, the authentication hash is derived from the vault key as the key and the master password as the salt.
      *
-     * @param email the email address.
-     * @param masterPassword the master password.
-     * @return the authentication hash.
+     * @param email the email address
+     * @param masterPassword the master password
+     * @return the authentication hash
      */
     public static CompletableFuture<String> getAuthHash(String email, String masterPassword) {
         // Generate vault key
@@ -55,8 +51,8 @@ public class ClientSecurity {
     /**
      * Encrypt the given data with the vault key.
      *
-     * @param data the data.
-     * @return the encrypted data.
+     * @param data the data
+     * @return the encrypted data
      */
     public static CompletableFuture<String> encrypt(String data) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -81,8 +77,8 @@ public class ClientSecurity {
     /**
      * Decrypt the given data with the vault key.
      *
-     * @param data the encrypted data.
-     * @return the data, decrypted.
+     * @param data the encrypted data
+     * @return the data, decrypted
      */
     public static CompletableFuture<String> decrypt(String data) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -107,9 +103,9 @@ public class ClientSecurity {
     /**
      * Generates a key for the given password and salt.
      *
-     * @param password the password.
-     * @param stringSalt the string used as a salt.
-     * @return the generated key.
+     * @param password the password
+     * @param stringSalt the string used as a salt
+     * @return the generated key
      */
     private static CompletableFuture<SecretKey> generateKey(String password, String stringSalt, int iterations) {
         CompletableFuture<SecretKey> future = new CompletableFuture<>();
@@ -131,9 +127,9 @@ public class ClientSecurity {
     /**
      * Generates a salt of the given length.
      *
-     * @param length the length of the salt.
-     * @return the generated salt.
-     * @throws NoSuchAlgorithmException if the random byte generator is not available.
+     * @param length the length of the salt
+     * @return the generated salt
+     * @throws NoSuchAlgorithmException if the random byte generator is not available
      */
     private static byte[] getSalt(int length) throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");

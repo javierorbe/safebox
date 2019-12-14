@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class SearchBox extends PlaceholderTextField {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchBox.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchBox.class);
 
     public SearchBox() {
         super(30, "Search...");
@@ -31,7 +31,7 @@ public class SearchBox extends PlaceholderTextField {
     }
 
     private void performSearch() {
-        logger.trace("Performing search...");
+        LOGGER.trace("Performing search...");
         // TODO
     }
 }

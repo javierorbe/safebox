@@ -8,26 +8,26 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Super class for items contained in a folder.
- * All items (except folders) should inherit this class.
+ * Represents an {@link Item} contained in a {@link Folder}.
+ *
+ * <p>All items (except folders) should inherit this class.
  */
 public abstract class LeafItem extends Item {
 
     private final List<ItemProperty<?>> properties = new ArrayList<>();
 
     /**
-     * Creates a {@link LeafItem}.
+     * Constructs a {@code LeafItem} with the specified properties.
      *
-     * @param id the item id.
-     * @param type the item type.
-     * @param title the title of the item.
-     * @param folder the parent folder.
-     * @param created the item creation timestamp.
+     * @param id the item id
+     * @param type the item type
+     * @param title the title of the item
+     * @param folder the parent folder
+     * @param created the item creation timestamp
      * @param lastModified the item last modification timestamp
      */
     LeafItem(UUID id, ItemType type, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type, title, folder, created, lastModified);
-        properties.add(this.title);
     }
 
     public List<ItemProperty<?>> getProperties() {
@@ -35,18 +35,22 @@ public abstract class LeafItem extends Item {
     }
 
     /**
-     * Returns a the property of the item at the specified index.
+     * Returns the property of this item at the specified index.
      *
-     * @param index the index of the property.
-     * @return the property at the specified index.
+     * @param index the index of the property
+     * @return the property at the specified index
      */
     public ItemProperty<?> getProperty(int index) {
         return properties.get(index);
     }
 
+    /**
+     * Builds the {@link #properties} list.
+     */
     void addProperties(List<ItemProperty<?>> properties) {
+        this.properties.add(title);
         this.properties.addAll(properties);
-        this.properties.add(this.created);
-        this.properties.add(this.lastModified);
+        this.properties.add(created);
+        this.properties.add(lastModified);
     }
 }
