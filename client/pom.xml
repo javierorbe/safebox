@@ -105,5 +105,11 @@
             <artifactId>LGoodDatePicker</artifactId>
             <version>10.3.1</version>
         </dependency>
+        <!-- Nbvcxz - Password strength estimator -->
+        <dependency>
+            <groupId>me.gosimple</groupId>
+            <artifactId>nbvcxz</artifactId>
+            <version>1.4.3</version>
+        </dependency>
     </dependencies>
 </project>

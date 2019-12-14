@@ -15,9 +15,7 @@ public class PassGenDialog extends JDialog {
         setPreferredSize(new Dimension(700,500));
         setLayout(new GridBagLayout());
 
-        PassGenPanel passGenerator = new PassGenPanel();
-
-        PassOptionsPanel.close.addActionListener(a -> dispose());
+        PassGenPanel passGenerator = new PassGenPanel(this);
 
         GridBagBuilder gbb = new GridBagBuilder();
         gbb.setFillAndAnchor(GridBagBuilder.Fill.BOTH, GridBagBuilder.Anchor.CENTER);

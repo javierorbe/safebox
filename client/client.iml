@@ -23,5 +23,6 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.28" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: com.github.lgooddatepicker:LGoodDatePicker:10.3.1" level="project" />
+    <orderEntry type="library" name="Maven: me.gosimple:nbvcxz:1.4.3" level="project" />
   </component>
 </module>
