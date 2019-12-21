@@ -2,12 +2,8 @@ package deusto.safebox.client.gui.component;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchBox extends PlaceholderTextField {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchBox.class);
 
     public SearchBox() {
         super(30, "Search...");
@@ -25,13 +21,15 @@ public class SearchBox extends PlaceholderTextField {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                performSearch();
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         });
     }
 
     private void performSearch() {
-        LOGGER.trace("Performing search...");
-        // TODO
+        String text = getText();
+        if (!text.trim().isEmpty()) {
+            DataTable.searchTitle("(?i)" + getText());
+        }
     }
 }

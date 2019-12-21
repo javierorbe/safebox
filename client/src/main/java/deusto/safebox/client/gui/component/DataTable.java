@@ -15,7 +15,10 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class DataTable extends JTable {
 
@@ -23,10 +26,10 @@ public class DataTable extends JTable {
     private final Map<ItemType, ItemTableModel> itemTableModels = new EnumMap<>(ItemType.class);
     private ItemType currentItemType = null;
     private DataTableModel tableModel;
+    private static final TableRowSorter<TableModel> rowSorter = new TableRowSorter<>();
 
     public DataTable(JFrame owner, Consumer<LeafItem> itemSelectionEvent) {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setAutoCreateRowSorter(true);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -59,6 +62,8 @@ public class DataTable extends JTable {
         Arrays.stream(ItemType.values())
                 .forEach(type -> itemTableModels.put(type, new ItemTableModel(type)));
         setModel(folderTableModel);
+        rowSorter.setModel(getModel());
+        setRowSorter(rowSorter);
     }
 
     FolderTableModel getFolderTableModel() {
@@ -91,5 +96,8 @@ public class DataTable extends JTable {
 
     public enum DataTableModel {
         FOLDER_MODEL, ITEM_MODEL
+    }
+    public static void searchTitle(String valueSearched) {
+        rowSorter.setRowFilter(RowFilter.regexFilter(valueSearched, 0));
     }
 }
