@@ -97,6 +97,7 @@ public class DataTable extends JTable {
     public enum DataTableModel {
         FOLDER_MODEL, ITEM_MODEL
     }
+
     public static void searchTitle(String valueSearched) {
         rowSorter.setRowFilter(RowFilter.regexFilter(valueSearched, 0));
     }

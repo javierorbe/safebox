@@ -28,8 +28,11 @@ public class SearchBox extends PlaceholderTextField {
 
     private void performSearch() {
         String text = getText();
-        if (!text.trim().isEmpty()) {
-            DataTable.searchTitle("(?i)" + getText());
+
+        if (text.trim().length() == 0) {
+            DataTable.searchTitle("");
+        } else {
+            DataTable.searchTitle("(?i)" + text);
         }
     }
 }
