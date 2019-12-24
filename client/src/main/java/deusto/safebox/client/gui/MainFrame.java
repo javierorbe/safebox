@@ -59,6 +59,7 @@ public class MainFrame extends JFrame {
                 Executors.newSingleThreadExecutor().submit(() -> client.sendPacket(new LogOutPacket()));
             }
         };
+        // TODO: Fix problem with FolderTree when you logOut and login again
 
         // Create menus
         getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);

@@ -12,8 +12,6 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JTree;
@@ -26,8 +24,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 public class FolderTree extends JTree {
-
-    private static final Random RANDOM = ThreadLocalRandom.current();
 
     private final DefaultTreeModel model;
     private final DefaultMutableTreeNode root;
@@ -99,7 +95,24 @@ public class FolderTree extends JTree {
                     model.reload();
                 },
                 () -> { // Delete folder
-                    // TODO
+                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                    if (selectedNode != null) {
+                        Folder selectedFolder = (Folder) selectedNode.getUserObject();
+
+                        if (!ItemManager.getRootFolders().contains(selectedFolder)) {
+                            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) selectedNode.getParent();
+                            Folder parentFolder = (Folder) parentNode.getUserObject();
+                            parentFolder.removeSubFolder(selectedFolder);
+                        }
+
+                        selectedNode.removeAllChildren();
+                        selectedNode.removeFromParent();
+                        ItemManager.removeItemsOf(selectedFolder);
+                        selectedFolder.removeAll();
+
+                        ItemManager.fireChange();
+                        model.reload();
+                    }
                 }
         ));
     }
@@ -109,21 +122,18 @@ public class FolderTree extends JTree {
         for (Folder rootFolder : rootFolders) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootFolder);
             root.add(node);
+            buildSubFolders(node);
         }
-        buildSubFolders(root);
         runSwing(model::reload);
     }
 
     private void buildSubFolders(DefaultMutableTreeNode parent) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
-            Folder folder = (Folder) child.getUserObject();
-            for (Folder subFolder : folder.getSubFolders()) {
-                DefaultMutableTreeNode subFolderNode = new DefaultMutableTreeNode(subFolder);
-                child.add(subFolderNode);
-                if (subFolder.hasSubFolders()) {
-                    buildSubFolders(subFolderNode);
-                }
+        Folder folder = (Folder) parent.getUserObject();
+        for (Folder subFolder : folder.getSubFolders()) {
+            DefaultMutableTreeNode subFolderNode = new DefaultMutableTreeNode(subFolder);
+            parent.add(subFolderNode);
+            if (subFolder.hasSubFolders()) {
+                buildSubFolders(subFolderNode);
             }
         }
     }

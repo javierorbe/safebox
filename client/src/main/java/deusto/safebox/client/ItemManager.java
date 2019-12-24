@@ -89,6 +89,14 @@ public class ItemManager {
         fireChange();
     }
 
+    public static void removeItemsOf(Folder folder) {
+        if (folder != null) {
+            removeRootFolder(folder);
+            folder.getItems().forEach(ItemManager::removeItem);
+            folder.getSubFolders().forEach(ItemManager::removeItemsOf);
+        }
+    }
+
     /**
      * Returns all the folders and items as a collection of {@link AbstractItem}s.
      */

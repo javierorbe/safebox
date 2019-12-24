@@ -78,12 +78,16 @@ public class DataTable extends JTable {
         tableModel = DataTableModel.FOLDER_MODEL;
         setModel(folderTableModel);
         updateFolderModel();
+        rowSorter.setModel(getModel());
+        setRowSorter(rowSorter);
     }
 
     void selectItemModel(ItemType itemType) {
         tableModel = DataTableModel.ITEM_MODEL;
         currentItemType = itemType;
         setModel(itemTableModels.get(itemType));
+        rowSorter.setModel(getModel());
+        setRowSorter(rowSorter);
     }
 
     public void updateFolderModel() {

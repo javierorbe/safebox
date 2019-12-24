@@ -39,6 +39,19 @@ public class Folder extends Item {
         items.remove(item);
     }
 
+    /** Remove all items and subfolders of this folder. */
+    public void removeAll() {
+        for (LeafItem item : items) {
+            item.setFolder(null);
+        }
+        for (Folder folder : subFolders) {
+            folder.setFolder(null);
+        }
+
+        items.clear();
+        subFolders.clear();
+    }
+
     /** Returns a list of the direct subfolders of this folder. */
     public List<Folder> getSubFolders() {
         return subFolders;
@@ -46,8 +59,8 @@ public class Folder extends Item {
 
     /** Returns a list of all the folders under this folder. */
     public List<Folder> getAllSubFolders() {
-        List<Folder> folders = new ArrayList<>(getSubFolders());
-        getSubFolders().forEach(subFolder -> folders.addAll(subFolder.getSubFolders()));
+        List<Folder> folders = new ArrayList<>(subFolders);
+        subFolders.forEach(subFolder -> folders.addAll(subFolder.getAllSubFolders()));
         return folders;
     }
 
@@ -56,7 +69,7 @@ public class Folder extends Item {
         folder.setFolder(this);
     }
 
-    private void removeSubFolder(Folder folder) {
+    public void removeSubFolder(Folder folder) {
         subFolders.remove(folder);
     }
 
