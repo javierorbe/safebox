@@ -2,6 +2,8 @@ package deusto.safebox.client.gui.panel;
 
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
+import static deusto.safebox.common.net.packet.ErrorPacket.ErrorType;
+import static deusto.safebox.common.util.GuiUtil.runSwing;
 
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
@@ -14,11 +16,9 @@ import deusto.safebox.client.util.TextValidator;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.RightAlignedLabel;
 import deusto.safebox.common.gui.SimpleButton;
-import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.function.Consumer;
@@ -27,7 +27,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ class RegisterPanel extends JPanel {
         this.sendRegisterRequest = sendRegisterRequest;
         setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 
-        registerBtn = new SimpleButton("Register", this::registerAction);
+        registerBtn = new SimpleButton("Register", this::onRegister);
         ToggleButton showPwdBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
@@ -102,29 +101,34 @@ class RegisterPanel extends JPanel {
         gbb.setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
         put(registerBtn);
 
-        Runnable enableRegisterBtn = () -> SwingUtilities.invokeLater(() -> registerBtn.setEnabled(true));
-        ErrorHandler.addListener(ErrorPacket.ErrorType.EMAIL_ALREADY_IN_USE,
-                () -> SwingUtilities.invokeLater(() -> {
-                    registerBtn.setEnabled(true);
-                    new ToastDialog("Email already in use.", Color.RED, 2, this);
-                }));
-        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
-        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> enableRegisterBtn.run());
-        PacketHandler.INSTANCE.registerListener(SuccessfulRegisterPacket.class, e ->
-                new ToastDialog("Successfully registered.", Color.GREEN, 3, this));
+        registerListeners();
     }
 
     private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }
 
-    private void registerAction() {
+    private void registerListeners() {
+        Runnable enableRegisterBtn = () -> runSwing(() -> registerBtn.setEnabled(true));
+
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> enableRegisterBtn.run());
+        PacketHandler.INSTANCE.registerListener(SuccessfulRegisterPacket.class, p ->
+                ToastDialog.showInfo(this, "Successfully registered."));
+
+        ErrorHandler.addListener(ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
+        ErrorHandler.addListener(ErrorType.EMAIL_ALREADY_IN_USE, () -> {
+            enableRegisterBtn.run();
+            ToastDialog.showError(this, "Email already in use.");
+        });
+    }
+
+    private void onRegister() {
         registerBtn.setEnabled(false);
 
         String email = emailField.getText();
         if (TextValidator.EMAIL.isNotValid(email)) {
             registerBtn.setEnabled(true);
-            new ToastDialog("Invalid email address.", Color.RED, 2, this);
+            ToastDialog.showError(this, "Invalid email address.");
             return;
         }
 
@@ -133,7 +137,7 @@ class RegisterPanel extends JPanel {
 
         if (!password.equals(confirmPassword)) {
             registerBtn.setEnabled(true);
-            new ToastDialog("The confirm password doesn't match the password.", Color.RED, 2, this);
+            ToastDialog.showError(this, "The confirm password doesn't match the password.");
             return;
         }
 

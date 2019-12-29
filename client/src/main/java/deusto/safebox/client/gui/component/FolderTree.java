@@ -25,12 +25,17 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class FolderTree extends JTree {
 
+    private final JFrame mainFrame;
+    private final DataTable table;
     private final DefaultTreeModel model;
     private final DefaultMutableTreeNode root;
 
-    public FolderTree(JFrame owner, DataTable table) {
-        this.root = new DefaultMutableTreeNode();
-        this.model = new FolderTreeModel(root);
+    public FolderTree(JFrame mainFrame, DataTable table) {
+        this.mainFrame = mainFrame;
+        this.table = table;
+
+        root = new DefaultMutableTreeNode();
+        model = new FolderTreeModel(root);
 
         setModel(model);
         setRootVisible(false);
@@ -42,18 +47,7 @@ public class FolderTree extends JTree {
         setCellEditor(new FolderCellEditor(this, renderer));
 
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-        addTreeSelectionListener(e -> {
-            if (table.getTableModel() != DataTable.DataTableModel.FOLDER_MODEL) {
-                table.selectFolderModel();
-            }
-
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-            if (selectedNode != null) {
-                Folder selectedFolder = (Folder) selectedNode.getUserObject();
-                table.getFolderTableModel().setFolder(selectedFolder);
-            }
-        });
+        addTreeSelectionListener(e -> handleTreeSelection());
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -69,62 +63,17 @@ public class FolderTree extends JTree {
             }
         });
 
-        setComponentPopupMenu(new ItemPopupMenu(
-                () -> { // New item
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-                    if (node != null) {
-                        Folder folder = (Folder) node.getUserObject();
-                        new ItemTypeDialog(owner, Objects.requireNonNull(folder));
-                        table.updateFolderModel();
-                    }
-                },
-                () -> { // New folder
-                    Folder folder = new Folder("Folder (" + (root.getChildCount() + 1) + ")");
-                    DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(folder);
-                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-
-                    if (selectedNode == null) {
-                        root.add(folderNode);
-                        ItemManager.addRootFolder(folder);
-                    } else {
-                        selectedNode.add(folderNode);
-                        Folder parent = (Folder) selectedNode.getUserObject();
-                        parent.addSubFolder(folder);
-                        ItemManager.fireChange();
-                    }
-                    model.reload();
-                },
-                () -> { // Delete folder
-                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-                    if (selectedNode != null) {
-                        Folder selectedFolder = (Folder) selectedNode.getUserObject();
-
-                        if (!ItemManager.getRootFolders().contains(selectedFolder)) {
-                            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) selectedNode.getParent();
-                            Folder parentFolder = (Folder) parentNode.getUserObject();
-                            parentFolder.removeSubFolder(selectedFolder);
-                        }
-
-                        selectedNode.removeAllChildren();
-                        selectedNode.removeFromParent();
-                        ItemManager.removeItemsOf(selectedFolder);
-                        selectedFolder.removeAll();
-
-                        ItemManager.fireChange();
-                        model.reload();
-                    }
-                }
-        ));
+        setComponentPopupMenu(new ItemPopupMenu(this::onNewItem, this::onNewFolder, this::onDeleteFolder));
     }
 
-    public void build(List<Folder> rootFolders) {
+    public void buildFolderTree(List<Folder> rootFolders) {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
         for (Folder rootFolder : rootFolders) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootFolder);
             root.add(node);
             buildSubFolders(node);
         }
-        runSwing(model::reload);
+        model.reload();
     }
 
     private void buildSubFolders(DefaultMutableTreeNode parent) {
@@ -135,6 +84,58 @@ public class FolderTree extends JTree {
             if (subFolder.hasSubFolders()) {
                 buildSubFolders(subFolderNode);
             }
+        }
+    }
+
+    private void handleTreeSelection() {
+        if (table.getTableModel() != DataTable.DataTableModel.FOLDER_MODEL) {
+            table.selectFolderModel();
+        }
+
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        if (selectedNode != null) {
+            Folder selectedFolder = (Folder) selectedNode.getUserObject();
+            table.getFolderTableModel().setFolder(selectedFolder);
+        }
+    }
+
+    private void onNewItem() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        if (node != null) {
+            Folder folder = (Folder) node.getUserObject();
+            new ItemTypeDialog(mainFrame, Objects.requireNonNull(folder));
+            table.updateFolderModel();
+        }
+    }
+
+    private void onNewFolder() {
+        Folder folder = new Folder("Folder (" + (root.getChildCount() + 1) + ")");
+        DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(folder);
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+
+        // If there is no selected folder, then a root folder is created.
+        if (selectedNode == null) {
+            root.add(folderNode);
+            ItemManager.addRootFolder(folder);
+        } else {
+            selectedNode.add(folderNode);
+            Folder parent = (Folder) selectedNode.getUserObject();
+            parent.addSubFolder(folder);
+        }
+
+        model.reload();
+    }
+
+    private void onDeleteFolder() {
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        if (selectedNode != null) {
+            Folder selectedFolder = (Folder) selectedNode.getUserObject();
+
+            selectedNode.removeAllChildren();
+            selectedNode.removeFromParent();
+            ItemManager.removeFolder(selectedFolder);
+
+            model.reload();
         }
     }
 

@@ -5,8 +5,8 @@ import static deusto.safebox.common.gui.GridBagBuilder.Fill;
 
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.property.MutableItemProperty;
-import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.gui.component.PasswordField;
+import deusto.safebox.client.gui.component.ToggleButton;
 import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.gui.GridBagBuilder;
 import deusto.safebox.common.gui.RightAlignedLabel;

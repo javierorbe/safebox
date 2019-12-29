@@ -39,19 +39,6 @@ public class Folder extends Item {
         items.remove(item);
     }
 
-    /** Remove all items and subfolders of this folder. */
-    public void removeAll() {
-        for (LeafItem item : items) {
-            item.setFolder(null);
-        }
-        for (Folder folder : subFolders) {
-            folder.setFolder(null);
-        }
-
-        items.clear();
-        subFolders.clear();
-    }
-
     /** Returns a list of the direct subfolders of this folder. */
     public List<Folder> getSubFolders() {
         return subFolders;
@@ -78,7 +65,7 @@ public class Folder extends Item {
         return subFolders.size() != 0;
     }
 
-    private boolean isRootFolder() {
+    public boolean isRootFolder() {
         return getFolder() == null;
     }
 

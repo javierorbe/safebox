@@ -1,5 +1,7 @@
 package deusto.safebox.server;
 
+import static deusto.safebox.common.util.GuiUtil.runSwing;
+
 import deusto.safebox.common.util.ConfigFile;
 import deusto.safebox.common.util.JsonConfig;
 import deusto.safebox.server.dao.sql.SqlDaoManager;
@@ -10,7 +12,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
-import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +24,8 @@ class ServerMain {
     /** Path where the config file is extracted. */
     private static final Path CONFIG_FILE = Path.of("config.json");
 
-    private static ConfigFile config;
-
     public static void main(String[] args) {
+        ConfigFile config;
         try {
             config = JsonConfig.ofResource(CONFIG_RESOURCE, CONFIG_FILE);
         } catch (IOException e) {
@@ -38,11 +38,12 @@ class ServerMain {
         Path keyPath = getDefaultKeyPath();
         String keyPassword = config.getString("keyPassword");
 
-        SqlDaoManager daoManager = getSqlDaoManager();
+        SqlDaoManager daoManager = getSqlDaoManager(config);
         Server server = new Server(socketPort, keyPath, keyPassword, daoManager);
 
+        // Open a window if the argument '-gui' is provided.
         if (args.length > 0 && args[0].equalsIgnoreCase("-gui")) {
-            SwingUtilities.invokeLater(() -> new ServerFrame(server, daoManager));
+            runSwing(() -> new ServerFrame(server, daoManager));
         } else {
             server.start();
 
@@ -55,7 +56,13 @@ class ServerMain {
         }
     }
 
-    private static SqlDaoManager getSqlDaoManager() {
+    /**
+     * Constructs a {@link SqlDaoManager} from the configuration file.
+     *
+     * @param config the config file.
+     * @return a {@code SqlDaoManager} connected to the database provided in the configuration.
+     */
+    private static SqlDaoManager getSqlDaoManager(ConfigFile config) {
         String dbms = config.getString("dbms");
         switch (dbms.toLowerCase()) {
             case "sqlite": {

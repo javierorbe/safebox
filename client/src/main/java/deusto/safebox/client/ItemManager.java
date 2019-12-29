@@ -20,15 +20,15 @@ import javax.swing.JFrame;
 /** Manages the items and provides an item change event. */
 public class ItemManager {
 
-    /** Item constructors with the parameter of their parent folder. */
-    private static final Map<ItemType, Function<Folder, LeafItem>> ITEM_CONSTRUCTORS = new EnumMap<>(ItemType.class);
-    /** Listeners of folder/item changes. */
-    private static final Collection<Runnable> CHANGE_LISTENERS = new HashSet<>();
-
     /** Folders at the top of the hierarchy. */
     private static List<Folder> rootFolders = new ArrayList<>();
     /** Map of items grouped by their type. */
     private static Map<ItemType, List<LeafItem>> itemMap = new EnumMap<>(ItemType.class);
+
+    private static Runnable itemChangeListener;
+
+    /** Item constructors with the parameter of their parent folder. */
+    private static final Map<ItemType, Function<Folder, LeafItem>> ITEM_CONSTRUCTORS = new EnumMap<>(ItemType.class);
 
     static {
         // Initialize the lists in item map.
@@ -38,6 +38,7 @@ public class ItemManager {
         // Register the item constructors.
         ITEM_CONSTRUCTORS.put(ItemType.LOGIN, Login::new);
         ITEM_CONSTRUCTORS.put(ItemType.NOTE, Note::new);
+        // TODO: uncomment when implemented
         // ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
         // ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
         // ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
@@ -53,48 +54,50 @@ public class ItemManager {
         return itemMap.get(type);
     }
 
-    public static void set(List<Folder> newRootFolders, Map<ItemType, List<LeafItem>> newItemMap) {
+    public static void setItemChangeListener(Runnable listener) {
+        itemChangeListener = listener;
+    }
+
+    public static void initialize(List<Folder> newRootFolders, Map<ItemType, List<LeafItem>> newItemMap) {
         rootFolders = newRootFolders;
         itemMap = newItemMap;
-        Arrays.stream(ItemType.values()).forEach(type -> itemMap.computeIfAbsent(type, e -> new ArrayList<>()));
-        fireChange();
-    }
 
-    public static void addChangeListener(Runnable runnable) {
-        CHANGE_LISTENERS.add(runnable);
-    }
+        Arrays.stream(ItemType.values())
+                .forEach(type -> itemMap.computeIfAbsent(type, t -> new ArrayList<>()));
 
-    public static void fireChange() {
-        CHANGE_LISTENERS.forEach(Runnable::run);
+        itemChangeListener.run();
     }
 
     public static void addItem(LeafItem item) {
         itemMap.get(item.getType()).add(item);
         item.getFolder().addItem(item);
-        fireChange();
+        itemChangeListener.run();
     }
 
     public static void removeItem(LeafItem item) {
         itemMap.get(item.getType()).remove(item);
-        fireChange();
+        itemChangeListener.run();
     }
 
     public static void addRootFolder(Folder folder) {
         rootFolders.add(folder);
-        fireChange();
     }
 
-    public static void removeRootFolder(Folder folder) {
-        rootFolders.remove(folder);
-        fireChange();
-    }
-
-    public static void removeItemsOf(Folder folder) {
-        if (folder != null) {
-            removeRootFolder(folder);
-            folder.getItems().forEach(ItemManager::removeItem);
-            folder.getSubFolders().forEach(ItemManager::removeItemsOf);
+    /** Removes a folder and all its subfolders, including the items. */
+    public static void removeFolder(Folder folder) {
+        if (folder.isRootFolder()) {
+            rootFolders.remove(folder);
+        } else {
+            folder.getFolder().removeSubFolder(folder);
         }
+        removeAllSubFolders(folder);
+        itemChangeListener.run();
+    }
+
+    /** Removes all the items from the folder and its subfolders. */
+    private static void removeAllSubFolders(Folder folder) {
+        folder.getItems().forEach(ItemManager::removeItem);
+        folder.getSubFolders().forEach(ItemManager::removeAllSubFolders);
     }
 
     /**
@@ -113,7 +116,7 @@ public class ItemManager {
         return folders;
     }
 
-    public static void openNewItemDialog(JFrame owner, ItemType type, Folder folder) {
+    public static void showNewItemDialog(JFrame owner, ItemType type, Folder folder) {
         LeafItem item = ITEM_CONSTRUCTORS.get(type).apply(folder);
         new EditItemDialog(owner, item);
         addItem(item);

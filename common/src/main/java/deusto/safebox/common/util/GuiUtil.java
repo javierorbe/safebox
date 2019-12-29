@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -42,8 +43,31 @@ public class GuiUtil {
         }
     }
 
+    /** Runs a callback on the Swing thread. */
     public static void runSwing(Runnable runnable) {
         SwingUtilities.invokeLater(runnable);
+    }
+
+    /**
+     * Expands all rows in a {@link JTree}.
+     *
+     * @param tree the tree
+     */
+    public static void expandTree(JTree tree) {
+        expandRecursively(tree, 0);
+    }
+
+    /**
+     * Expands the rows in a {@link JTree}, starting from the {@code index} row to the last row.
+     *
+     * @param tree the tree
+     * @param index the index of the first row to expand
+     */
+    private static void expandRecursively(JTree tree, int index) {
+        if (index < tree.getRowCount()) {
+            tree.expandRow(index);
+            expandRecursively(tree, ++index);
+        }
     }
 
     private GuiUtil() {

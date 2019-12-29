@@ -1,5 +1,8 @@
 package deusto.safebox.client.gui.component;
 
+import static deusto.safebox.common.util.GuiUtil.runSwing;
+
+import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.gui.model.ItemTreeModel;
 import deusto.safebox.client.gui.renderer.ItemTreeCellRenderer;
@@ -24,9 +27,11 @@ public class ItemTree extends JTree {
                 itemSelectionEvent.accept((LeafItem) object);
             }
         });
+
+        ItemManager.setItemChangeListener(() -> runSwing(this::updateModel));
     }
 
-    public void updateModel() {
+    private void updateModel() {
         // TODO: do this correctly and updateModel the model
         setModel(new ItemTreeModel());
     }

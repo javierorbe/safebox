@@ -40,7 +40,7 @@ public class ItemTypeDialog extends JDialog {
         JButton okBtn = new SimpleButton("OK", () -> {
             ItemType selectedType = (ItemType) itemTypeSelector.getSelectedItem();
             dispose();
-            ItemManager.openNewItemDialog(owner, Objects.requireNonNull(selectedType), folder);
+            ItemManager.showNewItemDialog(owner, Objects.requireNonNull(selectedType), folder);
         });
 
         gbb.setInsets(4, 4, 4, 4)

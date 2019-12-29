@@ -2,6 +2,7 @@ package deusto.safebox.client.gui.panel;
 
 import static deusto.safebox.common.gui.GridBagBuilder.Anchor;
 import static deusto.safebox.common.gui.GridBagBuilder.Fill;
+import static deusto.safebox.common.util.GuiUtil.runSwing;
 
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
@@ -17,7 +18,6 @@ import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.RequestLoginPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.function.Consumer;
@@ -27,7 +27,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,7 @@ class LoginPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 
         rememberEmail.setFocusPainted(false);
-        loginBtn = new SimpleButton("Login", this::loginAction);
+        loginBtn = new SimpleButton("Login", this::onLogin);
         ToggleButton showPasswordBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
@@ -90,26 +89,32 @@ class LoginPanel extends JPanel {
                 .setFillAndAnchor(Fill.NONE, Anchor.SOUTH);
         put(loginBtn);
 
-        Runnable enableLoginBtn = () -> SwingUtilities.invokeLater(() -> loginBtn.setEnabled(true));
-        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, e -> enableLoginBtn.run());
-        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
-        ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> SwingUtilities.invokeLater(() -> {
-            loginBtn.setEnabled(true);
-            new ToastDialog("Invalid login details.", Color.RED, 2, this);
-        }));
+        registerListeners();
     }
 
     private void put(JComponent component) {
         add(component, gbb.getConstraints());
     }
 
-    private void loginAction() {
+    private void registerListeners() {
+        Runnable enableLoginBtn = () -> runSwing(() -> loginBtn.setEnabled(true));
+
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> enableLoginBtn.run());
+
+        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
+        ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> {
+            enableLoginBtn.run();
+            ToastDialog.showError(this, "Invalid login details.");
+        });
+    }
+
+    private void onLogin() {
         loginBtn.setEnabled(false);
 
         String email = emailField.getText();
         if (TextValidator.EMAIL.isNotValid(email)) {
             loginBtn.setEnabled(true);
-            new ToastDialog("Invalid email address.", Color.RED, 2, this);
+            ToastDialog.showError(this, "Invalid email address.");
             return;
         }
 
@@ -122,6 +127,7 @@ class LoginPanel extends JPanel {
                 .thenAccept(hash -> sendLoginRequest.accept(new RequestLoginPacket(email, hash)))
                 .exceptionally(e -> {
                     LOGGER.error("Error generating auth hash.", e);
+                    ToastDialog.showError(this, "Unknown error.");
                     return null;
                 });
     }

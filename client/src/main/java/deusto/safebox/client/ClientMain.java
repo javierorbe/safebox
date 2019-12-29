@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 class ClientMain {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientMain.class);
 
     /** Program data directory. */
     private static final Path PROGRAM_DIRECTORY = Path.of(getUserDataDirectory(), ".safebox");
@@ -29,7 +29,7 @@ class ClientMain {
             Files.createDirectories(PROGRAM_DIRECTORY);
             config = JsonConfig.ofResource(CONFIG_RESOURCE, PROGRAM_DIRECTORY.resolve(CONFIG_FILE));
         } catch (IOException e) {
-            logger.error("Error loading the config file.", e);
+            LOGGER.error("Error loading the config file.", e);
             return;
         }
 
@@ -38,12 +38,21 @@ class ClientMain {
 
         Client client = new Client(hostname, port);
         client.setPacketReceived(packet -> {
-            logger.trace("Received a packet: {}", packet);
+            LOGGER.trace("Received a packet: {}", packet);
             PacketHandler.INSTANCE.fire(packet);
         });
 
-        String lang = config.getString("lang");
-        logger.info("Selected language: {}", lang);
+        String langCode = config.getString("lang");
+        LOGGER.info("Selected language: {}", langCode);
+        /*
+        Language language = Language.fromCode(langCode)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid language code: " + langCode));
+        try {
+            LocaleManager.loadTranslation(language);
+        } catch (URISyntaxException | IOException e) {
+            logger.error("Error loading language file.", e);
+        }
+         */
 
         client.start();
         SwingUtilities.invokeLater(() -> new MainFrame(client));
