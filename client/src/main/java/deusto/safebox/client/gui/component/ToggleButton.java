@@ -1,6 +1,7 @@
 package deusto.safebox.client.gui.component;
 
 import deusto.safebox.client.util.IconType;
+import java.util.function.Consumer;
 import javax.swing.JToggleButton;
 
 public class ToggleButton extends JToggleButton {
@@ -31,5 +32,21 @@ public class ToggleButton extends JToggleButton {
                 deselectedAction.run();
             }
         });
+    }
+
+    /**
+     * Constructs a toggle button with the specified properties.
+     *
+     * @param text the display text
+     * @param toolTipText the string to display as a tip
+     * @param selected the initial state of the button
+     * @param action an action listener that receives the button selection state
+     */
+    public ToggleButton(String text, String toolTipText, boolean selected, Consumer<Boolean> action) {
+        super(text, selected);
+        setFocusPainted(false);
+        setRequestFocusEnabled(false);
+        setToolTipText(toolTipText);
+        addActionListener(e -> action.accept(isSelected()));
     }
 }

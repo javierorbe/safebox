@@ -3,7 +3,7 @@ package deusto.safebox.client.gui.menu;
 import deusto.safebox.client.gui.TrayIconHandler;
 import deusto.safebox.client.gui.component.SearchBox;
 import deusto.safebox.client.gui.panel.SettingsDialog;
-import deusto.safebox.client.gui.panel.pwdgen.PassGenDialog;
+import deusto.safebox.client.gui.panel.pwdgen.PasswordGenDialog;
 import deusto.safebox.client.util.IconType;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,7 +22,7 @@ public class ToolBar extends JToolBar {
         add(new ToolBarButton("Lock database", IconType.LOCK, lockAction));
         add(new ToolBarButton("Minimize", IconType.MINIMIZE, TrayIconHandler::showTrayIcon));
         addSeparator();
-        add(new ToolBarButton("Password generator", IconType.PASSWORD_FIELD, () -> new PassGenDialog(mainFrame)));
+        add(new ToolBarButton("Password generator", IconType.PASSWORD_FIELD, () -> new PasswordGenDialog(mainFrame)));
         add(new ToolBarButton("Settings", IconType.GEAR, () -> new SettingsDialog(mainFrame)));
         addSeparator();
         add(Box.createHorizontalGlue());
