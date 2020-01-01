@@ -65,6 +65,7 @@ public class MainPanel extends JPanel {
                             ItemManager.initialize(pair.getLeft(), pair.getRight());
                             runSwing(() -> {
                                 folderTree.buildFolderTree(ItemManager.getRootFolders());
+                                itemTree.buildItemTree();
                                 expandTree(folderTree);
                                 expandTree(itemTree);
                                 mainFrame.setCurrentPanel(MainFrame.PanelType.MAIN);

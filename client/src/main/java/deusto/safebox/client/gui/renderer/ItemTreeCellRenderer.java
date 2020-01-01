@@ -5,6 +5,7 @@ import deusto.safebox.client.util.IconType;
 import deusto.safebox.common.ItemType;
 import java.awt.Component;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class ItemTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -14,12 +15,16 @@ public class ItemTreeCellRenderer extends DefaultTreeCellRenderer {
                                                   boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-        if (value instanceof ItemType) {
-            setText(((ItemType) value).getName());
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+
+        if (node.getUserObject() instanceof ItemType) {
+            ItemType nodeType = (ItemType) node.getUserObject();
+            setText(nodeType.getName());
             // TODO: set different icons for each item type
             setIcon(IconType.FOLDER.getAsIcon());
-        } else if (value instanceof LeafItem) {
-            setText(((LeafItem) value).getTitle());
+        } else if (node.getUserObject() instanceof LeafItem) {
+            LeafItem nodeItem = (LeafItem) node.getUserObject();
+            setText(nodeItem.getTitle());
             // TODO: customize the icon of each item
             setIcon(IconType.NEW_FILE_16.getAsIcon());
         }

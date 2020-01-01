@@ -1,7 +1,5 @@
 package deusto.safebox.client.gui.component;
 
-import static deusto.safebox.common.util.GuiUtil.runSwing;
-
 import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.gui.menu.ItemPopupMenu;
@@ -134,8 +132,8 @@ public class FolderTree extends JTree {
             selectedNode.removeAllChildren();
             selectedNode.removeFromParent();
             ItemManager.removeFolder(selectedFolder);
-
             model.reload();
+            table.updateFolderModel();
         }
     }
 

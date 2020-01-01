@@ -14,6 +14,10 @@ public class ItemPopupMenu extends JPopupMenu {
         add(new PopupMenuItem("Delete folder", IconType.NEW_FILE_12, deleteFolderAction));
     }
 
+    public ItemPopupMenu(Runnable deleteItemAction) {
+        add(new PopupMenuItem("Delete item", IconType.NEW_FILE_12, deleteItemAction));
+    }
+
     private static class PopupMenuItem extends JMenuItem {
 
         private PopupMenuItem(String text, IconType icon, Runnable action) {

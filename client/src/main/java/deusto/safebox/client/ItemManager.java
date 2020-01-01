@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.JFrame;
 
@@ -25,7 +26,9 @@ public class ItemManager {
     /** Map of items grouped by their type. */
     private static Map<ItemType, List<LeafItem>> itemMap = new EnumMap<>(ItemType.class);
 
-    private static Runnable itemChangeListener;
+    private static Consumer<LeafItem> itemAddedEvent;
+
+    private static Consumer<LeafItem> itemRemovedEvent;
 
     /** Item constructors with the parameter of their parent folder. */
     private static final Map<ItemType, Function<Folder, LeafItem>> ITEM_CONSTRUCTORS = new EnumMap<>(ItemType.class);
@@ -54,29 +57,29 @@ public class ItemManager {
         return itemMap.get(type);
     }
 
-    public static void setItemChangeListener(Runnable listener) {
-        itemChangeListener = listener;
-    }
-
     public static void initialize(List<Folder> newRootFolders, Map<ItemType, List<LeafItem>> newItemMap) {
         rootFolders = newRootFolders;
         itemMap = newItemMap;
 
         Arrays.stream(ItemType.values())
                 .forEach(type -> itemMap.computeIfAbsent(type, t -> new ArrayList<>()));
-
-        itemChangeListener.run();
     }
 
     public static void addItem(LeafItem item) {
         itemMap.get(item.getType()).add(item);
         item.getFolder().addItem(item);
-        itemChangeListener.run();
+        itemAddedEvent.accept(item);
     }
 
     public static void removeItem(LeafItem item) {
         itemMap.get(item.getType()).remove(item);
-        itemChangeListener.run();
+        itemRemovedEvent.accept(item);
+    }
+
+    public static void removeItemAndFromParent(LeafItem item) {
+        itemMap.get(item.getType()).remove(item);
+        item.getFolder().removeItem(item);
+        itemRemovedEvent.accept(item);
     }
 
     public static void addRootFolder(Folder folder) {
@@ -91,13 +94,14 @@ public class ItemManager {
             folder.getFolder().removeSubFolder(folder);
         }
         removeAllSubFolders(folder);
-        itemChangeListener.run();
     }
 
     /** Removes all the items from the folder and its subfolders. */
     private static void removeAllSubFolders(Folder folder) {
         folder.getItems().forEach(ItemManager::removeItem);
+        folder.getItems().clear();
         folder.getSubFolders().forEach(ItemManager::removeAllSubFolders);
+        folder.getSubFolders().clear();
     }
 
     /**
@@ -124,5 +128,13 @@ public class ItemManager {
 
     private ItemManager() {
         throw new AssertionError();
+    }
+
+    public static void setItemAddedEvent(Consumer<LeafItem> event) {
+        itemAddedEvent = event;
+    }
+
+    public static void setItemRemovedEvent(Consumer<LeafItem> event) {
+        itemRemovedEvent = event;
     }
 }
