@@ -17,7 +17,7 @@ public class WirelessRouter extends LeafItem {
 
     private WirelessRouter(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                            String stationName, String stationPassword, String location) {
-        super(id, ItemType.CREDIT_CARD, title, folder, created, lastModified);
+        super(id, ItemType.WIRELESS_ROUTER, title, folder, created, lastModified);
         this.stationName = new StringProperty("Station Name", 50, stationName);
         this.stationPassword = new StringProperty("Station Password", 50, stationPassword);
         this.location = new StringProperty("Location", 50, location);
@@ -35,12 +35,23 @@ public class WirelessRouter extends LeafItem {
 
     @Override
     JsonObject getCustomData() {
-        // TODO
-        throw new UnsupportedOperationException();
+        JsonObject root = new JsonObject();
+        root.addProperty("stationName", stationName.get());
+        root.addProperty("stationPassword", stationPassword.get());
+        root.addProperty("location", location.get());
+        return root;
     }
 
     static WirelessRouter build(ItemData itemData, Folder folder, JsonObject data) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return new WirelessRouter(
+                itemData.getId(),
+                data.get("title").getAsString(),
+                folder,
+                itemData.getCreated(),
+                itemData.getLastModified(),
+                data.get("stationName").getAsString(),
+                data.get("stationPassword").getAsString(),
+                data.get("location").getAsString()
+        );
     }
 }

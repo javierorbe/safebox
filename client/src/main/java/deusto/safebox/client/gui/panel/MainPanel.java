@@ -78,4 +78,12 @@ public class MainPanel extends JPanel {
     private void updateItemInfo(LeafItem item) {
         itemInfoPane.setViewportView(new ItemInfoPanel(item));
     }
+
+    public FolderTree getFolderTree() {
+        return folderTree;
+    }
+
+    public ItemTree getItemTree() {
+        return itemTree;
+    }
 }

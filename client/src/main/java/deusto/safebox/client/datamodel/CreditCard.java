@@ -5,6 +5,7 @@ import deusto.safebox.client.datamodel.property.DateProperty;
 import deusto.safebox.client.datamodel.property.StringProperty;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
+import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,12 +43,25 @@ public class CreditCard extends LeafItem {
 
     @Override
     JsonObject getCustomData() {
-        // TODO
-        throw new UnsupportedOperationException();
+        JsonObject root = new JsonObject();
+        root.addProperty("holder", holder.get());
+        root.addProperty("type", type.get());
+        root.addProperty("number", number.get());
+        root.add("expiring", Constants.GSON.toJsonTree(expiring.get()));
+        return root;
     }
 
     static CreditCard build(ItemData itemData, Folder folder, JsonObject data) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return new CreditCard(
+                itemData.getId(),
+                data.get("title").getAsString(),
+                folder,
+                itemData.getCreated(),
+                itemData.getLastModified(),
+                data.get("holder").getAsString(),
+                data.get("type").getAsString(),
+                data.get("number").getAsString(),
+                Constants.GSON.fromJson(data.get("expiring"), LocalDate.class)
+        );
     }
 }

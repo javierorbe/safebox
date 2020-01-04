@@ -5,6 +5,7 @@ import deusto.safebox.client.datamodel.property.DateProperty;
 import deusto.safebox.client.datamodel.property.StringProperty;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
+import deusto.safebox.common.util.Constants;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +23,7 @@ public class Identity extends LeafItem {
 
     private Identity(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                      String firstName, String lastName, String sex, LocalDate birthDate, String address, String phone) {
-        super(id, ItemType.CREDIT_CARD, title, folder, created, lastModified);
+        super(id, ItemType.IDENTITY, title, folder, created, lastModified);
         this.firstName = new StringProperty("First Name", 50, firstName);
         this.lastName = new StringProperty("Last Name", 50, lastName);
         this.sex = new StringProperty("Sex", 50, sex);
@@ -44,12 +45,29 @@ public class Identity extends LeafItem {
 
     @Override
     JsonObject getCustomData() {
-        // TODO
-        throw new UnsupportedOperationException();
+        JsonObject root = new JsonObject();
+        root.addProperty("firstName", firstName.get());
+        root.addProperty("lastName", lastName.get());
+        root.addProperty("sex", sex.get());
+        root.add("birthDate", Constants.GSON.toJsonTree(birthDate.get()));
+        root.addProperty("address", address.get());
+        root.addProperty("phone", phone.get());
+        return root;
     }
 
     static Identity build(ItemData itemData, Folder folder, JsonObject data) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return new Identity(
+                itemData.getId(),
+                data.get("title").getAsString(),
+                folder,
+                itemData.getCreated(),
+                itemData.getLastModified(),
+                data.get("firstName").getAsString(),
+                data.get("lastName").getAsString(),
+                data.get("sex").getAsString(),
+                Constants.GSON.fromJson(data.get("birthDate"), LocalDate.class),
+                data.get("address").getAsString(),
+                data.get("phone").getAsString()
+        );
     }
 }

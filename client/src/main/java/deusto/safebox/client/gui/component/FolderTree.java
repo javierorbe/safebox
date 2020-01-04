@@ -13,7 +13,6 @@ import java.util.Objects;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -53,10 +52,6 @@ public class FolderTree extends JTree {
                 // Clear selection if clicked outside a node
                 if (getRowForLocation(event.getX(), event.getY()) == -1) {
                     clearSelection();
-                }
-
-                if (SwingUtilities.isRightMouseButton(event)) {
-                    getComponentPopupMenu().show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         });
@@ -134,6 +129,14 @@ public class FolderTree extends JTree {
             ItemManager.removeFolder(selectedFolder);
             model.reload();
             table.updateFolderModel();
+        }
+    }
+
+    // Remove root folders. Now it is used when you log out to remove everything
+    public void removeRootChildren() {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            setSelectionPath(new TreePath(model.getPathToRoot(root.getChildAt(i))));
+            onDeleteFolder();
         }
     }
 

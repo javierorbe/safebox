@@ -57,9 +57,11 @@ public class MainFrame extends JFrame {
             if (currentPanel == PanelType.MAIN) {
                 runSwing(() -> setCurrentPanel(PanelType.AUTH));
                 Executors.newSingleThreadExecutor().submit(() -> client.sendPacket(new LogOutPacket()));
+
+                ((MainPanel) panels.get(PanelType.MAIN)).getFolderTree().removeRootChildren();
+                ((MainPanel) panels.get(PanelType.MAIN)).getItemTree().getRoot().removeAllChildren();
             }
         };
-        // TODO: Fix problem with FolderTree when you logOut and login again
 
         // Create menus
         getContentPane().add(new ToolBar(this, logOut), BorderLayout.PAGE_START);

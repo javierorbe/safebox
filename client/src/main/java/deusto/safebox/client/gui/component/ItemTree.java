@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -49,12 +48,6 @@ public class ItemTree extends JTree {
                 if (getRowForLocation(event.getX(), event.getY()) == -1) {
                     clearSelection();
                 }
-
-                if (SwingUtilities.isRightMouseButton(event)) {
-                    if (((DefaultMutableTreeNode) getLastSelectedPathComponent()).getUserObject() instanceof LeafItem) {
-                        getComponentPopupMenu().show(event.getComponent(), event.getX(), event.getY());
-                    }
-                }
             }
         });
 
@@ -64,7 +57,7 @@ public class ItemTree extends JTree {
 
     public void buildItemTree() {
         for (ItemType type : ItemType.values()) {
-            if (type == ItemType.LOGIN || type == ItemType.NOTE) {
+            if (type != ItemType.FOLDER) {
                 DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(type);
                 root.add(typeNode);
                 ITEM_TYPES_NODES.put(type, typeNode);
@@ -92,14 +85,14 @@ public class ItemTree extends JTree {
         }
     }
 
-    public void addItem(LeafItem item) {
+    private void addItem(LeafItem item) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(item);
         ITEM_TYPES_NODES.get(item.getType()).add(node);
         ITEM_NODES.put(item, node);
         model.reload();
     }
 
-    public void removeItem(LeafItem item) {
+    private void removeItem(LeafItem item) {
         DefaultMutableTreeNode parent = ITEM_TYPES_NODES.get(item.getType());
         parent.remove(ITEM_NODES.get(item));
         ITEM_NODES.remove(item);
@@ -107,11 +100,18 @@ public class ItemTree extends JTree {
         model.reload();
     }
 
-    public void removeItem() {
+    private void removeItem() {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-        ItemManager.removeItemAndFromParent((LeafItem) selectedNode.getUserObject());
-        table.updateItemModels();
-        model.reload();
+
+        if (selectedNode != null && selectedNode.getUserObject() instanceof LeafItem) {
+            ItemManager.removeItemAndFromParent((LeafItem) selectedNode.getUserObject());
+            table.updateItemModels();
+            model.reload();
+        }
+    }
+
+    public DefaultMutableTreeNode getRoot() {
+        return root;
     }
 
     @SuppressWarnings("serial")

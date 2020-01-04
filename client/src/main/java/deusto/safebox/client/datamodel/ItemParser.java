@@ -33,11 +33,10 @@ public class ItemParser {
     static {
         ITEM_BUILDERS.put(ItemType.LOGIN, Login::build);
         ITEM_BUILDERS.put(ItemType.NOTE, Note::build);
-        // TODO: uncomment when implemented
-        // ITEM_BUILDERS.put(ItemType.IDENTITY, Identity::build);
-        // ITEM_BUILDERS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::build);
-        // ITEM_BUILDERS.put(ItemType.CREDIT_CARD, CreditCard::build);
-        // ITEM_BUILDERS.put(ItemType.BANK_ACCOUNT, BankAccount::build);
+        ITEM_BUILDERS.put(ItemType.IDENTITY, Identity::build);
+        ITEM_BUILDERS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::build);
+        ITEM_BUILDERS.put(ItemType.CREDIT_CARD, CreditCard::build);
+        ITEM_BUILDERS.put(ItemType.BANK_ACCOUNT, BankAccount::build);
     }
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();

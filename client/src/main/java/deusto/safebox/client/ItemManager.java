@@ -1,9 +1,13 @@
 package deusto.safebox.client;
 
+import deusto.safebox.client.datamodel.BankAccount;
+import deusto.safebox.client.datamodel.CreditCard;
 import deusto.safebox.client.datamodel.Folder;
+import deusto.safebox.client.datamodel.Identity;
 import deusto.safebox.client.datamodel.LeafItem;
 import deusto.safebox.client.datamodel.Login;
 import deusto.safebox.client.datamodel.Note;
+import deusto.safebox.client.datamodel.WirelessRouter;
 import deusto.safebox.client.gui.panel.EditItemDialog;
 import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
@@ -41,11 +45,10 @@ public class ItemManager {
         // Register the item constructors.
         ITEM_CONSTRUCTORS.put(ItemType.LOGIN, Login::new);
         ITEM_CONSTRUCTORS.put(ItemType.NOTE, Note::new);
-        // TODO: uncomment when implemented
-        // ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
-        // ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
-        // ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
-        // ITEM_CONSTRUCTORS.put(ItemType.BANK_ACCOUNT, BankAccount::new);
+        ITEM_CONSTRUCTORS.put(ItemType.IDENTITY, Identity::new);
+        ITEM_CONSTRUCTORS.put(ItemType.WIRELESS_ROUTER, WirelessRouter::new);
+        ITEM_CONSTRUCTORS.put(ItemType.CREDIT_CARD, CreditCard::new);
+        ITEM_CONSTRUCTORS.put(ItemType.BANK_ACCOUNT, BankAccount::new);
     }
 
     public static List<Folder> getRootFolders() {
@@ -77,9 +80,8 @@ public class ItemManager {
     }
 
     public static void removeItemAndFromParent(LeafItem item) {
-        itemMap.get(item.getType()).remove(item);
+        removeItem(item);
         item.getFolder().removeItem(item);
-        itemRemovedEvent.accept(item);
     }
 
     public static void addRootFolder(Folder folder) {
