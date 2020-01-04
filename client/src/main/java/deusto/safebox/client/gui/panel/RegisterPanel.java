@@ -21,6 +21,8 @@ import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import deusto.safebox.common.net.packet.SuccessfulRegisterPacket;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -36,7 +38,6 @@ class RegisterPanel extends JPanel {
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
-    // TODO: clean the fields once the user has successfully registered
     private final JTextField nameField = new LimitedTextField(50, true);
     private final JTextField emailField = new LimitedTextField(50, true);
     private final PasswordField pwdField = new PasswordField(100, false);
@@ -70,6 +71,11 @@ class RegisterPanel extends JPanel {
                 confirmPwdField::showPassword,
                 confirmPwdField::hidePassword
         );
+
+        addEnterAction(nameField, this::onRegister);
+        addEnterAction(emailField, this::onRegister);
+        addEnterAction(pwdField, this::onRegister);
+        addEnterAction(confirmPwdField, this::onRegister);
 
         gbb.setInsets(4, 4, 4, 4)
                 .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
@@ -109,31 +115,40 @@ class RegisterPanel extends JPanel {
     }
 
     private void registerListeners() {
-        Runnable enableRegisterBtn = () -> runSwing(() -> registerBtn.setEnabled(true));
+        Runnable enableComponents = () -> runSwing(() -> setComponentsEnabled(true));
 
-        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> enableRegisterBtn.run());
-        PacketHandler.INSTANCE.registerListener(SuccessfulRegisterPacket.class, p ->
-                ToastDialog.showInfo(this, "Successfully registered."));
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> enableComponents.run());
+        PacketHandler.INSTANCE.registerListener(SuccessfulRegisterPacket.class, p -> {
+            clearFields().run();
+            enableComponents.run();
+            ToastDialog.showInfo(this, "Successfully registered.");
+        });
 
-        ErrorHandler.addListener(ErrorType.UNKNOWN_ERROR, enableRegisterBtn);
+        ErrorHandler.addListener(ErrorType.UNKNOWN_ERROR, enableComponents);
         ErrorHandler.addListener(ErrorType.EMAIL_ALREADY_IN_USE, () -> {
-            enableRegisterBtn.run();
+            enableComponents.run();
             ToastDialog.showError(this, "Email already in use.");
         });
     }
 
     private void onRegister() {
-        registerBtn.setEnabled(false);
+        setComponentsEnabled(false);
 
         String email = emailField.getText();
         if (TextValidator.EMAIL.isNotValid(email)) {
-            registerBtn.setEnabled(true);
+            setComponentsEnabled(true);
             ToastDialog.showError(this, "Invalid email address.");
             return;
         }
 
         String password = new String(pwdField.getPassword());
         String confirmPassword = new String(confirmPwdField.getPassword());
+
+        if (password.isEmpty()) {
+            setComponentsEnabled(true);
+            LOGGER.error("Password empty");
+            return;
+        }
 
         if (!password.equals(confirmPassword)) {
             registerBtn.setEnabled(true);
@@ -149,5 +164,33 @@ class RegisterPanel extends JPanel {
                     LOGGER.error("Error generating auth hash.", e);
                     return null;
                 });
+    }
+
+    private void setComponentsEnabled(boolean value) {
+        nameField.setEnabled(value);
+        emailField.setEnabled(value);
+        pwdField.setEnabled(value);
+        confirmPwdField.setEnabled(value);
+        registerBtn.setEnabled(value);
+    }
+
+    private Runnable clearFields() {
+        return () -> runSwing(() -> {
+            nameField.setText("");
+            emailField.setText("");
+            pwdField.setText("");
+            confirmPwdField.setText("");
+        });
+    }
+
+    private void addEnterAction(JTextField field, Runnable runnable) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == 10) {
+                    runnable.run();
+                }
+            }
+        });
     }
 }

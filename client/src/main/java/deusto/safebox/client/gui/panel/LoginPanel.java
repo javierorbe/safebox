@@ -20,6 +20,8 @@ import deusto.safebox.common.net.packet.RequestLoginPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,8 +35,6 @@ import org.slf4j.LoggerFactory;
 class LoginPanel extends JPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginPanel.class);
-
-    // TODO: once logged in, clean the password field
 
     private final GridBagBuilder gbb = new GridBagBuilder();
 
@@ -64,6 +64,9 @@ class LoginPanel extends JPanel {
                 passwordField::showPassword,
                 passwordField::hidePassword
         );
+
+        addEnterAction(emailField, this::onLogin);
+        addEnterAction(passwordField, this::onLogin);
 
         gbb.setInsets(4, 4, 4, 4)
                 .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
@@ -97,32 +100,42 @@ class LoginPanel extends JPanel {
     }
 
     private void registerListeners() {
-        Runnable enableLoginBtn = () -> runSwing(() -> loginBtn.setEnabled(true));
+        Runnable enableComponents = () -> runSwing(() -> setComponentsEnabled(true));
 
-        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> enableLoginBtn.run());
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> {
+            clearFields().run();
+            enableComponents.run();
+        });
 
-        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, enableLoginBtn);
+        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, () -> {
+            clearFields().run();
+            enableComponents.run();
+        });
         ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> {
-            enableLoginBtn.run();
+            clearFields().run();
+            enableComponents.run();
             ToastDialog.showError(this, "Invalid login details.");
         });
     }
 
     private void onLogin() {
-        loginBtn.setEnabled(false);
+        setComponentsEnabled(false);
 
         String email = emailField.getText();
         if (TextValidator.EMAIL.isNotValid(email)) {
-            loginBtn.setEnabled(true);
+            setComponentsEnabled(true);
             ToastDialog.showError(this, "Invalid email address.");
             return;
         }
 
-        if (rememberEmail.isSelected()) {
-            // TODO
+        String password = new String(passwordField.getPassword());
+
+        if (password.isEmpty()) {
+            setComponentsEnabled(true);
+            LOGGER.error("Password empty");
+            return;
         }
 
-        String password = new String(passwordField.getPassword());
         ClientSecurity.getAuthHash(email, password)
                 .thenAccept(hash -> sendLoginRequest.accept(new RequestLoginPacket(email, hash)))
                 .exceptionally(e -> {
@@ -130,5 +143,33 @@ class LoginPanel extends JPanel {
                     ToastDialog.showError(this, "Unknown error.");
                     return null;
                 });
+    }
+
+    private void setComponentsEnabled(boolean value) {
+        emailField.setEnabled(value);
+        passwordField.setEnabled(value);
+        loginBtn.setEnabled(value);
+        emailField.setEnabled(value);
+    }
+
+    private Runnable clearFields() {
+        return () -> runSwing(() -> {
+            passwordField.setText("");
+
+            if (!rememberEmail.isSelected()) {
+                emailField.setText("");
+            }
+        });
+    }
+
+    private void addEnterAction(JTextField field, Runnable runnable) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == 10) {
+                    runnable.run();
+                }
+            }
+        });
     }
 }
