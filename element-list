@@ -8,7 +8,9 @@ deusto.safebox.client.gui.model
 deusto.safebox.client.gui.panel
 deusto.safebox.client.gui.panel.pwdgen
 deusto.safebox.client.gui.renderer
+deusto.safebox.client.locale
 deusto.safebox.client.net
+deusto.safebox.client.pwdgen
 deusto.safebox.client.security
 deusto.safebox.client.util
 deusto.safebox.client.util.event
