@@ -7,6 +7,7 @@ import static deusto.safebox.common.util.GuiUtil.runSwing;
 import deusto.safebox.client.gui.component.LimitedTextField;
 import deusto.safebox.client.gui.component.PasswordField;
 import deusto.safebox.client.gui.component.ToggleButton;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.client.security.ClientSecurity;
@@ -18,6 +19,7 @@ import deusto.safebox.common.gui.SimpleButton;
 import deusto.safebox.common.net.packet.ErrorPacket;
 import deusto.safebox.common.net.packet.RequestLoginPacket;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
@@ -40,7 +42,7 @@ class LoginPanel extends JPanel {
 
     private final JTextField emailField = new LimitedTextField(50, true);
     private final PasswordField passwordField = new PasswordField(100, false);
-    private final JCheckBox rememberEmail = new JCheckBox("Remember Email");
+    private final JCheckBox rememberEmail = new JCheckBox(Message.REMEMBER_EMAIL.get());
     private final JButton loginBtn;
 
     private final Consumer<RequestLoginPacket> sendLoginRequest;
@@ -56,7 +58,7 @@ class LoginPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
 
         rememberEmail.setFocusPainted(false);
-        loginBtn = new SimpleButton("Login", this::onLogin);
+        loginBtn = new SimpleButton(Message.SIGN_IN.get(), this::onLogin);
         ToggleButton showPasswordBtn = new ToggleButton(
                 IconType.EYE,
                 IconType.EYE_CLOSED,
@@ -72,12 +74,12 @@ class LoginPanel extends JPanel {
                 .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        put(new RightAlignedLabel("Email:"));
+        put(new RightAlignedLabel(Message.EMAIL + ":"));
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 1);
         put(emailField);
 
         gbb.setGridWidthAndWeightX(1, 0);
-        put(new RightAlignedLabel("Password:"));
+        put(new RightAlignedLabel(Message.PASSWORD + ":"));
         gbb.setWeightX(1);
         put(passwordField);
         gbb.setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
@@ -100,39 +102,33 @@ class LoginPanel extends JPanel {
     }
 
     private void registerListeners() {
-        Runnable enableComponents = () -> runSwing(() -> setComponentsEnabled(true));
-
-        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> {
-            clearFields().run();
-            enableComponents.run();
+        Runnable resetFields = () -> runSwing(() -> {
+            clearInputFields();
+            toggleInputFields(true);
         });
 
-        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, () -> {
-            clearFields().run();
-            enableComponents.run();
-        });
+        PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> resetFields.run());
+        ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, resetFields);
         ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> {
-            clearFields().run();
-            enableComponents.run();
-            ToastDialog.showError(this, "Invalid login details.");
+            resetFields.run();
+            ToastDialog.showError(this, Message.INVALID_LOGIN_DETAILS.get());
         });
     }
 
     private void onLogin() {
-        setComponentsEnabled(false);
+        toggleInputFields(false);
 
         String email = emailField.getText();
         if (TextValidator.EMAIL.isNotValid(email)) {
-            setComponentsEnabled(true);
-            ToastDialog.showError(this, "Invalid email address.");
+            toggleInputFields(true);
+            ToastDialog.showError(this, Message.INVALID_EMAIL_ADDRESS.get());
             return;
         }
 
         String password = new String(passwordField.getPassword());
 
         if (password.isEmpty()) {
-            setComponentsEnabled(true);
-            LOGGER.error("Password empty");
+            toggleInputFields(true);
             return;
         }
 
@@ -140,33 +136,31 @@ class LoginPanel extends JPanel {
                 .thenAccept(hash -> sendLoginRequest.accept(new RequestLoginPacket(email, hash)))
                 .exceptionally(e -> {
                     LOGGER.error("Error generating auth hash.", e);
-                    ToastDialog.showError(this, "Unknown error.");
+                    ToastDialog.showError(this, Message.UNKNOWN_ERROR.get());
                     return null;
                 });
     }
 
-    private void setComponentsEnabled(boolean value) {
+    private void toggleInputFields(boolean value) {
         emailField.setEnabled(value);
         passwordField.setEnabled(value);
         loginBtn.setEnabled(value);
         emailField.setEnabled(value);
     }
 
-    private Runnable clearFields() {
-        return () -> runSwing(() -> {
-            passwordField.setText("");
+    private void clearInputFields() {
+        passwordField.setText("");
 
-            if (!rememberEmail.isSelected()) {
-                emailField.setText("");
-            }
-        });
+        if (!rememberEmail.isSelected()) {
+            emailField.setText("");
+        }
     }
 
-    private void addEnterAction(JTextField field, Runnable runnable) {
-        field.addKeyListener(new KeyAdapter() {
+    private void addEnterAction(Component component, Runnable runnable) {
+        component.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == 10) {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     runnable.run();
                 }
             }

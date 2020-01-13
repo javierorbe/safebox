@@ -4,6 +4,7 @@ import deusto.safebox.client.gui.TrayIconHandler;
 import deusto.safebox.client.gui.component.SearchBox;
 import deusto.safebox.client.gui.panel.SettingsDialog;
 import deusto.safebox.client.gui.panel.pwdgen.PasswordGenDialog;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.util.IconType;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,13 +18,13 @@ public class ToolBar extends JToolBar {
         setFloatable(false);
         setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
-        add(new ToolBarButton("New item", IconType.NEW_FILE_20, () -> { /* TODO */ }));
+        add(new ToolBarButton(Message.NEW_ITEM.get(), IconType.NEW_FILE_20, () -> { /* TODO */ }));
         addSeparator();
-        add(new ToolBarButton("Lock database", IconType.LOCK, lockAction));
-        add(new ToolBarButton("Minimize", IconType.MINIMIZE, TrayIconHandler::showTrayIcon));
+        add(new ToolBarButton(Message.SIGN_OUT.get(), IconType.LOCK, lockAction));
+        add(new ToolBarButton(Message.MINIMIZE.get(), IconType.MINIMIZE, TrayIconHandler::showTrayIcon));
         addSeparator();
-        add(new ToolBarButton("Password generator", IconType.PASSWORD_FIELD, () -> new PasswordGenDialog(mainFrame)));
-        add(new ToolBarButton("Settings", IconType.GEAR, () -> new SettingsDialog(mainFrame)));
+        add(new ToolBarButton(Message.PASSWORD_GENERATOR.get(), IconType.PASSWORD_FIELD, () -> new PasswordGenDialog(mainFrame)));
+        add(new ToolBarButton(Message.SETTINGS.get(), IconType.GEAR, () -> new SettingsDialog(mainFrame)));
         addSeparator();
         add(Box.createHorizontalGlue());
         add(new SearchBox());

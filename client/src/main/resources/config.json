@@ -1,6 +1,6 @@
 {
   "lang": "en",
-  "rememberedEmail": "",
+  "theme": "",
   "server": {
     "hostname": "localhost",
     "port": 6819

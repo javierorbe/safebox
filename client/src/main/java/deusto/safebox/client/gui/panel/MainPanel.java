@@ -64,7 +64,7 @@ public class MainPanel extends JPanel {
                         .thenAccept(pair -> {
                             ItemManager.initialize(pair.getLeft(), pair.getRight());
                             runSwing(() -> {
-                                folderTree.buildFolderTree(ItemManager.getRootFolders());
+                                folderTree.buildFolderTree();
                                 itemTree.buildItemTree();
                                 expandTree(folderTree);
                                 expandTree(itemTree);

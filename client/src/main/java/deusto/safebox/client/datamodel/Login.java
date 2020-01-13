@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.DateProperty;
 import deusto.safebox.client.datamodel.property.PasswordProperty;
 import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
@@ -24,10 +25,10 @@ public class Login extends LeafItem {
     private Login(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                   String username, String password, String website, LocalDate expiration) {
         super(id, ItemType.LOGIN, title, folder, created, lastModified);
-        this.username = new StringProperty("Username", 50, username);
-        this.password = new PasswordProperty("Password", 100, password);
-        this.website = new StringProperty("Website", 200, website);
-        this.expiration = new DateProperty("Expiration", expiration);
+        this.username = new StringProperty(Message.USERNAME.get(), 50, username);
+        this.password = new PasswordProperty(Message.PASSWORD.get(), 100, password);
+        this.website = new StringProperty(Message.WEBSITE.get(), 200, website);
+        this.expiration = new DateProperty(Message.EXPIRATION.get(), expiration);
         addProperties(List.of(
                 this.username,
                 this.password,

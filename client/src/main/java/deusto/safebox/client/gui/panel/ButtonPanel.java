@@ -1,5 +1,6 @@
 package deusto.safebox.client.gui.panel;
 
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.gui.SimpleButton;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -17,8 +18,8 @@ class ButtonPanel extends JPanel {
         super(new FlowLayout(FlowLayout.RIGHT));
 
         JButton acceptBtn = new SimpleButton("OK", acceptAction);
-        JButton cancelBtn = new SimpleButton("Cancel", cancelAction);
-        applyBtn = new SimpleButton("Apply", applyAction);
+        JButton cancelBtn = new SimpleButton(Message.CANCEL.get(), cancelAction);
+        applyBtn = new SimpleButton(Message.APPLY.get(), applyAction);
 
         add(acceptBtn);
         add(cancelBtn);

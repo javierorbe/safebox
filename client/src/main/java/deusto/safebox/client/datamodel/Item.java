@@ -3,6 +3,7 @@ package deusto.safebox.client.datamodel;
 import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.DateTimeProperty;
 import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.security.ClientSecurity;
 import deusto.safebox.common.AbstractItem;
 import deusto.safebox.common.ItemType;
@@ -30,9 +31,9 @@ abstract class Item extends AbstractItem {
     Item(UUID id, ItemType type, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified) {
         super(id, type);
         this.folder = folder;
-        this.title = new StringProperty("Title", 50, title);
-        this.created = new DateTimeProperty("Created", created);
-        this.lastModified = new DateTimeProperty("Last Modified", lastModified);
+        this.title = new StringProperty(Message.TITLE.get(), 50, title);
+        this.created = new DateTimeProperty(Message.CREATED.get(), created);
+        this.lastModified = new DateTimeProperty(Message.LAST_MODIFIED.get(), lastModified);
     }
 
     public String getTitle() {

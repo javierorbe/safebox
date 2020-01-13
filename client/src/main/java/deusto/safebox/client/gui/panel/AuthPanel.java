@@ -1,5 +1,6 @@
 package deusto.safebox.client.gui.panel;
 
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.net.packet.RequestLoginPacket;
 import deusto.safebox.common.net.packet.RequestRegisterPacket;
 import java.awt.BorderLayout;
@@ -27,8 +28,8 @@ public class AuthPanel extends JPanel {
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
         tabbedPane.setRequestFocusEnabled(false);
 
-        tabbedPane.addTab("Login", new LoginPanel(loginRequest));
-        tabbedPane.addTab("Register", new RegisterPanel(registerRequest));
+        tabbedPane.addTab(Message.SIGN_IN.get(), new LoginPanel(loginRequest));
+        tabbedPane.addTab(Message.CREATE_ACCOUNT.get(), new RegisterPanel(registerRequest));
 
         add(tabbedPane, BorderLayout.CENTER);
     }

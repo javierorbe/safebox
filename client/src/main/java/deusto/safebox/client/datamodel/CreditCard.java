@@ -3,6 +3,7 @@ package deusto.safebox.client.datamodel;
 import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.DateProperty;
 import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import deusto.safebox.common.util.Constants;
@@ -15,24 +16,24 @@ public class CreditCard extends LeafItem {
 
     // TODO: create card type enum
 
-    private final StringProperty holder;
+    private final StringProperty cardHolder;
     // TODO: create custom property for card type (an enum-like type)
     private final StringProperty type;
     private final StringProperty number;
-    private final DateProperty expiring;
+    private final DateProperty expiration;
 
     private CreditCard(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                       String holder, String type, String number, LocalDate expiring) {
+                       String cardHolder, String type, String number, LocalDate expiration) {
         super(id, ItemType.CREDIT_CARD, title, folder, created, lastModified);
-        this.holder = new StringProperty("Card Holder", 50, holder);
-        this.type = new StringProperty("Type", 50, type);
-        this.number = new StringProperty("Number", 50, number);
-        this.expiring = new DateProperty("Expiring", expiring);
+        this.cardHolder = new StringProperty(Message.CARD_HOLDER.get(), 50, cardHolder);
+        this.type = new StringProperty(Message.TYPE.get(), 50, type);
+        this.number = new StringProperty(Message.NUMBER.get(), 50, number);
+        this.expiration = new DateProperty(Message.EXPIRATION.get(), expiration);
         addProperties(List.of(
-                this.holder,
+                this.cardHolder,
                 this.type,
                 this.number,
-                this.expiring
+                this.expiration
         ));
     }
 
@@ -44,10 +45,10 @@ public class CreditCard extends LeafItem {
     @Override
     JsonObject getCustomData() {
         JsonObject root = new JsonObject();
-        root.addProperty("holder", holder.get());
+        root.addProperty("holder", cardHolder.get());
         root.addProperty("type", type.get());
         root.addProperty("number", number.get());
-        root.add("expiring", Constants.GSON.toJsonTree(expiring.get()));
+        root.add("expiration", Constants.GSON.toJsonTree(expiration.get()));
         return root;
     }
 
@@ -61,7 +62,7 @@ public class CreditCard extends LeafItem {
                 data.get("holder").getAsString(),
                 data.get("type").getAsString(),
                 data.get("number").getAsString(),
-                Constants.GSON.fromJson(data.get("expiring"), LocalDate.class)
+                Constants.GSON.fromJson(data.get("expiration"), LocalDate.class)
         );
     }
 }

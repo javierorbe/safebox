@@ -4,11 +4,11 @@ import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.gui.menu.ItemPopupMenu;
 import deusto.safebox.client.gui.panel.ItemTypeDialog;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.util.IconType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import java.util.List;
 import java.util.Objects;
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -59,9 +59,9 @@ public class FolderTree extends JTree {
         setComponentPopupMenu(new ItemPopupMenu(this::onNewItem, this::onNewFolder, this::onDeleteFolder));
     }
 
-    public void buildFolderTree(List<Folder> rootFolders) {
+    public void buildFolderTree() {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-        for (Folder rootFolder : rootFolders) {
+        for (Folder rootFolder : ItemManager.getRootFolders()) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootFolder);
             root.add(node);
             buildSubFolders(node);
@@ -102,7 +102,7 @@ public class FolderTree extends JTree {
     }
 
     private void onNewFolder() {
-        Folder folder = new Folder("Folder (" + (root.getChildCount() + 1) + ")");
+        Folder folder = new Folder(Message.NEW_FOLDER.get() + " (" + (root.getChildCount() + 1) + ")");
         DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(folder);
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 

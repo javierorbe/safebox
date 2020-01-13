@@ -2,6 +2,7 @@ package deusto.safebox.common.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +47,7 @@ public class JsonConfig implements ConfigFile {
     }
 
     @Override
-    public void setInt(int value, String path) {
+    public void setInt(String path, int value) {
         String[] s = path.split("\\.");
         getObjectAt(s).addProperty(s[s.length - 1], value);
     }
@@ -57,7 +58,7 @@ public class JsonConfig implements ConfigFile {
     }
 
     @Override
-    public void setString(String value, String path) {
+    public void setString(String path, String value) {
         String[] s = path.split("\\.");
         getObjectAt(s).addProperty(s[s.length - 1], value);
     }
@@ -83,8 +84,8 @@ public class JsonConfig implements ConfigFile {
 
     @Override
     public void save() {
-        try {
-            Constants.GSON.toJson(root, Files.newBufferedWriter(file));
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+            Constants.GSON.toJson(root, writer);
         } catch (IOException e) {
             logger.error("Error saving JSON config file.", e);
         }
@@ -98,8 +99,8 @@ public class JsonConfig implements ConfigFile {
     /**
      * Returns the element in the specified JSON path.
      *
-     * @param path the path to the element.
-     * @return the {@link JsonElement} in the path.
+     * @param path the path to the element
+     * @return the {@link JsonElement} in the path
      */
     private JsonElement elementAtPath(String path) {
         JsonElement current = root;
@@ -128,10 +129,10 @@ public class JsonConfig implements ConfigFile {
      * If the file doesn't exist in the system disk, then the resource file in {@code resourcePath}
      * is first extracted to {@code extractionPath} and then read.
      *
-     * @param resourcePath file path to the JSON file in the application resources.
-     * @param extract file path where to read or extract the file.
-     * @return the loaded JSON config file.
-     * @throws IOException if there is an error reading or extracting the file.
+     * @param resourcePath file path to the JSON file in the application resources
+     * @param extract file path where to read or extract the file
+     * @return the loaded JSON config file
+     * @throws IOException if there is an error reading or extracting the file
      */
     public static JsonConfig ofResource(String resourcePath, Path extract) throws IOException {
         if (!Files.exists(extract)) {

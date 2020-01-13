@@ -39,14 +39,14 @@ public class EditItemDialog extends JDialog {
         setPreferredSize(new Dimension(720, 480));
         setLayout(new GridBagLayout());
 
-        gbb.setInsets(4, 4, 4, 4);
-        gbb.setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
+        gbb.setInsets(4, 4, 4, 4)
+                .setFillAndAnchor(Fill.HORIZONTAL, Anchor.WEST);
 
         addItemPropertyFields();
 
-        gbb.setWeightY(0);
-        gbb.setAnchor(Anchor.PAGE_END);
-        gbb.setGridWidthAndWeightX(0, GridBagConstraints.REMAINDER);
+        gbb.setWeightY(0)
+                .setAnchor(Anchor.PAGE_END)
+                .setGridWidthAndWeightX(GridBagConstraints.REMAINDER, 0);
         put(new ButtonPanel(
             () -> {
                 save();

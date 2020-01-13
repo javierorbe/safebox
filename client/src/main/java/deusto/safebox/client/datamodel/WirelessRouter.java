@@ -2,6 +2,7 @@ package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
@@ -18,9 +19,9 @@ public class WirelessRouter extends LeafItem {
     private WirelessRouter(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                            String stationName, String stationPassword, String location) {
         super(id, ItemType.WIRELESS_ROUTER, title, folder, created, lastModified);
-        this.stationName = new StringProperty("Station Name", 50, stationName);
-        this.stationPassword = new StringProperty("Station Password", 50, stationPassword);
-        this.location = new StringProperty("Location", 50, location);
+        this.stationName = new StringProperty(Message.STATION_NAME.get(), 50, stationName);
+        this.stationPassword = new StringProperty(Message.STATION_PASSWORD.get(), 50, stationPassword);
+        this.location = new StringProperty(Message.LOCATION.get(), 50, location);
         addProperties(List.of(
                 this.stationName,
                 this.stationPassword,

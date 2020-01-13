@@ -4,11 +4,11 @@ public interface ConfigFile {
 
     int getInt(String path);
 
-    void setInt(int value, String path);
+    void setInt(String path, int value);
 
     String getString(String path);
 
-    void setString(String value, String path);
+    void setString(String path, String value);
 
     void save();
 }

@@ -2,6 +2,7 @@ package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.LongStringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public class Note extends LeafItem {
     private Note(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
                  String content) {
         super(id, ItemType.NOTE, title, folder, created, lastModified);
-        this.content = new LongStringProperty("Content", content);
+        this.content = new LongStringProperty(Message.CONTENT.get(), content);
         addProperties(List.of(this.content));
     }
 

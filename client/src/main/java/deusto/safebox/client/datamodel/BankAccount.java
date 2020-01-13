@@ -2,6 +2,7 @@ package deusto.safebox.client.datamodel;
 
 import com.google.gson.JsonObject;
 import deusto.safebox.client.datamodel.property.StringProperty;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.common.ItemData;
 import deusto.safebox.common.ItemType;
 import java.time.LocalDateTime;
@@ -10,18 +11,18 @@ import java.util.UUID;
 
 public class BankAccount extends LeafItem {
 
-    private final StringProperty holder;
+    private final StringProperty accountHolder;
     private final StringProperty iban;
     private final StringProperty bankName;
 
     private BankAccount(UUID id, String title, Folder folder, LocalDateTime created, LocalDateTime lastModified,
-                        String holder, String iban, String bankName) {
+                        String accountHolder, String iban, String bankName) {
         super(id, ItemType.BANK_ACCOUNT, title, folder, created, lastModified);
-        this.holder = new StringProperty("Account Holder", 50, holder);
-        this.iban = new StringProperty("IBAN", 50, iban);
-        this.bankName = new StringProperty("Bank Name", 50, bankName);
+        this.accountHolder = new StringProperty(Message.ACCOUNT_HOLDER.get(), 50, accountHolder);
+        this.iban = new StringProperty("IBAN", 34, iban);
+        this.bankName = new StringProperty(Message.BANK_NAME.get(), 30, bankName);
         addProperties(List.of(
-                this.holder,
+                this.accountHolder,
                 this.iban,
                 this.bankName
         ));
@@ -35,7 +36,7 @@ public class BankAccount extends LeafItem {
     @Override
     JsonObject getCustomData() {
         JsonObject root = new JsonObject();
-        root.addProperty("holder", holder.get());
+        root.addProperty("holder", accountHolder.get());
         root.addProperty("iban", iban.get());
         root.addProperty("bankName", bankName.get());
         return root;

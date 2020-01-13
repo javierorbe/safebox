@@ -1,12 +1,13 @@
 package deusto.safebox.client.gui.component;
 
+import deusto.safebox.client.locale.Message;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class SearchBox extends PlaceholderTextField {
 
     public SearchBox() {
-        super(30, "Search...");
+        super(30, Message.SEARCH.get() + "...");
         setMaximumSize(getPreferredSize());
         getDocument().addDocumentListener(new DocumentListener() {
             @Override
