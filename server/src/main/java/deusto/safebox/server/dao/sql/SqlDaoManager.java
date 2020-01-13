@@ -65,6 +65,7 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
      */
     public static SqlDaoManager ofSqlite(Path file) {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.sqlite.JDBC");
         config.setJdbcUrl(String.format(SqlDatabase.SQLITE.getJdbcUrl(), file.toString()));
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
@@ -84,7 +85,9 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
      * @see <a href="https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration" target="_top">MySQL Configuration</a>
      */
     public static SqlDaoManager ofMysql(String host, String database, String username, String password) {
-        return ofServerSql(SqlDatabase.MYSQL, host, database, username, password);
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("com.mysql.jdbc.Driver");
+        return ofServerSql(config, SqlDatabase.MYSQL, host, database, username, password);
     }
 
     /**
@@ -97,12 +100,14 @@ public class SqlDaoManager implements DaoManager, AutoCloseable {
      * @return a {@code SqlDaoManager} connected to the specified PostgreSQL database
      */
     public static SqlDaoManager ofPostgreSql(String host, String database, String username, String password) {
-        return ofServerSql(SqlDatabase.POSTGRESQL, host, database, username, password);
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.postgresql.Driver");
+        return ofServerSql(config, SqlDatabase.POSTGRESQL, host, database, username, password);
     }
 
-    private static SqlDaoManager ofServerSql(SqlDatabase database,
-                                             String host, String databaseName, String username, String password) {
-        HikariConfig config = new HikariConfig();
+    private static SqlDaoManager ofServerSql(HikariConfig config,
+                                             SqlDatabase database, String host, String databaseName,
+                                             String username, String password) {
         config.setJdbcUrl(String.format(database.getJdbcUrl(), host, databaseName));
         config.setUsername(username);
         config.setPassword(password);

@@ -39,7 +39,7 @@ public class ItemParser {
         ITEM_BUILDERS.put(ItemType.BANK_ACCOUNT, BankAccount::build);
     }
 
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(3);
 
     /**
      * Transforms a collection of {@link AbstractItem} into a collection of {@link ItemData}.

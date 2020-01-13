@@ -20,7 +20,7 @@ public class ClientSecurity {
     private static final int PBKDF2_VAULT_ITERATIONS = 100_000;
     private static final int PBKDF2_AUTH_ITERATIONS = 5_000;
 
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(3);
 
     private static SecretKey vaultKey;
 

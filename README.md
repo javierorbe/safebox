@@ -22,6 +22,9 @@ en [/server/src/main/sql](https://github.com/javierorbe/safebox/tree/master/serv
 Para seleccionar que SGBD se está utilizando, hay que indicarlo en el campo _dbms_ de la configuración
 (el campo puede tomar los valores _sqlite_, _mysql_ o _postgresql_).
 
+Si se utiliza el argumento _-gui_ al ejecutar el servidor,
+se abrirá una interfaz gráfica que contiene controles e información básica.
+
 ## Uso del cliente
 
 ### Requisitos del sistema del cliente

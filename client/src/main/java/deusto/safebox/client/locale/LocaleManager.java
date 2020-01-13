@@ -2,7 +2,9 @@ package deusto.safebox.client.locale;
 
 import deusto.safebox.common.util.JsonConfig;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.Map;
@@ -18,7 +20,9 @@ public class LocaleManager {
 
     public static void loadTranslation(Language language) throws IOException, URISyntaxException {
         String langFileName = String.format("/lang/%s.json", language.getCode());
-        Path langFile = Path.of(LocaleManager.class.getResource(langFileName).toURI());
+        URI uri = LocaleManager.class.getResource(langFileName).toURI();
+        FileSystems.newFileSystem(uri, Map.of("create", "true"));
+        Path langFile = Path.of(uri);
         loadFromFile(langFile);
     }
 

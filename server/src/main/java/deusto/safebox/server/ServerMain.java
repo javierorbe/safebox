@@ -8,9 +8,14 @@ import deusto.safebox.server.dao.sql.SqlDaoManager;
 import deusto.safebox.server.gui.ServerFrame;
 import deusto.safebox.server.net.Server;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,9 +103,10 @@ class ServerMain {
     private static Path getDefaultKeyPath() {
         try {
             @SuppressWarnings("SpellCheckingInspection")
-            Path path = Paths.get(ServerMain.class.getResource("/safeboxkey.jks").toURI());
-            return path;
-        } catch (URISyntaxException e) {
+            URI uri = ServerMain.class.getResource("/safeboxkey.jks").toURI();
+            FileSystems.newFileSystem(uri, Map.of("create", "true"));
+            return Paths.get(uri);
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             return null;
         }
