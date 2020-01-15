@@ -21,7 +21,11 @@ public class LocaleManager {
     public static void loadTranslation(Language language) throws IOException, URISyntaxException {
         String langFileName = String.format("/lang/%s.json", language.getCode());
         URI uri = LocaleManager.class.getResource(langFileName).toURI();
-        FileSystems.newFileSystem(uri, Map.of("create", "true"));
+        try {
+            FileSystems.newFileSystem(uri, Map.of("create", "true"));
+        } catch (IllegalArgumentException ignored) {
+            // ignored
+        }
         Path langFile = Path.of(uri);
         loadFromFile(langFile);
     }

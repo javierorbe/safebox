@@ -2,6 +2,7 @@ package deusto.safebox.client.gui;
 
 import static deusto.safebox.common.util.GuiUtil.runSwing;
 
+import deusto.safebox.client.ClientMain;
 import deusto.safebox.client.ItemManager;
 import deusto.safebox.client.datamodel.ItemParser;
 import deusto.safebox.client.gui.menu.MenuBar;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executors;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class MainFrame extends JFrame {
 
@@ -39,7 +41,7 @@ public class MainFrame extends JFrame {
         this.client = client;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        GuiUtil.setDefaultLookAndFeel();
+        setLookAndFeel();
         setPreferredSize(new Dimension(1280, 720));
         setIconImage(IconType.SAFEBOX.getAsImage());
         setLayout(new BorderLayout());
@@ -84,6 +86,12 @@ public class MainFrame extends JFrame {
         pack();
         setLocation(GuiUtil.getCenteredLocation(this));
         setVisible(true);
+    }
+
+    private void setLookAndFeel() {
+        String themeId = ClientMain.CONFIG.getString("theme");
+        ThemeSelector.Theme theme = ThemeSelector.Theme.fromId(themeId);
+        ThemeSelector.setTheme(theme);
     }
 
     public void setCurrentPanel(PanelType panel) {

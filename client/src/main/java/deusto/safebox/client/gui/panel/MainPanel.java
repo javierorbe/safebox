@@ -11,6 +11,7 @@ import deusto.safebox.client.gui.MainFrame;
 import deusto.safebox.client.gui.component.DataTable;
 import deusto.safebox.client.gui.component.FolderTree;
 import deusto.safebox.client.gui.component.ItemTree;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.net.ErrorHandler;
 import deusto.safebox.client.net.PacketHandler;
 import deusto.safebox.common.net.packet.RetrieveDataPacket;
@@ -44,8 +45,8 @@ public class MainPanel extends JPanel {
 
         JTabbedPane treeTabbedPane = new JTabbedPane();
         treeTabbedPane.setRequestFocusEnabled(false);
-        treeTabbedPane.addTab("Folders", folderTreeScrollPane);
-        treeTabbedPane.addTab("Categories", itemTreeScrollPane);
+        treeTabbedPane.addTab(Message.FOLDERS.get(), folderTreeScrollPane);
+        treeTabbedPane.addTab(Message.CATEGORIES.get(), itemTreeScrollPane);
         treeTabbedPane.setPreferredSize(new Dimension(180, 0));
 
         JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, itemInfoPane);
@@ -58,7 +59,7 @@ public class MainPanel extends JPanel {
     private void registerListeners() {
         ErrorHandler.addListener(ErrorType.SAVE_DATA_ERROR, () -> ToastDialog.showError(this, "Error saving data."));
         PacketHandler.INSTANCE.registerListener(SuccessfulSaveDataPacket.class,
-                p -> ToastDialog.showInfo(this, "Data was successfully saved."));
+                p -> ToastDialog.showInfo(this, Message.DATA_SUCCESSFULLY_SAVED.get()));
         PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class,
                 p -> ItemParser.fromItemData(p.getItems())
                         .thenAccept(pair -> {

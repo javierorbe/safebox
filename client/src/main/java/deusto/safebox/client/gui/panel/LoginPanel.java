@@ -110,7 +110,7 @@ class LoginPanel extends JPanel {
         PacketHandler.INSTANCE.registerListener(RetrieveDataPacket.class, p -> resetFields.run());
         ErrorHandler.addListener(ErrorPacket.ErrorType.UNKNOWN_ERROR, resetFields);
         ErrorHandler.addListener(ErrorPacket.ErrorType.INVALID_LOGIN, () -> {
-            resetFields.run();
+            toggleInputFields(true);
             ToastDialog.showError(this, Message.INVALID_LOGIN_DETAILS.get());
         });
     }

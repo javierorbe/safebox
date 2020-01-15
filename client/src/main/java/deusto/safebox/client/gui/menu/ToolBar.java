@@ -18,8 +18,6 @@ public class ToolBar extends JToolBar {
         setFloatable(false);
         setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 
-        add(new ToolBarButton(Message.NEW_ITEM.get(), IconType.NEW_FILE_20, () -> { /* TODO */ }));
-        addSeparator();
         add(new ToolBarButton(Message.SIGN_OUT.get(), IconType.LOCK, lockAction));
         add(new ToolBarButton(Message.MINIMIZE.get(), IconType.MINIMIZE, TrayIconHandler::showTrayIcon));
         addSeparator();
@@ -34,8 +32,7 @@ public class ToolBar extends JToolBar {
 
         ToolBarButton(String toolTipText, IconType iconType, Runnable action) {
             super(iconType.getAsIcon());
-            setFocusPainted(false);
-            setRequestFocusEnabled(false);
+            setFocusable(false);
             setToolTipText(toolTipText);
             addActionListener(e -> action.run());
         }

@@ -10,11 +10,9 @@ import deusto.safebox.server.net.Server;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -104,7 +102,11 @@ class ServerMain {
         try {
             @SuppressWarnings("SpellCheckingInspection")
             URI uri = ServerMain.class.getResource("/safeboxkey.jks").toURI();
-            FileSystems.newFileSystem(uri, Map.of("create", "true"));
+            try {
+                FileSystems.newFileSystem(uri, Map.of("create", "true"));
+            } catch (IllegalArgumentException ignored) {
+                // ignored
+            }
             return Paths.get(uri);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package deusto.safebox.client.gui.model;
 
 import deusto.safebox.client.datamodel.Folder;
 import deusto.safebox.client.datamodel.LeafItem;
+import deusto.safebox.client.locale.Message;
 import deusto.safebox.client.util.Pair;
 import deusto.safebox.common.util.Constants;
 import java.util.ArrayList;
@@ -13,10 +14,10 @@ import javax.swing.table.AbstractTableModel;
 public class FolderTableModel extends AbstractTableModel {
 
     private static final List<Pair<String, Function<LeafItem, Object>>> COLUMNS = List.of(
-            new Pair<>("Title", LeafItem::getTitle),
-            new Pair<>("Type", LeafItem::getType),
-            new Pair<>("Created", item -> Constants.DATE_TIME_FORMATTER.format(item.getCreated())),
-            new Pair<>("Last Modified", item -> Constants.DATE_TIME_FORMATTER.format(item.getLastModified()))
+            new Pair<>(Message.TITLE.get(), LeafItem::getTitle),
+            new Pair<>(Message.TYPE.get(), LeafItem::getType),
+            new Pair<>(Message.CREATED.get(), item -> Constants.DATE_TIME_FORMATTER.format(item.getCreated())),
+            new Pair<>(Message.LAST_MODIFIED.get(), item -> Constants.DATE_TIME_FORMATTER.format(item.getLastModified()))
     );
 
     private List<LeafItem> items = new ArrayList<>();

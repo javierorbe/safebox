@@ -18,15 +18,19 @@ public class ThemeSelector {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeSelector.class);
 
     public static void setTheme(Theme theme) {
-        try {
-            UIManager.setLookAndFeel(theme.classname);
-            if (theme.metalTheme != null) {
-                MetalLookAndFeel.setCurrentTheme(theme.metalTheme);
-            }
-        } catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            LOGGER.error("Error setting theme: " + theme.id, e);
+        if (theme == null) {
             setDefaultTheme();
+        } else {
+            try {
+                UIManager.setLookAndFeel(theme.classname);
+                if (theme.metalTheme != null) {
+                    MetalLookAndFeel.setCurrentTheme(theme.metalTheme);
+                }
+            } catch (ClassNotFoundException | InstantiationException
+                    | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                LOGGER.error("Error setting theme: " + theme.id, e);
+                setDefaultTheme();
+            }
         }
     }
 

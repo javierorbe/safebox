@@ -37,6 +37,7 @@ public class SettingsDialog extends JDialog {
         settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
+        /*
         {
             JPanel startup = new JPanel(new GridBagLayout());
             startup.setBorder(BorderFactory.createTitledBorder("Startup"));
@@ -50,6 +51,7 @@ public class SettingsDialog extends JDialog {
 
             settingsPanel.add(startup);
         }
+        */
 
         {
             JPanel appearance = new JPanel(new GridBagLayout());
@@ -113,7 +115,9 @@ public class SettingsDialog extends JDialog {
         ClientMain.CONFIG.setString("lang", Objects.requireNonNull(selectedLang).getCode());
 
         ThemeSelector.Theme selectedTheme = (ThemeSelector.Theme) themeSelector.getSelectedItem();
-        ClientMain.CONFIG.setString("theme", Objects.requireNonNull(selectedTheme).getId());
+        if (selectedTheme != null) {
+            ClientMain.CONFIG.setString("theme", selectedTheme.getId());
+        }
 
         ClientMain.CONFIG.save();
     }
